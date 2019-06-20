@@ -69,6 +69,18 @@ class AvatarBuilder extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                           ),
                         ),
+                        Center(
+                          child: Text(
+                            this.gems[i].sub_category.toUpperCase(),
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.w300,
+                                color: Colors.black),
+                            maxLines: 2,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
                         SizedBox(height: 0.0),
                       ],
                     ),

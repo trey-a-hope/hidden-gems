@@ -17,11 +17,11 @@ class FullListing extends StatelessWidget {
     for (String sub_category in this.sub_categories) {
 
       //Create tab object.
-      Tab tab = Tab(text: sub_category + ' - 4');
+      Tab tab = Tab(text: sub_category);
       tabs.add(tab);
 
       //Split gems into respective listings.
-      List<Gem> sub_category_gems = this.gems.where((i) => i.bio.length > 0).toList();
+      List<Gem> sub_category_gems = this.gems.where((i) => i.sub_category == sub_category).toList();
 
       //Create list tile for Gem.
       List<ListTile> gem_list_tiles =  List<ListTile>();

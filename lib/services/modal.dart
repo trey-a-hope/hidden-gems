@@ -5,7 +5,10 @@ class Modal {
   static void showInSnackBar(BuildContext context, String text) {
     final snackBar = SnackBar(content: Text(text));
     Scaffold.of(context).showSnackBar(snackBar);
-    // scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(text)));
+  }
+
+  static void showInSnackBar2(GlobalKey<ScaffoldState> scaffoldKey, String text){
+    scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(text)));
   }
 
   static void showAlert(BuildContext context, String title, String text) {

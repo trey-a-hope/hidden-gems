@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/widgets/avatarBuilder.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:hiddengems_flutter/pages/fullListing.dart';
+import 'package:hiddengems_flutter/functions.dart';
 import "dart:math";
 
 class GemsPreview extends StatelessWidget {
@@ -13,26 +14,11 @@ class GemsPreview extends StatelessWidget {
 
   GemsPreview(this.main_category, this.description, this.gems);
 
-  List<Gem> _getRandomGems(int amount){
-    final random = Random();
-    int randomIndex = random.nextInt(amount);
-
-    List<int> randomIndexes = List<int>();
-    List<Gem> randomGems = List<Gem>();
-
-    while(randomGems.length != amount){
-      if(!randomIndexes.contains(randomIndex)){
-        randomIndexes.add(randomIndex);
-        Gem randomGem = this.gems[randomIndex];
-        randomGems.add(randomGem);
-      }
-    }
-
-    return randomGems;
-  }
-
   @override
   Widget build(BuildContext context) {
+    
+    shuffle(this.gems);
+
     return Column(
       children: <Widget>[
         Padding(padding: const EdgeInsets.symmetric(vertical: 8.0)),
@@ -49,17 +35,20 @@ class GemsPreview extends StatelessWidget {
           ),
         ),
         Padding(
-          padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
+          padding: const EdgeInsets.all(15),
           child: Text(
+
             this.description,
+            textAlign: TextAlign.center,
             style: TextStyle(
+                
                 fontWeight: FontWeight.bold,
                 fontSize: 12.0,
                 letterSpacing: 2.0,
                 color: Colors.black),
           ),
         ),
-        AvatarBuilder(this._getRandomGems(this.gemPreviewCount)),
+        AvatarBuilder(this.gems.sublist(0, 3)),
         Padding(
           padding: const EdgeInsets.only(left: 15.0),
           child: InkWell(
@@ -78,7 +67,7 @@ class GemsPreview extends StatelessWidget {
                       MaterialPageRoute(
                           builder: (context) => FullListing(
                             this.main_category,
-                            ['Rappers', 'Singers', 'Producers', 'Engineers', 'Instrumentalists'],
+                            ['Rapper', 'Singer', 'Producer', 'Engineer', 'Instrumentalist'],
                             this.gems)));
                   break;
                 default:
