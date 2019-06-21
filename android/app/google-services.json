@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "672823748599",
+    "firebase_url": "https://hidden-gems-e481d.firebaseio.com",
+    "project_id": "hidden-gems-e481d",
+    "storage_bucket": "hidden-gems-e481d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672823748599:android:da6100bc2011dae8",
+        "android_client_info": {
+          "package_name": "com.example.hiddengems_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "672823748599-276vgie9ejt7m78tkgf7afrfau1iu4bl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCK557hZ5ZJKx-vz-crdn0La2QwWjstZfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "672823748599-276vgie9ejt7m78tkgf7afrfau1iu4bl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

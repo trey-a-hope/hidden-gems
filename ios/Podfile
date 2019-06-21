@@ -10,6 +10,8 @@ project 'Runner', {
   'Release' => :release,
 }
 
+pod 'Firebase/Core'
+
 platform :ios, '9.0'
 
 def parse_KV_file(file, separator='=')

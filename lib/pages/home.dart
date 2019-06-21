@@ -6,6 +6,7 @@ import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:hiddengems_flutter/mockData.dart';
 import 'package:hiddengems_flutter/pages/settings.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -34,6 +35,11 @@ class HomePageState extends State<HomePage>
   }
 
   void loadPage() async {
+
+    var s = await Firestore.instance.collection('Test').getDocuments();
+    String string = s.documents.first.data['Test'];
+    Modal.showAlert(context, string, string);
+
     this.gems_musicians = await loadGemsMusicians();
 
     setState(() {
