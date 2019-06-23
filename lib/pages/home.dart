@@ -36,10 +36,6 @@ class HomePageState extends State<HomePage>
 
   void loadPage() async {
 
-    var s = await Firestore.instance.collection('Test').getDocuments();
-    String string = s.documents.first.data['Test'];
-    Modal.showAlert(context, string, string);
-
     this.gems_musicians = await loadGemsMusicians();
 
     setState(() {
@@ -100,6 +96,7 @@ class HomePageState extends State<HomePage>
 
                           GemsPreview(
                               'MUSICIANS',
+                              ['Rapper', 'Singer', 'Producer', 'Engineer', 'Instrumentalist'],
                               'Some of the best rappers, singers, producers, engineers, and much more take hold of this list. Ideal for making some of the hottest music the city of Dayton has to offer.',
                               this.gems_musicians),
                           Divider(color: Colors.black),

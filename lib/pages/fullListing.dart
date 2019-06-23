@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
+import 'package:hiddengems_flutter/widgets/gemListTile.dart';
 
 class FullListing extends StatelessWidget {
   final String main_category;
@@ -24,12 +25,10 @@ class FullListing extends StatelessWidget {
       List<Gem> sub_category_gems = this.gems.where((i) => i.sub_category == sub_category).toList();
 
       //Create list tile for Gem.
-      List<ListTile> gem_list_tiles =  List<ListTile>();
+      List<GemListTile> gem_list_tiles =  List<GemListTile>();
       for(Gem sub_category_gem in sub_category_gems){
-        ListTile lt = ListTile(
-          title: Text(sub_category_gem.name),
-        );
-        gem_list_tiles.add(lt);
+        GemListTile glt = GemListTile(sub_category_gem);
+        gem_list_tiles.add(glt);
       }
 
       //Create page.

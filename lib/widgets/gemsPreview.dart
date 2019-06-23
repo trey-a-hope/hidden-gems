@@ -7,16 +7,17 @@ import "dart:math";
 
 class GemsPreview extends StatelessWidget {
   final String main_category;
+  final List<String> sub_categories;
   final String description;
   final List<Gem> gems;
-  
+
   final int gemPreviewCount = 3;
 
-  GemsPreview(this.main_category, this.description, this.gems);
+  GemsPreview(
+      this.main_category, this.sub_categories, this.description, this.gems);
 
   @override
   Widget build(BuildContext context) {
-    
     shuffle(this.gems);
 
     return Column(
@@ -37,11 +38,9 @@ class GemsPreview extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.all(15),
           child: Text(
-
             this.description,
             textAlign: TextAlign.center,
             style: TextStyle(
-                
                 fontWeight: FontWeight.bold,
                 fontSize: 12.0,
                 letterSpacing: 2.0,
@@ -60,25 +59,13 @@ class GemsPreview extends StatelessWidget {
                   color: Colors.black),
             ),
             onTap: () async {
-              switch (this.main_category) {
-                case 'MUSICIANS':
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => FullListing(
-                            this.main_category,
-                            ['Rapper', 'Singer', 'Producer', 'Engineer', 'Instrumentalist'],
-                            this.gems)));
-                  break;
-                default:
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => FullListing(
-                            this.main_category,
-                            ['Rappers', 'Singers', 'Producers', 'Engineers', 'Instrumentalists'],
-                            this.gems)));
-              }
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => FullListing(
+                          this.main_category,
+                          this.sub_categories,
+                          this.gems)));
             },
           ),
         ),
