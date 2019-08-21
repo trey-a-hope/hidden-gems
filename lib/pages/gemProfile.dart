@@ -29,7 +29,7 @@ class GemProfilePageState extends State<GemProfilePage>
       appBar: AppBar(
           centerTitle: true,
           title: Text(
-            'DETAILS',
+            'GEM DETAILS',
             style: TextStyle(letterSpacing: 2.0),
           ),
           actions: [
@@ -47,7 +47,11 @@ class GemProfilePageState extends State<GemProfilePage>
             SizedBox(
               height: 250,
               width: double.infinity,
-              child: CachedNetworkImage(imageUrl: gem.photoUrl),
+              child: CachedNetworkImage(
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  fit: BoxFit.cover,
+                  fadeInCurve: Curves.easeIn,
+                  imageUrl: gem.backgroundUrl),
             ),
             Container(
               margin: EdgeInsets.fromLTRB(16.0, 200.0, 16.0, 16.0),
@@ -57,10 +61,11 @@ class GemProfilePageState extends State<GemProfilePage>
                     children: <Widget>[
                       Container(
                         padding: EdgeInsets.all(16.0),
-                        margin: EdgeInsets.only(top: 16.0),
+                        margin: EdgeInsets.only(top: 20.0),
                         decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(5.0)),
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: <Widget>[
@@ -100,7 +105,7 @@ class GemProfilePageState extends State<GemProfilePage>
                                   child: Column(
                                     children: <Widget>[
                                       Text(
-                                        "3025",
+                                        "0",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -112,7 +117,7 @@ class GemProfilePageState extends State<GemProfilePage>
                                   child: Column(
                                     children: <Widget>[
                                       Text(
-                                        "650",
+                                        "0",
                                         style: TextStyle(
                                             fontWeight: FontWeight.bold),
                                       ),
@@ -129,10 +134,12 @@ class GemProfilePageState extends State<GemProfilePage>
                         height: 80,
                         width: 80,
                         decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(10.0),
-                            image: DecorationImage(
-                                image: CachedNetworkImageProvider(gem.photoUrl),
-                                fit: BoxFit.cover)),
+                          border: Border.all(width: 2.0, color: Colors.white),
+                          borderRadius: BorderRadius.circular(10.0),
+                          image: DecorationImage(
+                              image: CachedNetworkImageProvider(gem.photoUrl),
+                              fit: BoxFit.cover),
+                        ),
                         margin: EdgeInsets.only(left: 16.0),
                       ),
                     ],
@@ -146,21 +153,22 @@ class GemProfilePageState extends State<GemProfilePage>
                     child: Column(
                       children: <Widget>[
                         ListTile(
-                          title: Text('Gem Information',
-                              style: TextStyle(
-                                  color: Colors.red,
-                                  fontWeight: FontWeight.bold)),
+                          title: Text(
+                            'Information',
+                            style: TextStyle(
+                                color: Colors.red, fontWeight: FontWeight.bold),
+                          ),
                         ),
                         Divider(),
+                        ListTile(
+                          title: Text('Age'),
+                          subtitle: Text('${gem.age}'),
+                          leading: Icon(Icons.cake, color: Colors.teal),
+                        ),
                         ListTile(
                           title: Text('Bio'),
                           subtitle: Text(gem.bio),
                           leading: Icon(Icons.person, color: Colors.deepOrange),
-                        ),
-                        ListTile(
-                          title: Text("Joined Date"),
-                          subtitle: Text("15 February 2019"),
-                          leading: Icon(MdiIcons.calendar, color: Colors.indigo),
                         ),
                       ],
                     ),
@@ -174,17 +182,22 @@ class GemProfilePageState extends State<GemProfilePage>
                     child: Column(
                       children: <Widget>[
                         ListTile(
-                          title: Text('Social Media',
-                              style: TextStyle(
-                                  color: Colors.blue,
-                                  fontWeight: FontWeight.bold)),
+                          title: Text(
+                            'Social Media',
+                            style: TextStyle(
+                                color: Colors.blue,
+                                fontWeight: FontWeight.bold),
+                          ),
                         ),
                         Divider(),
                         InkWell(
                           child: ListTile(
                             title: Text("Instagram"),
                             subtitle: Text('@${gem.instagramName}'),
-                            leading: Icon(MdiIcons.instagram, color: Colors.purple,),
+                            leading: Icon(
+                              MdiIcons.instagram,
+                              color: Colors.purple,
+                            ),
                             trailing: Icon(Icons.chevron_right),
                           ),
                           onTap: () {
@@ -196,7 +209,10 @@ class GemProfilePageState extends State<GemProfilePage>
                           child: ListTile(
                             title: Text("Twitter"),
                             subtitle: Text('TODO'),
-                            leading: Icon(MdiIcons.twitter, color: Colors.lightBlue,),
+                            leading: Icon(
+                              MdiIcons.twitter,
+                              color: Colors.lightBlue,
+                            ),
                             trailing: Icon(Icons.chevron_right),
                           ),
                           onTap: () {
@@ -208,7 +224,10 @@ class GemProfilePageState extends State<GemProfilePage>
                           child: ListTile(
                             title: Text("Facebook"),
                             subtitle: Text('TODO'),
-                            leading: Icon(MdiIcons.facebook, color: Colors.blue,),
+                            leading: Icon(
+                              MdiIcons.facebook,
+                              color: Colors.blue,
+                            ),
                             trailing: Icon(Icons.chevron_right),
                           ),
                           onTap: () {
@@ -220,7 +239,10 @@ class GemProfilePageState extends State<GemProfilePage>
                           child: ListTile(
                             title: Text("YouTube"),
                             subtitle: Text('TODO'),
-                            leading: Icon(MdiIcons.youtube, color: Colors.red,),
+                            leading: Icon(
+                              MdiIcons.youtube,
+                              color: Colors.red,
+                            ),
                             trailing: Icon(Icons.chevron_right),
                           ),
                           onTap: () {
@@ -228,30 +250,40 @@ class GemProfilePageState extends State<GemProfilePage>
                                 'https://www.instagram.com/${gem.instagramName}');
                           },
                         ),
-                        gem.category == 'Musician' ? InkWell(
-                          child: ListTile(
-                            title: Text("Spotify"),
-                            subtitle: Text('TODO'),
-                            leading: Icon(MdiIcons.spotify, color: Colors.green,),
-                            trailing: Icon(Icons.chevron_right),
-                          ),
-                          onTap: () {
-                            URLLauncher.launchUrl(
-                                'https://www.instagram.com/${gem.instagramName}');
-                          },
-                        ) : Container(),
-                        gem.category == 'Musician' ? InkWell(
-                          child: ListTile(
-                            title: Text("SoundCloud"),
-                            subtitle: Text('TODO'),
-                            leading: Icon(MdiIcons.soundcloud, color: Colors.orange,),
-                            trailing: Icon(Icons.chevron_right),
-                          ),
-                          onTap: () {
-                            URLLauncher.launchUrl(
-                                'https://www.instagram.com/${gem.instagramName}');
-                          },
-                        ) : Container(),
+                        gem.category == 'Musician'
+                            ? InkWell(
+                                child: ListTile(
+                                  title: Text("Spotify"),
+                                  subtitle: Text('TODO'),
+                                  leading: Icon(
+                                    MdiIcons.spotify,
+                                    color: Colors.green,
+                                  ),
+                                  trailing: Icon(Icons.chevron_right),
+                                ),
+                                onTap: () {
+                                  URLLauncher.launchUrl(
+                                      'https://www.instagram.com/${gem.instagramName}');
+                                },
+                              )
+                            : Container(),
+                        gem.category == 'Musician'
+                            ? InkWell(
+                                child: ListTile(
+                                  title: Text("SoundCloud"),
+                                  subtitle: Text('TODO'),
+                                  leading: Icon(
+                                    MdiIcons.soundcloud,
+                                    color: Colors.orange,
+                                  ),
+                                  trailing: Icon(Icons.chevron_right),
+                                ),
+                                onTap: () {
+                                  URLLauncher.launchUrl(
+                                      'https://www.instagram.com/${gem.instagramName}');
+                                },
+                              )
+                            : Container(),
                       ],
                     ),
                   ),

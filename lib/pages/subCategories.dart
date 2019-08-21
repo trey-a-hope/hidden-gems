@@ -100,7 +100,9 @@ class SubCategories extends StatelessWidget {
           gems.where((i) => i.subCategory == subCategory).toList();
 
       //Create page.
-      listViewSubCategories.add(_buildGemListing(subCategoryGems));
+      listViewSubCategories.add(
+        _buildGemListing(subCategoryGems),
+      );
     }
 
     return DefaultTabController(

@@ -50,6 +50,8 @@ class HomePageState extends State<HomePage>
       gem.photoUrl = ds['photoUrl'];
       gem.likes = ds['likes'];
       gem.instagramName = ds['instagramName'];
+      gem.age = ds['age'];
+      gem.backgroundUrl = ds['backgroundUrl'];
       gems.add(gem);
     }
     return gems;
@@ -161,9 +163,10 @@ class HomePageState extends State<HomePage>
                 child: Padding(
                   padding: EdgeInsets.all(20),
                   child: Text(
-                      'Version ${_projectVersion} / Build ${_projectCode}. App created by Tr3umphant.Designs, LLC',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(color: Colors.grey)),
+                    'Version ${_projectVersion} / Build ${_projectCode}. App created by Tr3umphant.Designs, LLC',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(color: Colors.grey),
+                  ),
                 ),
               ),
             ),

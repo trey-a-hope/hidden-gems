@@ -4,7 +4,9 @@ class Gem {
   String subCategory;
   String bio;
   String photoUrl;
+  String backgroundUrl;
   int likes;
+  int age;
 
   String instagramName;
 
