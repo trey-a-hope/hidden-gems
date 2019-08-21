@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:hiddengems_flutter/pages/subCategories.dart';
 import 'package:hiddengems_flutter/widgets/avatarBuilder.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
-import 'package:hiddengems_flutter/pages/fullListing.dart';
+import 'package:hiddengems_flutter/pages/subCategories.dart';
 import 'package:hiddengems_flutter/functions.dart';
 import "dart:math";
 
@@ -18,7 +19,6 @@ class GemsPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Column(
       children: <Widget>[
         Padding(padding: const EdgeInsets.symmetric(vertical: 8.0)),
@@ -59,12 +59,12 @@ class GemsPreview extends StatelessWidget {
             ),
             onTap: () async {
               Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => FullListing(
-                          this.main_category,
-                          this.sub_categories,
-                          this.gems)));
+                context,
+                MaterialPageRoute(
+                  builder: (context) => SubCategories(
+                      this.main_category, this.sub_categories, this.gems),
+                ),
+              );
             },
           ),
         ),

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
-import 'package:hiddengems_flutter/pages/gemInfo.dart';
-import 'package:hiddengems_flutter/widgets/gemListTile.dart';
+import 'package:hiddengems_flutter/pages/gemProfile.dart';
 import 'package:hiddengems_flutter/pages/search.dart';
 
-class FullListing extends StatelessWidget {
+class SubCategories extends StatelessWidget {
   final String mainCategory;
   final List<String> subCategories;
   final List<Gem> gems;
 
-  FullListing(this.mainCategory, this.subCategories, this.gems);
+  SubCategories(this.mainCategory, this.subCategories, this.gems);
 
   _buildGemListing(List<Gem> gems) {
     return ListView.builder(
@@ -35,7 +34,7 @@ class FullListing extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
                       Text(
@@ -76,7 +75,7 @@ class FullListing extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => GemInfoPage(gem),
+                  builder: (context) => GemProfilePage(gem),
                 ),
               );
             },

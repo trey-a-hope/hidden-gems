@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/functions.dart';
-import 'package:hiddengems_flutter/pages/fullListing.dart';
+import 'package:hiddengems_flutter/pages/subCategories.dart';
 import 'package:hiddengems_flutter/widgets/avatarBuilder.dart';
 import 'package:hiddengems_flutter/widgets/gemsPreview.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
@@ -48,6 +48,7 @@ class HomePageState extends State<HomePage>
       gem.subCategory = ds['subCategory'];
       gem.photoUrl = ds['photoUrl'];
       gem.likes = ds['likes'];
+      gem.instagramName = ds['instagramName'];
       gems.add(gem);
     }
     return gems;
@@ -96,24 +97,6 @@ class HomePageState extends State<HomePage>
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               onTap: () {},
-            ),
-            Divider(),
-            //Shop
-            ListTile(
-              leading: Icon(Icons.store, color: _drawerIconColor),
-              title: Text(
-                'Shop',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              subtitle: Text('See what products are available.'),
-              onTap: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => ShopPage(),
-                //   ),
-                // );
-              },
             ),
             Divider(),
             //About
@@ -228,7 +211,7 @@ class HomePageState extends State<HomePage>
                                   Navigator.push(
                                     context,
                                     MaterialPageRoute(
-                                      builder: (context) => FullListing(
+                                      builder: (context) => SubCategories(
                                           'MUSICIANS',
                                           [
                                             'Rapper',

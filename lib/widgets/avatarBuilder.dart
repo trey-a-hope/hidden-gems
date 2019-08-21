@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
-import 'package:hiddengems_flutter/pages/fullListing.dart';
-import 'package:hiddengems_flutter/pages/gemInfo.dart';
+import 'package:hiddengems_flutter/pages/subCategories.dart';
+import 'package:hiddengems_flutter/pages/gemProfile.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
 class AvatarBuilder extends StatelessWidget {
@@ -54,7 +54,7 @@ class AvatarBuilder extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => GemInfoPage(gem)));
+                            builder: (context) => GemProfilePage(gem)));
                   },
                 ),
                 SizedBox(

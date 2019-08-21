@@ -6,10 +6,8 @@ class Gem {
   String photoUrl;
   int likes;
 
-  String twitter_url;
-  String facebook_url;
-  String instagram_url;
-  String youtube_url;
+  String instagramName;
+
+
   String email;
-  String soundcloud_url;
 }
