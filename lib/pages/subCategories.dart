@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:hiddengems_flutter/pages/gemProfile.dart';
-import 'package:hiddengems_flutter/pages/search.dart';
 
 class SubCategories extends StatelessWidget {
   final String mainCategory;
@@ -112,18 +111,6 @@ class SubCategories extends StatelessWidget {
             isScrollable: true,
             tabs: tabs,
           ),
-          actions: <Widget>[
-            IconButton(
-                icon: Icon(Icons.search),
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => SearchPage(),
-                    ),
-                  );
-                })
-          ],
           title: Text(
             mainCategory,
             style: TextStyle(letterSpacing: 2.0),
@@ -135,37 +122,4 @@ class SubCategories extends StatelessWidget {
       ),
     );
   }
-}
-
-class DataSearch extends SearchDelegate<String> {
-  final cities = ['Dayton', 'Atlanta', 'Virginia', 'Detroit', 'Los Angeles'];
-
-  final recentCities = ['Dayton', 'Atlanta'];
-
-  @override
-  List<Widget> buildActions(BuildContext context) {
-    return [IconButton(icon: Icon(Icons.clear), onPressed: () {})];
-  }
-
-  @override
-  Widget buildLeading(BuildContext context) {
-    return IconButton(
-      icon: AnimatedIcon(
-          icon: AnimatedIcons.menu_arrow, progress: transitionAnimation),
-      onPressed: () {},
-    );
-  }
-
-  @override
-  Widget buildResults(BuildContext context) {
-    // TODO: implement buildResults
-    return null;
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    final suggestionsList = query.isEmpty ? recentCities : cities;
-  }
-
-  //https://www.youtube.com/watch?v=FPcl1tu0gDs
 }

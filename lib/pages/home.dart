@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:hiddengems_flutter/functions.dart';
 import 'package:hiddengems_flutter/pages/subCategories.dart';
 import 'package:hiddengems_flutter/widgets/avatarBuilder.dart';
-import 'package:hiddengems_flutter/widgets/gemsPreview.dart';
-import 'package:hiddengems_flutter/services/modal.dart';
-import 'package:hiddengems_flutter/mockData.dart';
-import 'package:hiddengems_flutter/pages/settings.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
+import 'package:get_version/get_version.dart';
+import 'package:flutter/services.dart';
+import 'package:hiddengems_flutter/pages/search.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -24,6 +22,9 @@ class HomePageState extends State<HomePage>
   bool _isLoading = true;
 
   List<Gem> _musicians = List<Gem>();
+
+  String _projectVersion;
+  String _projectCode;
 
   @override
   void initState() {
@@ -54,8 +55,24 @@ class HomePageState extends State<HomePage>
     return gems;
   }
 
+  _getVersionDetails() async {
+    //Version Name
+    try {
+      _projectVersion = await GetVersion.projectVersion;
+    } on PlatformException {
+      _projectVersion = 'Failed to get project version.';
+    }
+    //Version Code
+    try {
+      _projectCode = await GetVersion.projectCode;
+    } on PlatformException {
+      _projectCode = 'Failed to get build number.';
+    }
+  }
+
   void loadPage() async {
     _musicians = await _getGems('Musician');
+    await _getVersionDetails();
 
     setState(() {
       _isLoading = false;
@@ -69,12 +86,13 @@ class HomePageState extends State<HomePage>
       appBar: AppBar(
           centerTitle: true,
           title: Text(
-            'Hidden Gems',
+            'HIDDEN GEMS',
             style: TextStyle(letterSpacing: 2.0),
           ),
           actions: []),
       drawer: Drawer(
-        child: ListView(
+        child: Column(
+          mainAxisSize: MainAxisSize.max,
           children: <Widget>[
             UserAccountsDrawerHeader(
               accountName: Text(
@@ -98,38 +116,56 @@ class HomePageState extends State<HomePage>
               ),
               onTap: () {},
             ),
-            Divider(),
-            //About
             ListTile(
-              leading: Icon(MdiIcons.help, color: _drawerIconColor),
+              leading: Icon(MdiIcons.searchWeb, color: _drawerIconColor),
               title: Text(
-                'About',
-                style: TextStyle(fontWeight: FontWeight.bold),
-              ),
-              onTap: () {
-                // Navigator.push(
-                //   context,
-                //   MaterialPageRoute(
-                //     builder: (context) => AboutPage(),
-                //   ),
-                // );
-              },
-            ),
-            //Settings
-            ListTile(
-              leading: Icon(MdiIcons.settings, color: _drawerIconColor),
-              title: Text(
-                'Settings',
+                'Search Gems',
                 style: TextStyle(fontWeight: FontWeight.bold),
               ),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => SettingsPage(),
+                    builder: (context) => SearchPage(),
                   ),
                 );
               },
+            ),
+            ListTile(
+              leading: Icon(MdiIcons.help, color: _drawerIconColor),
+              title: Text(
+                'About',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(MdiIcons.email, color: _drawerIconColor),
+              title: Text(
+                'Contact Us',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              onTap: () {},
+            ),
+            ListTile(
+              leading: Icon(MdiIcons.helpCircle, color: _drawerIconColor),
+              title: Text(
+                'Help',
+                style: TextStyle(fontWeight: FontWeight.bold),
+              ),
+              onTap: () {},
+            ),
+            Expanded(
+              child: Align(
+                alignment: Alignment.bottomCenter,
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: Text(
+                      'Version ${_projectVersion} / Build ${_projectCode}. App created by Tr3umphant.Designs, LLC',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: Colors.grey)),
+                ),
+              ),
             ),
           ],
         ),
