@@ -18,7 +18,6 @@ class GemsPreview extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    shuffle(this.gems);
 
     return Column(
       children: <Widget>[

@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
 
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'tr3Designs',
+      title: 'Hidden Gems',
       theme: ThemeData(
         brightness: Brightness.light,
         // primaryColor: Colors.teal,

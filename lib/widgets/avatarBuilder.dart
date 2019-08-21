@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:hiddengems_flutter/pages/fullListing.dart';
-
-//MAKE A STATELESS WIDGET
+import 'package:hiddengems_flutter/pages/gemInfo.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class AvatarBuilder extends StatelessWidget {
   final List<Gem> gems;
@@ -11,6 +11,7 @@ class AvatarBuilder extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+
     return Container(
     //aspectRatio: 16/15,
     height: 200.0,
@@ -18,20 +19,24 @@ class AvatarBuilder extends StatelessWidget {
       physics: BouncingScrollPhysics(),
       itemCount: this.gems.length,
       scrollDirection: Axis.horizontal,
-      itemBuilder: (context, i) => Padding(
+      itemBuilder: (context, i) { 
+        
+        Gem gem = gems[i];
+
+        return Padding(
             padding: const EdgeInsets.only(bottom: 10.0, right: 0.0),
             child: Column(
               children: <Widget>[
                 InkResponse(
                   child: SizedBox(
                     child: Hero(
-                        tag: this.gems[i].name,
+                        tag: gem.name,
                         child: Container(
                           height: 130.0,
                           width: 130.0,
 
                           child: CircleAvatar(
-                            backgroundImage: NetworkImage(this.gems[i].path),
+                            backgroundImage: CachedNetworkImageProvider(gem.photoUrl),
                           )
 
                           // child: Material(
@@ -46,7 +51,10 @@ class AvatarBuilder extends StatelessWidget {
                         )),
                   ),
                   onTap: () {
-                    Modal.showAlert(context, 'ToDo', 'text');
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => GemInfoPage(gem)));
                   },
                 ),
                 SizedBox(
@@ -59,7 +67,7 @@ class AvatarBuilder extends StatelessWidget {
                       children: <Widget>[
                         Center(
                           child: Text(
-                            this.gems[i].name.toUpperCase(),
+                            gem.name.toUpperCase(),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 14.0,
@@ -71,7 +79,7 @@ class AvatarBuilder extends StatelessWidget {
                         ),
                         Center(
                           child: Text(
-                            this.gems[i].sub_category.toUpperCase(),
+                            gem.subCategory.toUpperCase(),
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 12.0,
@@ -88,8 +96,10 @@ class AvatarBuilder extends StatelessWidget {
                 ),
               ],
             ),
-          ),
+          );
+      }
     ),
+      
   ); 
   }
 }

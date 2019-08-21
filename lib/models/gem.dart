@@ -1,8 +1,10 @@
 class Gem {
   String name;
-  String sub_category;
+  String category;
+  String subCategory;
   String bio;
-  String path;
+  String photoUrl;
+  int likes;
 
   String twitter_url;
   String facebook_url;
@@ -10,11 +12,4 @@ class Gem {
   String youtube_url;
   String email;
   String soundcloud_url;
-
-  Gem(name, sub_category, bio, path){
-    this.name = name;
-    this.sub_category = sub_category;
-    this.bio = bio;
-    this.path = path;
-  }
 }
