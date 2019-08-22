@@ -54,17 +54,6 @@ class SubCategories extends StatelessWidget {
                       SizedBox(
                         height: 10,
                       ),
-                      Row(
-                        children: <Widget>[
-                          Text(
-                            '${gem.likes} likes',
-                            style: TextStyle(fontSize: 13, color: Colors.red),
-                          ),
-                          SizedBox(
-                            width: 5,
-                          ),
-                        ],
-                      )
                     ],
                   ),
                 ),
@@ -74,7 +63,7 @@ class SubCategories extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => GemProfilePage(gem),
+                  builder: (context) => GemProfilePage(gem.id),
                 ),
               );
             },
@@ -109,6 +98,7 @@ class SubCategories extends StatelessWidget {
       length: tabs.length,
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.black,
           bottom: TabBar(
             isScrollable: true,
             tabs: tabs,

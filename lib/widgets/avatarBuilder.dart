@@ -14,7 +14,7 @@ class AvatarBuilder extends StatelessWidget {
 
     return Container(
     //aspectRatio: 16/15,
-    height: 200.0,
+    height: 220.0,
     child: ListView.builder(
       physics: BouncingScrollPhysics(),
       itemCount: this.gems.length,
@@ -54,7 +54,7 @@ class AvatarBuilder extends StatelessWidget {
                     Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => GemProfilePage(gem)));
+                            builder: (context) => GemProfilePage(gem.id)));
                   },
                 ),
                 SizedBox(
