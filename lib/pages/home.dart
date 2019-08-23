@@ -38,12 +38,14 @@ class HomePageState extends State<HomePage>
   Section _entertainment = Section();
   Section _food = Section();
   Section _tech = Section();
+  Section _art = Section();
 
   List<Gem> _musicGems,
       _mediaGems,
       _entertainmentGems,
       _foodGems,
-      _techGems = List<Gem>();
+      _techGems,
+      _artGems = List<Gem>();
 
   String _projectVersion, _projectCode, _deviceID;
 
@@ -131,6 +133,12 @@ class HomePageState extends State<HomePage>
     _tech.subQuote = techData['subQuote'];
     _tech.photoUrl = techData['photoUrl'];
     _tech.subCategories = List.from(techData['subCategories']);
+
+    dynamic artData = data['art'];
+    _art.quote = artData['quote'];
+    _art.subQuote = artData['subQuote'];
+    _art.photoUrl = artData['photoUrl'];
+    _art.subCategories = List.from(artData['subCategories']);
   }
 
   void loadPage() async {
@@ -139,6 +147,8 @@ class HomePageState extends State<HomePage>
     _mediaGems = await _getGems('Media');
     _entertainmentGems = await _getGems('Entertainment');
     _foodGems = await _getGems('Food');
+    _techGems = await _getGems('Tech');
+    _artGems = await _getGems('Art');
 
     await _getHeaderWidgets();
     await _getVersionDetails();
@@ -171,29 +181,36 @@ class HomePageState extends State<HomePage>
                         SizedBox(height: 20),
                         _buildMusicLayout(),
                         SizedBox(height: 20),
-                        Divider(),
+                        Divider(color: Colors.black),
                         SizedBox(height: 20),
                         _buildMediaHeader(),
                         SizedBox(height: 20),
                         _buildMediaLayout(),
                         SizedBox(height: 20),
-                        Divider(),
+                        Divider(color: Colors.black),
                         SizedBox(height: 20),
                         _buildEntertainmentHeader(),
                         SizedBox(height: 20),
                         _buildEntertainmentLayout(),
                         SizedBox(height: 20),
-                        Divider(),
+                        Divider(color: Colors.black),
                         SizedBox(height: 20),
                         _buildFoodHeader(),
                         SizedBox(height: 20),
                         _buildFoodLayout(),
                         SizedBox(height: 20),
-                        Divider(),
+                        Divider(color: Colors.black),
                         SizedBox(height: 20),
                         _buildTechHeader(),
                         SizedBox(height: 20),
                         _buildTechLayout(),
+                        SizedBox(height: 20),
+                        Divider(color: Colors.black),
+                        SizedBox(height: 20),
+                        _buildArtHeader(),
+                        SizedBox(height: 20),
+                        _buildArtLayout(),
+                        SizedBox(height: 20),
                       ],
                     ),
                   )
@@ -876,7 +893,7 @@ class HomePageState extends State<HomePage>
           Divider(),
           SizedBox(height: 20),
           AvatarBuilder(
-            _foodGems.sublist(0, _techGems.length < 5 ? _techGems.length : 5),
+            _techGems.sublist(0, _techGems.length < 5 ? _techGems.length : 5),
           ),
           Divider(),
           Padding(
@@ -886,6 +903,125 @@ class HomePageState extends State<HomePage>
                   Icon(MdiIcons.laptop, color: Colors.blue),
                   SizedBox(width: 20),
                   Text('${_techGems.length} artists currently.')
+                ],
+              ))
+        ],
+      ),
+    );
+  }
+
+    _buildArtHeader() {
+    return Container(
+      constraints: BoxConstraints.expand(
+        height: 250.0,
+      ),
+      padding: EdgeInsets.only(left: 16.0, bottom: 8.0, right: 16.0),
+      decoration: BoxDecoration(
+        image: DecorationImage(
+          image: NetworkImage(_art.photoUrl),
+          fit: BoxFit.cover,
+        ),
+      ),
+      child: Stack(
+        children: <Widget>[
+          Positioned(
+            right: 0.0,
+            bottom: 0.0,
+            child: Container(
+              decoration: BoxDecoration(
+                color: Colors.black,
+                borderRadius: BorderRadius.circular(5.0),
+              ),
+              padding: EdgeInsets.all(10),
+              child: Column(
+                children: <Widget>[
+                  Text(
+                    '"${_art.quote}"',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.0,
+                    ),
+                  ),
+                  Text(
+                    _art.subQuote,
+                    style: TextStyle(
+                      color: Colors.grey,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 10.0,
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  _buildArtLayout() {
+    return Container(
+      margin: EdgeInsets.only(left: 16, right: 16),
+      decoration: BoxDecoration(
+        color: Colors.brown[50],
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      child: Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: <Widget>[
+                Row(
+                  children: <Widget>[
+                    Text(
+                      'ART',
+                      style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 14.0,
+                          letterSpacing: 2.0,
+                          color: Colors.black),
+                    )
+                  ],
+                ),
+                InkWell(
+                  child: Text(
+                    'SEE ALL',
+                    style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 14.0,
+                        letterSpacing: 2.0,
+                        color: Colors.brown),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SubCategories(
+                            'ART', _art.subCategories, _artGems),
+                      ),
+                    );
+                  },
+                )
+              ],
+            ),
+          ),
+          Divider(),
+          SizedBox(height: 20),
+          AvatarBuilder(
+            _artGems.sublist(0, _artGems.length < 5 ? _artGems.length : 5),
+          ),
+          Divider(),
+          Padding(
+              padding: EdgeInsets.all(10),
+              child: Row(
+                children: <Widget>[
+                  Icon(MdiIcons.formatPaint, color: Colors.brown),
+                  SizedBox(width: 20),
+                  Text('${_artGems.length} artists currently.')
                 ],
               ))
         ],

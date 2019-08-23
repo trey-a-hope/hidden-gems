@@ -12,7 +12,7 @@ class AvatarBuilder extends StatelessWidget {
 
     return Container(
     //aspectRatio: 16/15,
-    height: 220.0,
+    height: 200.0,
     child: ListView.builder(
       physics: BouncingScrollPhysics(),
       itemCount: this.gems.length,
