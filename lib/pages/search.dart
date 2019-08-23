@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/widgets/searchBar.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hiddengems_flutter/models/gemCard.dart';
+import 'package:hiddengems_flutter/widgets/gemCard.dart';
 
 class SearchPage extends StatefulWidget {
   @override

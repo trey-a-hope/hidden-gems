@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:hiddengems_flutter/pages/subCategories.dart';
-import 'package:hiddengems_flutter/widgets/avatarBuilder.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -8,20 +6,13 @@ import 'package:hiddengems_flutter/pages/search.dart';
 import 'package:hiddengems_flutter/pages/createGem.dart';
 import 'package:hiddengems_flutter/constants.dart';
 import 'package:hiddengems_flutter/services/pdInfo.dart';
+import 'package:hiddengems_flutter/widgets/gemSectionHeader.dart';
+import 'package:hiddengems_flutter/widgets/gemSectionLayout.dart';
+import 'package:hiddengems_flutter/models/section.dart';
 
 class HomePage extends StatefulWidget {
   @override
   State createState() => HomePageState();
-}
-
-class Section {
-  String quote;
-  String subQuote;
-  String photoUrl;
-  List<String> subCategories = List<String>();
-  Color primaryColor;
-  Color accentColor;
-  IconData icon;
 }
 
 class HomePageState extends State<HomePage>
@@ -33,20 +24,12 @@ class HomePageState extends State<HomePage>
 
   bool _isLoading = true;
 
-  Section _music = Section();
-  Section _media = Section();
-  Section _entertainment = Section();
-  Section _food = Section();
-  Section _tech = Section();
-  Section _art = Section();
-
-
-  List<Gem> _musicGems,
-      _mediaGems,
-      _entertainmentGems,
-      _foodGems,
-      _techGems,
-      _artGems = List<Gem>();
+  Section _music = Section('MUSIC');
+  Section _media = Section('MEDIA');
+  Section _entertainment = Section('ENTERTAINMENT');
+  Section _food = Section('FOOD');
+  Section _tech = Section('TECH');
+  Section _art = Section('ART');
 
   String _projectVersion, _projectCode, _deviceID;
 
@@ -142,19 +125,22 @@ class HomePageState extends State<HomePage>
     _art.icon = MdiIcons.formatPaint;
   }
 
-  void loadPage() async {
-    _musicGems = await _getGems('Music');
-    _mediaGems = await _getGems('Media');
-    _entertainmentGems = await _getGems('Entertainment');
-    _foodGems = await _getGems('Food');
-    _techGems = await _getGems('Tech');
-    _artGems = await _getGems('Art');
+  _attachGems() async {
+    _music.gems = await _getGems('Music');
+    _media.gems = await _getGems('Media');
+    _entertainment.gems = await _getGems('Entertainment');
+    _food.gems = await _getGems('Food');
+    _tech.gems = await _getGems('Tech');
+    _art.gems = await _getGems('Art');
+  }
 
+  void loadPage() async {
     _deviceID = await _pdInfo.getDeviceID();
     _projectCode = await _pdInfo.getAppBuildNumber();
     _projectVersion = await _pdInfo.getAppVersionNumber();
 
     await _getHeaderWidgets();
+    await _attachGems();
 
     setState(
       () {
@@ -180,39 +166,39 @@ class HomePageState extends State<HomePage>
                   SliverList(
                     delegate: SliverChildListDelegate(
                       <Widget>[
-                        _buildMusicHeader(),
+                        GemSectionHeader(_music).build(context),
                         SizedBox(height: 20),
-                        _buildMusicLayout(),
-                        SizedBox(height: 20),
-                        Divider(color: Colors.black),
-                        SizedBox(height: 20),
-                        _buildMediaHeader(),
-                        SizedBox(height: 20),
-                        _buildMediaLayout(),
+                        GemSectionLayout(_music).build(context),
                         SizedBox(height: 20),
                         Divider(color: Colors.black),
                         SizedBox(height: 20),
-                        _buildEntertainmentHeader(),
+                        GemSectionHeader(_media).build(context),
                         SizedBox(height: 20),
-                        _buildEntertainmentLayout(),
-                        SizedBox(height: 20),
-                        Divider(color: Colors.black),
-                        SizedBox(height: 20),
-                        _buildFoodHeader(),
-                        SizedBox(height: 20),
-                        _buildFoodLayout(),
+                        GemSectionLayout(_media).build(context),
                         SizedBox(height: 20),
                         Divider(color: Colors.black),
                         SizedBox(height: 20),
-                        _buildTechHeader(),
+                        GemSectionHeader(_entertainment).build(context),
                         SizedBox(height: 20),
-                        _buildTechLayout(),
+                        GemSectionLayout(_entertainment).build(context),
                         SizedBox(height: 20),
                         Divider(color: Colors.black),
                         SizedBox(height: 20),
-                        _buildArtHeader(),
+                        GemSectionHeader(_food).build(context),
                         SizedBox(height: 20),
-                        _buildArtLayout(),
+                        GemSectionLayout(_food).build(context),
+                        SizedBox(height: 20),
+                        Divider(color: Colors.black),
+                        SizedBox(height: 20),
+                        GemSectionHeader(_tech).build(context),
+                        SizedBox(height: 20),
+                        GemSectionLayout(_tech).build(context),
+                        SizedBox(height: 20),
+                        Divider(color: Colors.black),
+                        SizedBox(height: 20),
+                        GemSectionHeader(_art).build(context),
+                        SizedBox(height: 20),
+                        GemSectionLayout(_art).build(context),
                         SizedBox(height: 20),
                       ],
                     ),
@@ -310,747 +296,6 @@ class HomePageState extends State<HomePage>
               ),
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  _buildMusicHeader() {
-    return Container(
-      constraints: BoxConstraints.expand(
-        height: 250.0,
-      ),
-      padding: EdgeInsets.only(left: 16.0, bottom: 8.0, right: 16.0),
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: NetworkImage(_music.photoUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            left: 0.0,
-            bottom: 0.0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: _music.primaryColor,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              padding: EdgeInsets.all(10),
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    '"${_music.quote}"',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.0,
-                    ),
-                  ),
-                  Text(
-                    _music.subQuote,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 10.0,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  _buildMusicLayout() {
-    return Container(
-      margin: EdgeInsets.only(left: 16, right: 16),
-      decoration: BoxDecoration(
-        color: _music.accentColor,
-        borderRadius: BorderRadius.circular(5.0),
-      ),
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Text(
-                      'MUSIC',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16.0,
-                          letterSpacing: 2.0,
-                          color: Colors.black),
-                    )
-                  ],
-                ),
-                InkWell(
-                  child: Text(
-                    'SEE ALL',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 16.0,
-                        letterSpacing: 2.0,
-                        color: _music.primaryColor),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => SubCategories(
-                              'MUSIC',
-                              _music.subCategories,
-                              _musicGems,
-                              _music.accentColor,
-                              _music.icon)),
-                    );
-                  },
-                )
-              ],
-            ),
-          ),
-          Divider(),
-          SizedBox(height: 20),
-          AvatarBuilder(
-            _musicGems.sublist(
-                0, _musicGems.length < 5 ? _musicGems.length : 5),
-          ),
-          Divider(),
-          Padding(
-              padding: EdgeInsets.all(10),
-              child: Row(
-                children: <Widget>[
-                  Icon(_music.icon, color: _music.primaryColor),
-                  SizedBox(width: 20),
-                  Text('${_musicGems.length} artists currently.')
-                ],
-              ))
-        ],
-      ),
-    );
-  }
-
-  _buildMediaHeader() {
-    return Container(
-      constraints: BoxConstraints.expand(
-        height: 250.0,
-      ),
-      padding: EdgeInsets.only(left: 16.0, bottom: 8.0, right: 16.0),
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: NetworkImage(_media.photoUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            right: 0.0,
-            bottom: 0.0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: _media.primaryColor,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              padding: EdgeInsets.all(10),
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    '"${_media.quote}"',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.0,
-                    ),
-                  ),
-                  Text(
-                    _media.subQuote,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 10.0,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  _buildMediaLayout() {
-    return Container(
-      margin: EdgeInsets.only(left: 16, right: 16),
-      decoration: BoxDecoration(
-        color: _media.accentColor,
-        borderRadius: BorderRadius.circular(5.0),
-      ),
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Text(
-                      'MEDIA',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.0,
-                          letterSpacing: 2.0,
-                          color: Colors.black),
-                    )
-                  ],
-                ),
-                InkWell(
-                  child: Text(
-                    'SEE ALL',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.0,
-                        letterSpacing: 2.0,
-                        color: _media.primaryColor),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SubCategories(
-                            'MEDIA',
-                            _media.subCategories,
-                            _mediaGems,
-                            _media.accentColor,
-                            _media.icon),
-                      ),
-                    );
-                  },
-                )
-              ],
-            ),
-          ),
-          Divider(),
-          SizedBox(height: 20),
-          AvatarBuilder(
-            _mediaGems.sublist(
-                0, _mediaGems.length < 5 ? _mediaGems.length : 5),
-          ),
-          Divider(),
-          Padding(
-              padding: EdgeInsets.all(10),
-              child: Row(
-                children: <Widget>[
-                  Icon(_media.icon, color: _media.primaryColor),
-                  SizedBox(width: 20),
-                  Text('${_mediaGems.length} artists currently.')
-                ],
-              ))
-        ],
-      ),
-    );
-  }
-
-  _buildEntertainmentHeader() {
-    return Container(
-      constraints: BoxConstraints.expand(
-        height: 250.0,
-      ),
-      padding: EdgeInsets.only(left: 16.0, bottom: 8.0, right: 16.0),
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: NetworkImage(_entertainment.photoUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            left: 0.0,
-            bottom: 0.0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: _entertainment.primaryColor,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              padding: EdgeInsets.all(10),
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    '"${_entertainment.quote}"',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.0,
-                    ),
-                  ),
-                  Text(
-                    _entertainment.subQuote,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 10.0,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  _buildEntertainmentLayout() {
-    return Container(
-      margin: EdgeInsets.only(left: 16, right: 16),
-      decoration: BoxDecoration(
-        color: _entertainment.accentColor,
-        borderRadius: BorderRadius.circular(5.0),
-      ),
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Text(
-                      'ENTERTAINMENT',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.0,
-                          letterSpacing: 2.0,
-                          color: Colors.black),
-                    )
-                  ],
-                ),
-                InkWell(
-                  child: Text(
-                    'SEE ALL',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.0,
-                        letterSpacing: 2.0,
-                        color: _entertainment.primaryColor),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SubCategories(
-                            'ENTERTAINMENT',
-                            _entertainment.subCategories,
-                            _entertainmentGems,
-                            _entertainment.accentColor,
-                            _entertainment.icon),
-                      ),
-                    );
-                  },
-                )
-              ],
-            ),
-          ),
-          Divider(),
-          SizedBox(height: 20),
-          AvatarBuilder(
-            _entertainmentGems.sublist(0,
-                _entertainmentGems.length < 5 ? _entertainmentGems.length : 5),
-          ),
-          Divider(),
-          Padding(
-              padding: EdgeInsets.all(10),
-              child: Row(
-                children: <Widget>[
-                  Icon(_entertainment.icon, color: _entertainment.primaryColor),
-                  SizedBox(width: 20),
-                  Text('${_entertainmentGems.length} artists currently.')
-                ],
-              ))
-        ],
-      ),
-    );
-  }
-
-  _buildFoodHeader() {
-    return Container(
-      constraints: BoxConstraints.expand(
-        height: 250.0,
-      ),
-      padding: EdgeInsets.only(left: 16.0, bottom: 8.0, right: 16.0),
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: NetworkImage(_food.photoUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            right: 0.0,
-            bottom: 0.0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: _food.primaryColor,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              padding: EdgeInsets.all(10),
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    '"${_food.quote}"',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.0,
-                    ),
-                  ),
-                  Text(
-                    _food.subQuote,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 10.0,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  _buildFoodLayout() {
-    return Container(
-      margin: EdgeInsets.only(left: 16, right: 16),
-      decoration: BoxDecoration(
-        color: _food.accentColor,
-        borderRadius: BorderRadius.circular(5.0),
-      ),
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Text(
-                      'FOOD',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.0,
-                          letterSpacing: 2.0,
-                          color: Colors.black),
-                    )
-                  ],
-                ),
-                InkWell(
-                  child: Text(
-                    'SEE ALL',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.0,
-                        letterSpacing: 2.0,
-                        color: _food.primaryColor),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SubCategories(
-                          'FOOD',
-                          _food.subCategories,
-                          _foodGems,
-                          _food.accentColor,
-                          _food.icon,
-                        ),
-                      ),
-                    );
-                  },
-                )
-              ],
-            ),
-          ),
-          Divider(),
-          SizedBox(height: 20),
-          AvatarBuilder(
-            _foodGems.sublist(0, _foodGems.length < 5 ? _foodGems.length : 5),
-          ),
-          Divider(),
-          Padding(
-              padding: EdgeInsets.all(10),
-              child: Row(
-                children: <Widget>[
-                  Icon(_food.icon, color: _food.primaryColor),
-                  SizedBox(width: 20),
-                  Text('${_foodGems.length} artists currently.')
-                ],
-              ))
-        ],
-      ),
-    );
-  }
-
-  _buildTechHeader() {
-    return Container(
-      constraints: BoxConstraints.expand(
-        height: 250.0,
-      ),
-      padding: EdgeInsets.only(left: 16.0, bottom: 8.0, right: 16.0),
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: NetworkImage(_tech.photoUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            left: 0.0,
-            bottom: 0.0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: _tech.primaryColor,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              padding: EdgeInsets.all(10),
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    '"${_tech.quote}"',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.0,
-                    ),
-                  ),
-                  Text(
-                    _tech.subQuote,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 10.0,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  _buildTechLayout() {
-    return Container(
-      margin: EdgeInsets.only(left: 16, right: 16),
-      decoration: BoxDecoration(
-        color: _tech.accentColor,
-        borderRadius: BorderRadius.circular(5.0),
-      ),
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Text(
-                      'TECH',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.0,
-                          letterSpacing: 2.0,
-                          color: Colors.black),
-                    )
-                  ],
-                ),
-                InkWell(
-                  child: Text(
-                    'SEE ALL',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.0,
-                        letterSpacing: 2.0,
-                        color: _tech.primaryColor),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SubCategories(
-                            'TECH',
-                            _tech.subCategories,
-                            _techGems,
-                            _tech.accentColor,
-                            _tech.icon),
-                      ),
-                    );
-                  },
-                )
-              ],
-            ),
-          ),
-          Divider(),
-          SizedBox(height: 20),
-          AvatarBuilder(
-            _techGems.sublist(0, _techGems.length < 5 ? _techGems.length : 5),
-          ),
-          Divider(),
-          Padding(
-              padding: EdgeInsets.all(10),
-              child: Row(
-                children: <Widget>[
-                  Icon(_tech.icon, color: _tech.primaryColor),
-                  SizedBox(width: 20),
-                  Text('${_techGems.length} artists currently.')
-                ],
-              ))
-        ],
-      ),
-    );
-  }
-
-  _buildArtHeader() {
-    return Container(
-      constraints: BoxConstraints.expand(
-        height: 250.0,
-      ),
-      padding: EdgeInsets.only(left: 16.0, bottom: 8.0, right: 16.0),
-      decoration: BoxDecoration(
-        image: DecorationImage(
-          image: NetworkImage(_art.photoUrl),
-          fit: BoxFit.cover,
-        ),
-      ),
-      child: Stack(
-        children: <Widget>[
-          Positioned(
-            right: 0.0,
-            bottom: 0.0,
-            child: Container(
-              decoration: BoxDecoration(
-                color: _art.primaryColor,
-                borderRadius: BorderRadius.circular(5.0),
-              ),
-              padding: EdgeInsets.all(10),
-              child: Column(
-                children: <Widget>[
-                  Text(
-                    '"${_art.quote}"',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 14.0,
-                    ),
-                  ),
-                  Text(
-                    _art.subQuote,
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontWeight: FontWeight.bold,
-                      fontSize: 10.0,
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  _buildArtLayout() {
-    return Container(
-      margin: EdgeInsets.only(left: 16, right: 16),
-      decoration: BoxDecoration(
-        color: _art.accentColor,
-        borderRadius: BorderRadius.circular(5.0),
-      ),
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.all(20),
-            child: Row(
-              mainAxisSize: MainAxisSize.max,
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: <Widget>[
-                Row(
-                  children: <Widget>[
-                    Text(
-                      'ART',
-                      style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 14.0,
-                          letterSpacing: 2.0,
-                          color: Colors.black),
-                    )
-                  ],
-                ),
-                InkWell(
-                  child: Text(
-                    'SEE ALL',
-                    style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        fontSize: 14.0,
-                        letterSpacing: 2.0,
-                        color: _art.primaryColor),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SubCategories(
-                            'ART',
-                            _art.subCategories,
-                            _artGems,
-                            _art.accentColor,
-                            _art.icon),
-                      ),
-                    );
-                  },
-                )
-              ],
-            ),
-          ),
-          Divider(),
-          SizedBox(height: 20),
-          AvatarBuilder(
-            _artGems.sublist(0, _artGems.length < 5 ? _artGems.length : 5),
-          ),
-          Divider(),
-          Padding(
-              padding: EdgeInsets.all(10),
-              child: Row(
-                children: <Widget>[
-                  Icon(_art.icon, color: _art.primaryColor),
-                  SizedBox(width: 20),
-                  Text('${_artGems.length} artists currently.')
-                ],
-              ))
         ],
       ),
     );

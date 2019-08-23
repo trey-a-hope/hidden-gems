@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
-import 'package:hiddengems_flutter/models/gemCard.dart';
+import 'package:hiddengems_flutter/widgets/gemCard.dart';
 
 class SubCategories extends StatelessWidget {
   final String mainCategory;
