@@ -1,78 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
-import 'package:hiddengems_flutter/pages/gemProfile.dart';
+import 'package:hiddengems_flutter/models/gemCard.dart';
 
 class SubCategories extends StatelessWidget {
   final String mainCategory;
   final List<String> subCategories;
   final List<Gem> gems;
+  final Color titleColor;
+  final IconData titleIcon;
 
-  SubCategories(this.mainCategory, this.subCategories, this.gems);
+  SubCategories(this.mainCategory, this.subCategories, this.gems, this.titleColor, this.titleIcon);
 
   _buildGemListing(List<Gem> gems) {
     return ListView.builder(
       padding: EdgeInsets.all(6),
       itemCount: gems.length,
       itemBuilder: (BuildContext context, int index) {
-        Gem gem = gems[index];
-        return _buildGemCard(gem, context);
+        return GemCard(gems[index]);
       },
-    );
-  }
-
-  _buildGemCard(Gem gem, BuildContext context) {
-    return Card(
-      elevation: 3,
-      child: InkWell(
-        child: Row(
-          children: <Widget>[
-            Container(
-              height: 125,
-              width: 110,
-              padding: EdgeInsets.only(left: 0, top: 10, bottom: 70, right: 20),
-              decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: NetworkImage(gem.photoUrl), fit: BoxFit.cover),
-              ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: <Widget>[
-                  Text(
-                    gem.name,
-                    style: TextStyle(
-                        color: Colors.deepOrange,
-                        fontWeight: FontWeight.w700,
-                        fontSize: 17),
-                  ),
-                  Text(
-                    gem.category,
-                    style: TextStyle(fontSize: 14, color: Colors.black87),
-                  ),
-                  Text(
-                    gem.subCategory,
-                    style: TextStyle(fontSize: 14, color: Colors.black87),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => GemProfilePage(gem.id),
-            ),
-          );
-        },
-      ),
     );
   }
 
@@ -101,15 +46,20 @@ class SubCategories extends StatelessWidget {
       length: tabs.length,
       child: Scaffold(
         appBar: AppBar(
-          bottom: TabBar(
-            isScrollable: true,
-            tabs: tabs,
-          ),
-          title: Text(
-            mainCategory,
-            style: TextStyle(letterSpacing: 2.0),
-          ),
-        ),
+            bottom: TabBar(
+              isScrollable: true,
+              tabs: tabs,
+            ),
+            title: Row(
+              children: <Widget>[
+                Icon(titleIcon, color: titleColor),
+                SizedBox(width: 10),
+                Text(
+                  mainCategory,
+                  style: TextStyle(letterSpacing: 2.0, color: titleColor),
+                ),
+              ],
+            )),
         body: TabBarView(
           children: listViewSubCategories,
         ),

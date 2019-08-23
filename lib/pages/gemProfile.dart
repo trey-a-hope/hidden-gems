@@ -113,29 +113,16 @@ class GemProfilePageState extends State<GemProfilePage>
   }
 
   _email() async {
-    // if (_gem.email == null) {
-    //   Modal.showAlert(context, 'Sorry', 'This user did not provide an email.');
-    // } else {
-    //   final Email email = Email(
-    //     body: 'Hey ${_gem.name}, I was wondering...',
-    //     subject: 'Greetings!',
-    //     recipients: [_gem.email],
-    //   );
-
-    //   FlutterEmailSender.send(email).then(
-    //     (res) {
-    //       Modal.showAlert(context, 'Sent', 'They should response shortly.');
-    //     },
-    //   ).catchError(
-    //     (e) {
-    //       Modal.showAlert(
-    //         context,
-    //         'Error',
-    //         e.toString(),
-    //       );
-    //     },
-    //   );
-    // }
+    if (_gem.email == null) {
+      Modal.showAlert(context, 'Sorry', 'This user did not provide an email.');
+    } else {
+      String uri = 'mailto:${_gem.email}?subject=Greetings!&body=Hello ${_gem.name}, how are you?';
+      if (await canLaunch(uri)) {
+        await launch(uri);
+      } else {
+        throw 'Could not launch $uri';
+      }
+    }
   }
 
   _call() async {
@@ -228,8 +215,8 @@ class GemProfilePageState extends State<GemProfilePage>
             children: [
               SpeedDialChild(
                   child: List.from(_gem.likes).contains(_deviceId)
-                      ? Icon(Icons.favorite_border, color: Colors.red)
-                      : Icon(Icons.favorite, color: Colors.red),
+                      ? Icon(Icons.thumb_down, color: Colors.red)
+                      : Icon(Icons.thumb_up, color: Colors.green),
                   backgroundColor: Colors.white,
                   label: List.from(_gem.likes).contains(_deviceId)
                       ? 'Unlike'
@@ -244,7 +231,7 @@ class GemProfilePageState extends State<GemProfilePage>
                 onTap: () => _email(),
               ),
               SpeedDialChild(
-                child: Icon(Icons.phone, color: Colors.green),
+                child: Icon(Icons.phone, color: Colors.orange),
                 backgroundColor: Colors.white,
                 label: 'Call',
                 labelStyle: TextStyle(fontSize: 18.0),

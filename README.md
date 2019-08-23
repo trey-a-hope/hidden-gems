@@ -2,4 +2,4 @@
 
 Mobile application for Dayton artists.
 
-#TODO: 1. Email, 2. Run on iOS
+#TODO: 1. Run on iOS

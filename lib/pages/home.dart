@@ -7,8 +7,6 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:get_version/get_version.dart';
 import 'package:flutter/services.dart';
 import 'package:hiddengems_flutter/pages/search.dart';
-
-import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:hiddengems_flutter/pages/createGem.dart';
 import 'package:hiddengems_flutter/constants.dart';
 import 'package:device_id/device_id.dart';
@@ -23,6 +21,9 @@ class Section {
   String subQuote;
   String photoUrl;
   List<String> subCategories = List<String>();
+  Color primaryColor;
+  Color accentColor;
+  IconData icon;
 }
 
 class HomePageState extends State<HomePage>
@@ -76,6 +77,7 @@ class HomePageState extends State<HomePage>
       gem.category = ds['category'];
       gem.subCategory = ds['subCategory'];
       gem.photoUrl = ds['photoUrl'];
+      gem.likes = ds['likes'];
 
       gems.add(gem);
     }
@@ -108,12 +110,18 @@ class HomePageState extends State<HomePage>
     _music.subQuote = musicData['subQuote'];
     _music.photoUrl = musicData['photoUrl'];
     _music.subCategories = List.from(musicData['subCategories']);
+    _music.primaryColor = Colors.teal;
+    _music.accentColor = Colors.teal[50];
+    _music.icon = MdiIcons.music;
 
     dynamic mediaData = data['media'];
     _media.quote = mediaData['quote'];
     _media.subQuote = mediaData['subQuote'];
     _media.photoUrl = mediaData['photoUrl'];
     _media.subCategories = List.from(mediaData['subCategories']);
+    _media.primaryColor = Colors.orange;
+    _media.accentColor = Colors.orange[50];
+    _media.icon = MdiIcons.camera;
 
     dynamic entertainmentData = data['entertainment'];
     _entertainment.quote = entertainmentData['quote'];
@@ -121,24 +129,36 @@ class HomePageState extends State<HomePage>
     _entertainment.photoUrl = entertainmentData['photoUrl'];
     _entertainment.subCategories =
         List.from(entertainmentData['subCategories']);
+    _entertainment.primaryColor = Colors.purple;
+    _entertainment.accentColor = Colors.purple[50];
+    _entertainment.icon = MdiIcons.saxophone;
 
     dynamic foodData = data['food'];
     _food.quote = foodData['quote'];
     _food.subQuote = foodData['subQuote'];
     _food.photoUrl = foodData['photoUrl'];
     _food.subCategories = List.from(foodData['subCategories']);
+    _food.primaryColor = Colors.red;
+    _food.accentColor = Colors.red[50];
+    _food.icon = MdiIcons.food;
 
     dynamic techData = data['tech'];
     _tech.quote = techData['quote'];
     _tech.subQuote = techData['subQuote'];
     _tech.photoUrl = techData['photoUrl'];
     _tech.subCategories = List.from(techData['subCategories']);
+    _tech.primaryColor = Colors.blue;
+    _tech.accentColor = Colors.blue[50];
+    _tech.icon = MdiIcons.laptop;
 
     dynamic artData = data['art'];
     _art.quote = artData['quote'];
     _art.subQuote = artData['subQuote'];
     _art.photoUrl = artData['photoUrl'];
     _art.subCategories = List.from(artData['subCategories']);
+    _art.primaryColor = Colors.brown;
+    _art.accentColor = Colors.brown[50];
+    _art.icon = MdiIcons.formatPaint;
   }
 
   void loadPage() async {
@@ -366,7 +386,7 @@ class HomePageState extends State<HomePage>
     return Container(
       margin: EdgeInsets.only(left: 16, right: 16),
       decoration: BoxDecoration(
-        color: Colors.teal[50],
+        color: _music.accentColor,
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Column(
@@ -396,15 +416,18 @@ class HomePageState extends State<HomePage>
                         fontWeight: FontWeight.bold,
                         fontSize: 16.0,
                         letterSpacing: 2.0,
-                        color: Colors.teal),
+                        color: _music.primaryColor),
                   ),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SubCategories(
-                            'MUSIC', _music.subCategories, _musicGems),
-                      ),
+                          builder: (context) => SubCategories(
+                              'MUSIC',
+                              _music.subCategories,
+                              _musicGems,
+                              _music.accentColor,
+                              _music.icon)),
                     );
                   },
                 )
@@ -422,7 +445,7 @@ class HomePageState extends State<HomePage>
               padding: EdgeInsets.all(10),
               child: Row(
                 children: <Widget>[
-                  Icon(MdiIcons.music, color: Colors.teal),
+                  Icon(_music.icon, color: _music.primaryColor),
                   SizedBox(width: 20),
                   Text('${_musicGems.length} artists currently.')
                 ],
@@ -486,7 +509,7 @@ class HomePageState extends State<HomePage>
     return Container(
       margin: EdgeInsets.only(left: 16, right: 16),
       decoration: BoxDecoration(
-        color: Colors.orange[50],
+        color: _media.accentColor,
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Column(
@@ -516,14 +539,18 @@ class HomePageState extends State<HomePage>
                         fontWeight: FontWeight.bold,
                         fontSize: 14.0,
                         letterSpacing: 2.0,
-                        color: Colors.orange),
+                        color: _media.primaryColor),
                   ),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => SubCategories(
-                            'MEDIA', _media.subCategories, _mediaGems),
+                            'MEDIA',
+                            _media.subCategories,
+                            _mediaGems,
+                            _media.accentColor,
+                            _media.icon),
                       ),
                     );
                   },
@@ -542,7 +569,7 @@ class HomePageState extends State<HomePage>
               padding: EdgeInsets.all(10),
               child: Row(
                 children: <Widget>[
-                  Icon(MdiIcons.camera, color: Colors.orange),
+                  Icon(_media.icon, color: _media.primaryColor),
                   SizedBox(width: 20),
                   Text('${_mediaGems.length} artists currently.')
                 ],
@@ -606,7 +633,7 @@ class HomePageState extends State<HomePage>
     return Container(
       margin: EdgeInsets.only(left: 16, right: 16),
       decoration: BoxDecoration(
-        color: Colors.purple[50],
+        color: _entertainment.accentColor,
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Column(
@@ -636,14 +663,18 @@ class HomePageState extends State<HomePage>
                         fontWeight: FontWeight.bold,
                         fontSize: 14.0,
                         letterSpacing: 2.0,
-                        color: Colors.purple),
+                        color: _entertainment.primaryColor),
                   ),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SubCategories('ENTERTAINMENT',
-                            _entertainment.subCategories, _entertainmentGems),
+                        builder: (context) => SubCategories(
+                            'ENTERTAINMENT',
+                            _entertainment.subCategories,
+                            _entertainmentGems,
+                            _entertainment.accentColor,
+                            _entertainment.icon),
                       ),
                     );
                   },
@@ -662,7 +693,7 @@ class HomePageState extends State<HomePage>
               padding: EdgeInsets.all(10),
               child: Row(
                 children: <Widget>[
-                  Icon(MdiIcons.saxophone, color: Colors.purple),
+                  Icon(_entertainment.icon, color: _entertainment.primaryColor),
                   SizedBox(width: 20),
                   Text('${_entertainmentGems.length} artists currently.')
                 ],
@@ -726,7 +757,7 @@ class HomePageState extends State<HomePage>
     return Container(
       margin: EdgeInsets.only(left: 16, right: 16),
       decoration: BoxDecoration(
-        color: Colors.red[50],
+        color: _food.accentColor,
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Column(
@@ -756,14 +787,19 @@ class HomePageState extends State<HomePage>
                         fontWeight: FontWeight.bold,
                         fontSize: 14.0,
                         letterSpacing: 2.0,
-                        color: Colors.red),
+                        color: _food.primaryColor),
                   ),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => SubCategories(
-                            'FOOD', _food.subCategories, _foodGems),
+                          'FOOD',
+                          _food.subCategories,
+                          _foodGems,
+                          _food.accentColor,
+                          _food.icon,
+                        ),
                       ),
                     );
                   },
@@ -781,7 +817,7 @@ class HomePageState extends State<HomePage>
               padding: EdgeInsets.all(10),
               child: Row(
                 children: <Widget>[
-                  Icon(MdiIcons.food, color: Colors.red),
+                  Icon(_food.icon, color: _food.primaryColor),
                   SizedBox(width: 20),
                   Text('${_foodGems.length} artists currently.')
                 ],
@@ -845,7 +881,7 @@ class HomePageState extends State<HomePage>
     return Container(
       margin: EdgeInsets.only(left: 16, right: 16),
       decoration: BoxDecoration(
-        color: Colors.blue[50],
+        color: _tech.accentColor,
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Column(
@@ -875,14 +911,18 @@ class HomePageState extends State<HomePage>
                         fontWeight: FontWeight.bold,
                         fontSize: 14.0,
                         letterSpacing: 2.0,
-                        color: Colors.blue),
+                        color: _tech.primaryColor),
                   ),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => SubCategories(
-                            'TECH', _tech.subCategories, _techGems),
+                            'TECH',
+                            _tech.subCategories,
+                            _techGems,
+                            _tech.accentColor,
+                            _tech.icon),
                       ),
                     );
                   },
@@ -900,7 +940,7 @@ class HomePageState extends State<HomePage>
               padding: EdgeInsets.all(10),
               child: Row(
                 children: <Widget>[
-                  Icon(MdiIcons.laptop, color: Colors.blue),
+                  Icon(_tech.icon, color: _tech.primaryColor),
                   SizedBox(width: 20),
                   Text('${_techGems.length} artists currently.')
                 ],
@@ -910,7 +950,7 @@ class HomePageState extends State<HomePage>
     );
   }
 
-    _buildArtHeader() {
+  _buildArtHeader() {
     return Container(
       constraints: BoxConstraints.expand(
         height: 250.0,
@@ -964,7 +1004,7 @@ class HomePageState extends State<HomePage>
     return Container(
       margin: EdgeInsets.only(left: 16, right: 16),
       decoration: BoxDecoration(
-        color: Colors.brown[50],
+        color: _art.accentColor,
         borderRadius: BorderRadius.circular(5.0),
       ),
       child: Column(
@@ -994,14 +1034,18 @@ class HomePageState extends State<HomePage>
                         fontWeight: FontWeight.bold,
                         fontSize: 14.0,
                         letterSpacing: 2.0,
-                        color: Colors.brown),
+                        color: _art.primaryColor),
                   ),
                   onTap: () {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) => SubCategories(
-                            'ART', _art.subCategories, _artGems),
+                            'ART',
+                            _art.subCategories,
+                            _artGems,
+                            _art.accentColor,
+                            _art.icon),
                       ),
                     );
                   },
@@ -1019,7 +1063,7 @@ class HomePageState extends State<HomePage>
               padding: EdgeInsets.all(10),
               child: Row(
                 children: <Widget>[
-                  Icon(MdiIcons.formatPaint, color: Colors.brown),
+                  Icon(_art.icon, color: _art.primaryColor),
                   SizedBox(width: 20),
                   Text('${_artGems.length} artists currently.')
                 ],
