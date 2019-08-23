@@ -3,9 +3,9 @@ import 'package:hiddengems_flutter/models/section.dart';
 import 'package:flutter/material.dart';
 
 class GemSectionHeader extends StatelessWidget {
-
   final Section _section;
-  GemSectionHeader(this._section);
+  final bool _isLeft;
+  GemSectionHeader(this._section, this._isLeft);
 
   @override
   Widget build(BuildContext context) {
@@ -23,7 +23,8 @@ class GemSectionHeader extends StatelessWidget {
       child: Stack(
         children: <Widget>[
           Positioned(
-            left: 0.0,
+            left: _isLeft ? 0.0 : null,
+            right: _isLeft ? null : 0.0,
             bottom: 0.0,
             child: Container(
               decoration: BoxDecoration(

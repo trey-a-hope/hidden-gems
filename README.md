@@ -2,4 +2,6 @@
 
 Mobile application for Dayton artists.
 
-#TODO: 1. Create Splash Screens
+#Create Login/Sign Up
+#Use authentication for app.
+#Create Edit Profile page.

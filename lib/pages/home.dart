@@ -33,6 +33,10 @@ class HomePageState extends State<HomePage>
 
   String _projectVersion, _projectCode, _deviceID;
 
+  int _totalGemCount = 0;
+  int _totalCategories = 0;
+  int _totalSubcategories = 0;
+
   @override
   void initState() {
     super.initState();
@@ -132,6 +136,20 @@ class HomePageState extends State<HomePage>
     _food.gems = await _getGems('Food');
     _tech.gems = await _getGems('Tech');
     _art.gems = await _getGems('Art');
+
+    List<Section> sections = [
+      _music,
+      _media,
+      _entertainment,
+      _food,
+      _tech,
+      _art
+    ];
+    for (Section s in sections) {
+      _totalGemCount += s.gems.length;
+      _totalCategories += 1;
+      _totalSubcategories += s.subCategories.length;
+    }
   }
 
   void loadPage() async {
@@ -146,6 +164,55 @@ class HomePageState extends State<HomePage>
       () {
         _isLoading = false;
       },
+    );
+  }
+
+  _buildStatCard() {
+    return Container(
+      padding: EdgeInsets.all(10),
+      child: Card(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceAround,
+          children: <Widget>[
+            Column(
+              children: <Widget>[
+                Container(
+                    padding: EdgeInsets.only(top: 15, bottom: 5),
+                    child: Text('$_totalGemCount',
+                        style: TextStyle(color: Colors.black54))),
+                Container(
+                    padding: EdgeInsets.only(bottom: 15),
+                    child: Text("Gems",
+                        style: TextStyle(color: Colors.black87, fontSize: 16))),
+              ],
+            ),
+            Column(
+              children: <Widget>[
+                Container(
+                    padding: EdgeInsets.only(top: 15, bottom: 5),
+                    child: Text('$_totalCategories',
+                        style: TextStyle(color: Colors.black54))),
+                Container(
+                    padding: EdgeInsets.only(bottom: 15),
+                    child: Text("Categories",
+                        style: TextStyle(color: Colors.black87, fontSize: 16))),
+              ],
+            ),
+            Column(
+              children: <Widget>[
+                Container(
+                    padding: EdgeInsets.only(top: 10, bottom: 5),
+                    child: Text('$_totalSubcategories',
+                        style: TextStyle(color: Colors.black54))),
+                Container(
+                    padding: EdgeInsets.only(bottom: 10),
+                    child: Text("Subcategories",
+                        style: TextStyle(color: Colors.black87, fontSize: 16))),
+              ],
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -166,37 +233,38 @@ class HomePageState extends State<HomePage>
                   SliverList(
                     delegate: SliverChildListDelegate(
                       <Widget>[
-                        GemSectionHeader(_music).build(context),
+                        _buildStatCard(),
+                        GemSectionHeader(_music, true).build(context),
                         SizedBox(height: 20),
                         GemSectionLayout(_music).build(context),
                         SizedBox(height: 20),
                         Divider(color: Colors.black),
                         SizedBox(height: 20),
-                        GemSectionHeader(_media).build(context),
+                        GemSectionHeader(_media, false).build(context),
                         SizedBox(height: 20),
                         GemSectionLayout(_media).build(context),
                         SizedBox(height: 20),
                         Divider(color: Colors.black),
                         SizedBox(height: 20),
-                        GemSectionHeader(_entertainment).build(context),
+                        GemSectionHeader(_entertainment, true).build(context),
                         SizedBox(height: 20),
                         GemSectionLayout(_entertainment).build(context),
                         SizedBox(height: 20),
                         Divider(color: Colors.black),
                         SizedBox(height: 20),
-                        GemSectionHeader(_food).build(context),
+                        GemSectionHeader(_food, false).build(context),
                         SizedBox(height: 20),
                         GemSectionLayout(_food).build(context),
                         SizedBox(height: 20),
                         Divider(color: Colors.black),
                         SizedBox(height: 20),
-                        GemSectionHeader(_tech).build(context),
+                        GemSectionHeader(_tech, true).build(context),
                         SizedBox(height: 20),
                         GemSectionLayout(_tech).build(context),
                         SizedBox(height: 20),
                         Divider(color: Colors.black),
                         SizedBox(height: 20),
-                        GemSectionHeader(_art).build(context),
+                        GemSectionHeader(_art, false).build(context),
                         SizedBox(height: 20),
                         GemSectionLayout(_art).build(context),
                         SizedBox(height: 20),

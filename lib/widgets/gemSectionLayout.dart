@@ -75,7 +75,7 @@ class GemSectionLayout extends StatelessWidget {
                 children: <Widget>[
                   Icon(_section.icon, color: _section.primaryColor),
                   SizedBox(width: 20),
-                  Text('${_section.gems.length} artists currently.')
+                  Text('${_section.gems.length} gems')
                 ],
               ))
         ],
