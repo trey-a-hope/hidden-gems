@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/widgets/searchBar.dart';
-import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:hiddengems_flutter/pages/gemProfile.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -14,8 +13,6 @@ class _SearchPageState extends State<SearchPage> {
   SearchBar _searchAppBar;
   String _searchText = '';
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  List<Gem> _gems = List<Gem>();
-  final _db = Firestore.instance;
 
   @override
   void initState() {

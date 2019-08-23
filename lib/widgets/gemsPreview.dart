@@ -2,20 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/pages/subCategories.dart';
 import 'package:hiddengems_flutter/widgets/avatarBuilder.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
-import 'package:hiddengems_flutter/pages/subCategories.dart';
-import 'package:hiddengems_flutter/functions.dart';
-import "dart:math";
 
 class GemsPreview extends StatelessWidget {
-  final String main_category;
-  final List<String> sub_categories;
+  final String mainCategory;
+  final List<String> subCategories;
   final String description;
   final List<Gem> gems;
 
   final int gemPreviewCount = 3;
 
   GemsPreview(
-      this.main_category, this.sub_categories, this.description, this.gems);
+      this.mainCategory, this.subCategories, this.description, this.gems);
 
   @override
   Widget build(BuildContext context) {
@@ -26,7 +23,7 @@ class GemsPreview extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(left: 15.0, top: 15.0, bottom: 10.0),
           child: Text(
-            this.main_category,
+            this.mainCategory,
             style: TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 15.0,
@@ -62,7 +59,7 @@ class GemsPreview extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                   builder: (context) => SubCategories(
-                      this.main_category, this.sub_categories, this.gems),
+                      this.mainCategory, this.subCategories, this.gems),
                 ),
               );
             },

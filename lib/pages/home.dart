@@ -7,8 +7,8 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:get_version/get_version.dart';
 import 'package:flutter/services.dart';
 import 'package:hiddengems_flutter/pages/search.dart';
-import 'package:hiddengems_flutter/pages/about.dart';
-import 'package:cached_network_image/cached_network_image.dart';
+
+import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:hiddengems_flutter/pages/createGem.dart';
 import 'package:hiddengems_flutter/constants.dart';
 import 'package:device_id/device_id.dart';
@@ -117,7 +117,8 @@ class HomePageState extends State<HomePage>
     _entertainment.quote = entertainmentData['quote'];
     _entertainment.subQuote = entertainmentData['subQuote'];
     _entertainment.photoUrl = entertainmentData['photoUrl'];
-    _entertainment.subCategories = List.from(entertainmentData['subCategories']);
+    _entertainment.subCategories =
+        List.from(entertainmentData['subCategories']);
 
     dynamic foodData = data['food'];
     _food.quote = foodData['quote'];
@@ -142,9 +143,11 @@ class HomePageState extends State<HomePage>
     await _getHeaderWidgets();
     await _getVersionDetails();
 
-    setState(() {
-      _isLoading = false;
-    });
+    setState(
+      () {
+        _isLoading = false;
+      },
+    );
   }
 
   @override
@@ -280,7 +283,7 @@ class HomePageState extends State<HomePage>
               child: Padding(
                 padding: EdgeInsets.all(20),
                 child: Text(
-                  'Version ${_projectVersion} / Build ${_projectCode}. App created by Tr3umphant.Designs, LLC',
+                  'Version $_projectVersion / Build $_projectCode. App created by Tr3umphant.Designs, LLC',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey),
                 ),
@@ -383,9 +386,7 @@ class HomePageState extends State<HomePage>
                       context,
                       MaterialPageRoute(
                         builder: (context) => SubCategories(
-                            'MUSIC',
-                            _music.subCategories,
-                            _musicGems),
+                            'MUSIC', _music.subCategories, _musicGems),
                       ),
                     );
                   },
@@ -504,8 +505,8 @@ class HomePageState extends State<HomePage>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SubCategories('MEDIA',
-                            _media.subCategories, _mediaGems),
+                        builder: (context) => SubCategories(
+                            'MEDIA', _media.subCategories, _mediaGems),
                       ),
                     );
                   },
@@ -624,10 +625,8 @@ class HomePageState extends State<HomePage>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => SubCategories(
-                            'ENTERTAINMENT',
-                            _entertainment.subCategories,
-                            _entertainmentGems),
+                        builder: (context) => SubCategories('ENTERTAINMENT',
+                            _entertainment.subCategories, _entertainmentGems),
                       ),
                     );
                   },
