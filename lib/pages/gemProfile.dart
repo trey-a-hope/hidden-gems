@@ -7,6 +7,7 @@ import 'package:hiddengems_flutter/services/urlLauncher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_id/device_id.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class GemProfilePage extends StatefulWidget {
   final String id;
@@ -67,6 +68,7 @@ class GemProfilePageState extends State<GemProfilePage>
     gem.iTunesID = ds['iTunesID'];
     gem.email = ds['email'];
     gem.phoneNumber = ds['phoneNumber'];
+    gem.time = ds['time'].toDate();
 
     return gem;
   }
@@ -255,24 +257,14 @@ class GemProfilePageState extends State<GemProfilePage>
                     child: Column(
                       children: <Widget>[
                         Text(
-                          "0",
+                          timeago.format(_gem.time),
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Text("Comments")
+                        Text('Joined')
                       ],
                     ),
                   ),
-                  Expanded(
-                    child: Column(
-                      children: <Widget>[
-                        Text(
-                          "0",
-                          style: TextStyle(fontWeight: FontWeight.bold),
-                        ),
-                        Text("Favourites")
-                      ],
-                    ),
-                  ),
+
                 ],
               ),
             ],
@@ -296,7 +288,6 @@ class GemProfilePageState extends State<GemProfilePage>
 
   _buildAppBar() {
     return AppBar(
-      backgroundColor: Colors.black,
       centerTitle: true,
       title: Text(
         'GEM DETAILS',

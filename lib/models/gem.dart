@@ -10,6 +10,7 @@ class Gem {
   //Default value.
   String id;
   List<dynamic> likes = List<dynamic>();//List of user IDs
+  DateTime time;
 
   //Can be null.
   String email;

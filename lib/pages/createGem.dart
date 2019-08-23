@@ -19,24 +19,23 @@ class CreateGemPageState extends State<CreateGemPage>
   //Move this to a separate class in the future.
   _createNewGem() async {
     var data = {
-      'name': 'Ric Sexton',
-      'category': 'Entertainment',
-      'subCategory': 'Host',
-      'bio': 'Ric Sexton is a new entertainer.',
+      'name': 'lbooogi_e',
+      'category': 'Food',
+      'subCategory': 'Chef',
+      'bio': 'Cheesecakes are fire!',
       'photoUrl':
-          'https://scontent-ort2-2.cdninstagram.com/vp/97fe4bba90a722ce1cbef1b58ff703cd/5DDF78A8/t51.2885-19/s150x150/42766276_275030050005202_1769734999369580544_n.jpg?_nc_ht=scontent-ort2-2.cdninstagram.com',
+          'https://scontent-ort2-2.cdninstagram.com/vp/3a56d7546b56e8ade15bc689fde5d6e2/5DDCEB42/t51.2885-19/s150x150/67434243_2440150902697790_6474788590290206720_n.jpg?_nc_ht=scontent-ort2-2.cdninstagram.com',
       'backgroundUrl':
-          'https://i.pinimg.com/originals/00/16/01/00160120217169c7a933abefd15ed319.jpg',
+          'https://cdn.wallpapersafari.com/71/53/hb9IVU.jpg',
       'likes': [],
-      'instagramName': 'ricsexton',
       'time': DateTime.now()
     };
 
     // //Can be null.
     // String spotifyID;
     // String iTunesID;
+    // String instagram;
     // String youTubeID;
-    // String instagramName;
     // String facebookName;
     // String twitterName;
     // String soundCloudName;

@@ -71,7 +71,7 @@ class AvatarBuilder extends StatelessWidget {
                             textAlign: TextAlign.center,
                             style: TextStyle(
                                 fontSize: 14.0,
-                                fontWeight: FontWeight.w500,
+                                fontWeight: FontWeight.bold,
                                 color: Colors.black),
                             maxLines: 2,
                             overflow: TextOverflow.ellipsis,
