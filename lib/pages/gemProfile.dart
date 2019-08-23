@@ -5,14 +5,10 @@ import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/services/urlLauncher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-// import 'package:device_id/device_id.dart';
-import 'package:device_info/device_info.dart';
-import 'dart:io';
-
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:timeago/timeago.dart' as timeago;
-// import 'package:flutter_email_sender/flutter_email_sender.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:hiddengems_flutter/services/pdInfo.dart';
 
 class GemProfilePage extends StatefulWidget {
   final String id;
@@ -25,7 +21,7 @@ class GemProfilePage extends StatefulWidget {
 class GemProfilePageState extends State<GemProfilePage>
     with SingleTickerProviderStateMixin {
   GemProfilePageState(this._id);
-  final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+  final PDInfo _pdInfo = PDInfo();
 
   final String _id; //Gem ID
   final Color _iconColor = Colors.grey;
@@ -41,23 +37,14 @@ class GemProfilePageState extends State<GemProfilePage>
   }
 
   _loadPage() async {
-    _deviceId = await _fetchDeviceID();
-    Modal.showAlert(context, 'ID', _deviceId);
+    _deviceId = await _pdInfo.getDeviceID();
     _gem = await _fetchGem();
 
-    setState(() {
-      _isLoading = false;
-    });
-  }
-
-  Future<String> _fetchDeviceID() async {
-    if (Platform.isIOS) {
-      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
-      return iosInfo.identifierForVendor;
-    } else {
-      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
-      return androidInfo.androidId;
-    }
+    setState(
+      () {
+        _isLoading = false;
+      },
+    );
   }
 
   _fetchGem() async {
@@ -105,7 +92,7 @@ class GemProfilePageState extends State<GemProfilePage>
   _text() async {
     if (_gem.phoneNumber == null) {
       Modal.showAlert(
-          context, 'Sorry', 'This user did not provide an phone number.');
+          context, 'Sorry', 'This user did not provide a phone number.');
     } else {
       // Android
       String uri = 'sms:+${_gem.phoneNumber}';
