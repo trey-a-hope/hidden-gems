@@ -5,7 +5,10 @@ import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/services/urlLauncher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:device_id/device_id.dart';
+// import 'package:device_id/device_id.dart';
+import 'package:device_info/device_info.dart';
+import 'dart:io';
+
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:timeago/timeago.dart' as timeago;
 // import 'package:flutter_email_sender/flutter_email_sender.dart';
@@ -22,6 +25,7 @@ class GemProfilePage extends StatefulWidget {
 class GemProfilePageState extends State<GemProfilePage>
     with SingleTickerProviderStateMixin {
   GemProfilePageState(this._id);
+  final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
   final String _id; //Gem ID
   final Color _iconColor = Colors.grey;
@@ -38,6 +42,7 @@ class GemProfilePageState extends State<GemProfilePage>
 
   _loadPage() async {
     _deviceId = await _fetchDeviceID();
+    Modal.showAlert(context, 'ID', _deviceId);
     _gem = await _fetchGem();
 
     setState(() {
@@ -46,7 +51,13 @@ class GemProfilePageState extends State<GemProfilePage>
   }
 
   Future<String> _fetchDeviceID() async {
-    return await DeviceId.getID;
+    if (Platform.isIOS) {
+      IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
+      return iosInfo.identifierForVendor;
+    } else {
+      AndroidDeviceInfo androidInfo = await deviceInfo.androidInfo;
+      return androidInfo.androidId;
+    }
   }
 
   _fetchGem() async {
@@ -116,7 +127,8 @@ class GemProfilePageState extends State<GemProfilePage>
     if (_gem.email == null) {
       Modal.showAlert(context, 'Sorry', 'This user did not provide an email.');
     } else {
-      String uri = 'mailto:${_gem.email}?subject=Greetings!&body=Hello ${_gem.name}, how are you?';
+      String uri =
+          'mailto:${_gem.email}?subject=Greetings!&body=Hello ${_gem.name}, how are you?';
       if (await canLaunch(uri)) {
         await launch(uri);
       } else {

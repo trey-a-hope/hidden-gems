@@ -4,12 +4,12 @@ import 'package:hiddengems_flutter/widgets/avatarBuilder.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:get_version/get_version.dart';
+// import 'package:get_version/get_version.dart';
 import 'package:flutter/services.dart';
 import 'package:hiddengems_flutter/pages/search.dart';
 import 'package:hiddengems_flutter/pages/createGem.dart';
 import 'package:hiddengems_flutter/constants.dart';
-import 'package:device_id/device_id.dart';
+// import 'package:device_id/device_id.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -57,9 +57,9 @@ class HomePageState extends State<HomePage>
     loadPage();
   }
 
-  Future<String> _fetchDeviceID() async {
-    return await DeviceId.getID;
-  }
+  // Future<String> _fetchDeviceID() async {
+  //   return await DeviceId.getID;
+  // }
 
   //Fetch gems based on their category and limit them.
   Future<List<Gem>> _getGems(String category) async {
@@ -84,20 +84,20 @@ class HomePageState extends State<HomePage>
     return gems;
   }
 
-  _getVersionDetails() async {
-    //Version Name
-    try {
-      _projectVersion = await GetVersion.projectVersion;
-    } on PlatformException {
-      _projectVersion = 'Failed to get project version.';
-    }
-    //Version Code
-    try {
-      _projectCode = await GetVersion.projectCode;
-    } on PlatformException {
-      _projectCode = 'Failed to get build number.';
-    }
-  }
+  // _getVersionDetails() async {
+  //   //Version Name
+  //   try {
+  //     _projectVersion = await GetVersion.projectVersion;
+  //   } on PlatformException {
+  //     _projectVersion = 'Failed to get project version.';
+  //   }
+  //   //Version Code
+  //   try {
+  //     _projectCode = await GetVersion.projectCode;
+  //   } on PlatformException {
+  //     _projectCode = 'Failed to get build number.';
+  //   }
+  // }
 
   _getHeaderWidgets() async {
     DocumentSnapshot ds =
@@ -162,7 +162,7 @@ class HomePageState extends State<HomePage>
   }
 
   void loadPage() async {
-    _deviceID = await _fetchDeviceID();
+    // _deviceID = await _fetchDeviceID();
     _musicGems = await _getGems('Music');
     _mediaGems = await _getGems('Media');
     _entertainmentGems = await _getGems('Entertainment');
@@ -171,7 +171,7 @@ class HomePageState extends State<HomePage>
     _artGems = await _getGems('Art');
 
     await _getHeaderWidgets();
-    await _getVersionDetails();
+    // await _getVersionDetails();
 
     setState(
       () {
