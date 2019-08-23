@@ -8,6 +8,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:device_id/device_id.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:timeago/timeago.dart' as timeago;
+// import 'package:flutter_email_sender/flutter_email_sender.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GemProfilePage extends StatefulWidget {
   final String id;
@@ -89,19 +91,71 @@ class GemProfilePageState extends State<GemProfilePage>
     });
   }
 
-  _email() {
-    if (_gem.email == null) {
-      Modal.showAlert(context, 'Sorry', 'This user did not provide an email.');
+  _text() async {
+    if (_gem.phoneNumber == null) {
+      Modal.showAlert(
+          context, 'Sorry', 'This user did not provide an phone number.');
     } else {
-      Modal.showAlert(context, 'TODO', 'Send an email to ${_gem.name}');
+      // Android
+      String uri = 'sms:+${_gem.phoneNumber}';
+      if (await canLaunch(uri)) {
+        await launch(uri);
+      } else {
+        // iOS
+        String uri = 'sms:00${_gem.phoneNumber}';
+        if (await canLaunch(uri)) {
+          await launch(uri);
+        } else {
+          throw 'Could not launch $uri';
+        }
+      }
     }
   }
 
-  _call() {
+  _email() async {
+    // if (_gem.email == null) {
+    //   Modal.showAlert(context, 'Sorry', 'This user did not provide an email.');
+    // } else {
+    //   final Email email = Email(
+    //     body: 'Hey ${_gem.name}, I was wondering...',
+    //     subject: 'Greetings!',
+    //     recipients: [_gem.email],
+    //   );
+
+    //   FlutterEmailSender.send(email).then(
+    //     (res) {
+    //       Modal.showAlert(context, 'Sent', 'They should response shortly.');
+    //     },
+    //   ).catchError(
+    //     (e) {
+    //       Modal.showAlert(
+    //         context,
+    //         'Error',
+    //         e.toString(),
+    //       );
+    //     },
+    //   );
+    // }
+  }
+
+  _call() async {
     if (_gem.phoneNumber == null) {
-      Modal.showAlert(context, 'Sorry', 'This user did not provide a phone number.');
+      Modal.showAlert(
+          context, 'Sorry', 'This user did not provide an phone number.');
     } else {
-      Modal.showAlert(context, 'TODO', 'Call ${_gem.name}');
+      // Android
+      String uri = 'tel:+1${_gem.phoneNumber}';
+      if (await canLaunch(uri)) {
+        await launch(uri);
+      } else {
+        // iOS
+        String uri = 'tel:00${_gem.phoneNumber}8';
+        if (await canLaunch(uri)) {
+          await launch(uri);
+        } else {
+          throw 'Could not launch $uri';
+        }
+      }
     }
   }
 
@@ -195,6 +249,13 @@ class GemProfilePageState extends State<GemProfilePage>
                 label: 'Call',
                 labelStyle: TextStyle(fontSize: 18.0),
                 onTap: () => _call(),
+              ),
+              SpeedDialChild(
+                child: Icon(Icons.textsms, color: Colors.purple),
+                backgroundColor: Colors.white,
+                label: 'Text',
+                labelStyle: TextStyle(fontSize: 18.0),
+                onTap: () => _text(),
               )
             ],
           );
@@ -264,7 +325,6 @@ class GemProfilePageState extends State<GemProfilePage>
                       ],
                     ),
                   ),
-
                 ],
               ),
             ],
