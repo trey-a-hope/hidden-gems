@@ -351,7 +351,7 @@ class HomePageState extends State<HomePage>
             bottom: 0.0,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black,
+                color:_music.primaryColor,
                 borderRadius: BorderRadius.circular(5.0),
               ),
               padding: EdgeInsets.all(10),
@@ -368,7 +368,7 @@ class HomePageState extends State<HomePage>
                   Text(
                     _music.subQuote,
                     style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 10.0,
                     ),
@@ -474,7 +474,7 @@ class HomePageState extends State<HomePage>
             bottom: 0.0,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: _media.primaryColor,
                 borderRadius: BorderRadius.circular(5.0),
               ),
               padding: EdgeInsets.all(10),
@@ -491,7 +491,7 @@ class HomePageState extends State<HomePage>
                   Text(
                     _media.subQuote,
                     style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 10.0,
                     ),
@@ -598,7 +598,7 @@ class HomePageState extends State<HomePage>
             bottom: 0.0,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: _entertainment.primaryColor,
                 borderRadius: BorderRadius.circular(5.0),
               ),
               padding: EdgeInsets.all(10),
@@ -615,7 +615,7 @@ class HomePageState extends State<HomePage>
                   Text(
                     _entertainment.subQuote,
                     style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 10.0,
                     ),
@@ -722,7 +722,7 @@ class HomePageState extends State<HomePage>
             bottom: 0.0,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: _food.primaryColor,
                 borderRadius: BorderRadius.circular(5.0),
               ),
               padding: EdgeInsets.all(10),
@@ -739,7 +739,7 @@ class HomePageState extends State<HomePage>
                   Text(
                     _food.subQuote,
                     style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 10.0,
                     ),
@@ -846,7 +846,7 @@ class HomePageState extends State<HomePage>
             bottom: 0.0,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: _tech.primaryColor,
                 borderRadius: BorderRadius.circular(5.0),
               ),
               padding: EdgeInsets.all(10),
@@ -863,7 +863,7 @@ class HomePageState extends State<HomePage>
                   Text(
                     _tech.subQuote,
                     style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 10.0,
                     ),
@@ -969,7 +969,7 @@ class HomePageState extends State<HomePage>
             bottom: 0.0,
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.black,
+                color: _art.primaryColor,
                 borderRadius: BorderRadius.circular(5.0),
               ),
               padding: EdgeInsets.all(10),
@@ -986,7 +986,7 @@ class HomePageState extends State<HomePage>
                   Text(
                     _art.subQuote,
                     style: TextStyle(
-                      color: Colors.grey,
+                      color: Colors.white,
                       fontWeight: FontWeight.bold,
                       fontSize: 10.0,
                     ),
