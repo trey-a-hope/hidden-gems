@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/pages/gemProfile.dart';
 
@@ -12,8 +13,10 @@ class Gem {
 
   //Default value.
   String id;
+  String uid;
   List<dynamic> likes = List<dynamic>(); //List of user IDs
   DateTime time;
+  bool isSafe;
 
   //Can be null.
   String email;
@@ -25,7 +28,35 @@ class Gem {
   String facebookName;
   String twitterName;
   String soundCloudName;
+
+  static Gem extractDocument(DocumentSnapshot ds){
+    Gem gem = Gem();
+
+    gem.name = ds['name'];
+    gem.id = ds['id'];
+    gem.name = ds['name'];
+    gem.bio = ds['bio'];
+    gem.category = ds['category'];
+    gem.subCategory = ds['subCategory'];
+    gem.photoUrl = ds['photoUrl'];
+    gem.likes = ds['likes'];
+    gem.instagramName = ds['instagramName'];
+    gem.backgroundUrl = ds['backgroundUrl'];
+    gem.spotifyID = ds['spotifyID'];
+    gem.twitterName = ds['twitterName'];
+    gem.facebookName = ds['facebookName'];
+    gem.youTubeID = ds['youTubeID'];
+    gem.soundCloudName = ds['soundCloudName'];
+    gem.iTunesID = ds['iTunesID'];
+    gem.email = ds['email'];
+    gem.phoneNumber = ds['phoneNumber'];
+    gem.time = ds['time'].toDate();
+
+    return gem;
+  }
 }
+
+
 
 
 

@@ -4,11 +4,15 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/pages/search.dart';
 import 'package:hiddengems_flutter/pages/createGem.dart';
+import 'package:hiddengems_flutter/pages/login.dart';
 import 'package:hiddengems_flutter/constants.dart';
 import 'package:hiddengems_flutter/services/pdInfo.dart';
 import 'package:hiddengems_flutter/widgets/gemSectionHeader.dart';
 import 'package:hiddengems_flutter/widgets/gemSectionLayout.dart';
+import 'package:hiddengems_flutter/widgets/navDrawer.dart';
+
 import 'package:hiddengems_flutter/models/section.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -18,6 +22,8 @@ class HomePage extends StatefulWidget {
 class HomePageState extends State<HomePage>
     with SingleTickerProviderStateMixin {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
+      GlobalKey<RefreshIndicatorState>();
   final _db = Firestore.instance;
   final _drawerIconColor = Colors.blueGrey;
   final PDInfo _pdInfo = PDInfo();
@@ -33,9 +39,7 @@ class HomePageState extends State<HomePage>
 
   String _projectVersion, _projectCode, _deviceID;
 
-  int _totalGemCount = 0;
-  int _totalCategories = 0;
-  int _totalSubcategories = 0;
+  int _totalGemCount, _totalCategories, _totalSubcategories;
 
   @override
   void initState() {
@@ -145,6 +149,11 @@ class HomePageState extends State<HomePage>
       _tech,
       _art
     ];
+
+    _totalGemCount = 0;
+    _totalCategories = 0;
+    _totalSubcategories = 0;
+
     for (Section s in sections) {
       _totalGemCount += s.gems.length;
       _totalCategories += 1;
@@ -164,6 +173,89 @@ class HomePageState extends State<HomePage>
       () {
         _isLoading = false;
       },
+    );
+  }
+
+  Future<void> _refresh() async {
+    await _getHeaderWidgets();
+    await _attachGems();
+    setState(
+      () {},
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      key: _scaffoldKey,
+      appBar: _buildAppBar(),
+      drawer: NavDrawer(),
+      body: Builder(
+        builder: (context) => _isLoading
+            ? Center(
+                child: CircularProgressIndicator(),
+              )
+            : RefreshIndicator(
+                onRefresh: _refresh,
+                key: _refreshIndicatorKey,
+                child: CustomScrollView(
+                  physics: BouncingScrollPhysics(),
+                  slivers: <Widget>[
+                    SliverList(
+                      delegate: SliverChildListDelegate(
+                        <Widget>[
+                          _buildStatCard(),
+                          GemSectionHeader(_music, true).build(context),
+                          SizedBox(height: 20),
+                          GemSectionLayout(_music).build(context),
+                          SizedBox(height: 20),
+                          // Divider(color: Colors.black),
+                          // SizedBox(height: 20),
+                          // GemSectionHeader(_media, false).build(context),
+                          GemSectionLayout(_media).build(context),
+                          SizedBox(height: 20),
+                          // Divider(color: Colors.black),
+                          // SizedBox(height: 20),
+                          GemSectionHeader(_entertainment, true).build(context),
+                          SizedBox(height: 20),
+                          GemSectionLayout(_entertainment).build(context),
+                          // SizedBox(height: 20),
+                          // Divider(color: Colors.black),
+                          // SizedBox(height: 20),
+                          // GemSectionHeader(_food, false).build(context),
+                          SizedBox(height: 20),
+                          GemSectionLayout(_food).build(context),
+                          // SizedBox(height: 20),
+                          // Divider(color: Colors.black),
+                          SizedBox(height: 20),
+                          GemSectionHeader(_tech, true).build(context),
+                          SizedBox(height: 20),
+                          GemSectionLayout(_tech).build(context),
+                          // SizedBox(height: 20),
+                          // Divider(color: Colors.black),
+                          // SizedBox(height: 20),
+                          // GemSectionHeader(_art, false).build(context),
+                          SizedBox(height: 20),
+                          GemSectionLayout(_art).build(context),
+                          SizedBox(height: 20),
+                        ],
+                      ),
+                    )
+                  ],
+                ),
+              ),
+      ),
+    );
+  }
+
+  _buildAppBar() {
+    return AppBar(
+      centerTitle: true,
+      title: Text(
+        'HIDDEN GEMS',
+        style: TextStyle(letterSpacing: 2.0),
+      ),
+      actions: [],
     );
   }
 
@@ -212,159 +304,6 @@ class HomePageState extends State<HomePage>
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      appBar: _buildAppBar(),
-      drawer: _buildDrawer(),
-      body: Builder(
-        builder: (context) => _isLoading
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
-            : CustomScrollView(
-                physics: BouncingScrollPhysics(),
-                slivers: <Widget>[
-                  SliverList(
-                    delegate: SliverChildListDelegate(
-                      <Widget>[
-                        _buildStatCard(),
-                        GemSectionHeader(_music, true).build(context),
-                        SizedBox(height: 20),
-                        GemSectionLayout(_music).build(context),
-                        SizedBox(height: 20),
-                        Divider(color: Colors.black),
-                        SizedBox(height: 20),
-                        GemSectionHeader(_media, false).build(context),
-                        SizedBox(height: 20),
-                        GemSectionLayout(_media).build(context),
-                        SizedBox(height: 20),
-                        Divider(color: Colors.black),
-                        SizedBox(height: 20),
-                        GemSectionHeader(_entertainment, true).build(context),
-                        SizedBox(height: 20),
-                        GemSectionLayout(_entertainment).build(context),
-                        SizedBox(height: 20),
-                        Divider(color: Colors.black),
-                        SizedBox(height: 20),
-                        GemSectionHeader(_food, false).build(context),
-                        SizedBox(height: 20),
-                        GemSectionLayout(_food).build(context),
-                        SizedBox(height: 20),
-                        Divider(color: Colors.black),
-                        SizedBox(height: 20),
-                        GemSectionHeader(_tech, true).build(context),
-                        SizedBox(height: 20),
-                        GemSectionLayout(_tech).build(context),
-                        SizedBox(height: 20),
-                        Divider(color: Colors.black),
-                        SizedBox(height: 20),
-                        GemSectionHeader(_art, false).build(context),
-                        SizedBox(height: 20),
-                        GemSectionLayout(_art).build(context),
-                        SizedBox(height: 20),
-                      ],
-                    ),
-                  )
-                ],
-              ),
-      ),
-    );
-  }
-
-  _buildAppBar() {
-    return AppBar(
-      centerTitle: true,
-      title: Text(
-        'HIDDEN GEMS',
-        style: TextStyle(letterSpacing: 2.0),
-      ),
-      actions: [],
-    );
-  }
-
-  _buildDrawer() {
-    return Drawer(
-      child: Column(
-        mainAxisSize: MainAxisSize.max,
-        children: <Widget>[
-          UserAccountsDrawerHeader(
-            accountName: Text(
-              'Hidden Gems',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            accountEmail: Text('Dayton has more to offer...'),
-            currentAccountPicture: GestureDetector(
-              child: CircleAvatar(
-                backgroundColor: Colors.transparent,
-                radius: 10.0,
-                child: Image.asset('assets/images/logo.jpg'),
-              ),
-            ),
-            decoration: BoxDecoration(
-              color: Colors.black,
-            ),
-          ),
-          ListTile(
-            leading: Icon(Icons.home, color: _drawerIconColor),
-            title: Text(
-              'Home',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            onTap: () {},
-          ),
-          ListTile(
-            leading: Icon(MdiIcons.searchWeb, color: _drawerIconColor),
-            title: Text(
-              'Search Gems',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SearchPage(),
-                ),
-              );
-            },
-          ),
-          Divider(),
-          _deviceID == ADMIN_DEVICE_ID
-              ? ListTile(
-                  leading: Icon(MdiIcons.creation, color: _drawerIconColor),
-                  title: Text(
-                    'Create Gem',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => CreateGemPage(),
-                      ),
-                    );
-                  },
-                )
-              : Container(),
-          Expanded(
-            child: Align(
-              alignment: Alignment.bottomCenter,
-              child: Padding(
-                padding: EdgeInsets.all(20),
-                child: Text(
-                  'Version $_projectVersion / Build $_projectCode. App created by Tr3umphant.Designs, LLC',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(color: Colors.grey),
-                ),
-              ),
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -2,6 +2,6 @@
 
 Mobile application for Dayton artists.
 
-#Create Login/Sign Up
-#Use authentication for app.
+#Create Sign Up Page
 #Create Edit Profile page.
+#Implement better search.

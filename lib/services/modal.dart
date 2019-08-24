@@ -68,29 +68,29 @@ class Modal {
   //   );
   // }
 
-  // static Future<bool> showConfirmation(
-  //     BuildContext context, String title, String text) {
-  //   return showDialog<bool>(
-  //     barrierDismissible: false,
-  //     context: context,
-  //     child: AlertDialog(
-  //       title: Text(title),
-  //       content: Text(text),
-  //       actions: <Widget>[
-  //         FlatButton(
-  //           child: const Text('NO'),
-  //           onPressed: () {
-  //             Navigator.of(context).pop(false);
-  //           },
-  //         ),
-  //         FlatButton(
-  //           child: const Text('YES'),
-  //           onPressed: () {
-  //             Navigator.of(context).pop(true);
-  //           },
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
+  static Future<bool> showConfirmation(
+      BuildContext context, String title, String text) {
+    return showDialog<bool>(
+      barrierDismissible: false,
+      context: context,
+      child: AlertDialog(
+        title: Text(title),
+        content: Text(text),
+        actions: <Widget>[
+          FlatButton(
+            child: const Text('NO'),
+            onPressed: () {
+              Navigator.of(context).pop(false);
+            },
+          ),
+          FlatButton(
+            child: const Text('YES'),
+            onPressed: () {
+              Navigator.of(context).pop(true);
+            },
+          )
+        ],
+      ),
+    );
+  }
 }
