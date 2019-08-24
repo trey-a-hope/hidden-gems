@@ -4,6 +4,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:hiddengems_flutter/constants.dart';
+import 'package:hiddengems_flutter/pages/editImages.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/services/validater.dart';
 
@@ -214,7 +215,12 @@ class EditProfilePageState extends State<EditProfilePage>
         IconButton(
           icon: Icon(MdiIcons.image),
           onPressed: () {
-            Modal.showAlert(context, 'Edit Profile Image', '');
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => EditImagePage(),
+              ),
+            );
           },
         )
       ],
