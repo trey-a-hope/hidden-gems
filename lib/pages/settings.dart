@@ -1,10 +1,4 @@
 import 'package:flutter/material.dart';
-// import 'package:flutter_facebook_login/flutter_facebook_login.dart';
-// import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-// import 'package:hiddengems_flutter/pages/notifications.dart';
-// import 'package:hiddengems_flutter/services/urlLauncher.dart';
-// import 'package:hiddengems_flutter/constants.dart';
-import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 

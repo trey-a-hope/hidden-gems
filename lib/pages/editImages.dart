@@ -3,11 +3,9 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 // import 'package:image_picker/image_picker.dart';
-import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hiddengems_flutter/services/modal.dart';
 
 class EditImagePage extends StatefulWidget {
   @override

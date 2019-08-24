@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:hiddengems_flutter/services/pdInfo.dart';
 import 'package:hiddengems_flutter/widgets/gemSectionHeader.dart';
 import 'package:hiddengems_flutter/widgets/gemSectionLayout.dart';
 import 'package:hiddengems_flutter/widgets/navDrawer.dart';
-import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:hiddengems_flutter/models/section.dart';
 
 class HomePage extends StatefulWidget {
@@ -20,8 +18,6 @@ class HomePageState extends State<HomePage>
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
   final _db = Firestore.instance;
-  final _drawerIconColor = Colors.blueGrey;
-  final PDInfo _pdInfo = PDInfo();
 
   bool _isLoading = true;
 
@@ -31,8 +27,6 @@ class HomePageState extends State<HomePage>
   Section _food = Section('FOOD');
   Section _tech = Section('TECH');
   Section _art = Section('ART');
-
-  String _projectVersion, _projectCode, _deviceID;
 
   int _totalGemCount, _totalCategories, _totalSubcategories;
 
@@ -157,10 +151,6 @@ class HomePageState extends State<HomePage>
   }
 
   void loadPage() async {
-    _deviceID = await _pdInfo.getDeviceID();
-    _projectCode = await _pdInfo.getAppBuildNumber();
-    _projectVersion = await _pdInfo.getAppVersionNumber();
-
     await _getHeaderWidgets();
     await _attachGems();
 
