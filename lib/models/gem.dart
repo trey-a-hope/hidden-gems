@@ -5,11 +5,9 @@ import 'package:hiddengems_flutter/pages/gemProfile.dart';
 class Gem {
   //Required
   String name;
+  String email;
   String category;
   String subCategory;
-  String bio;
-  String photoUrl;
-  String backgroundUrl;
 
   //Default value.
   String id;
@@ -17,9 +15,11 @@ class Gem {
   List<dynamic> likes = List<dynamic>(); //List of user IDs
   DateTime time;
   bool isSafe;
+  String photoUrl;
+  String backgroundUrl;
 
   //Can be null.
-  String email;
+  String bio;
   String phoneNumber;
   String spotifyID;
   String iTunesID;
@@ -29,10 +29,11 @@ class Gem {
   String twitterName;
   String soundCloudName;
 
-  static Gem extractDocument(DocumentSnapshot ds){
+  static Gem extractDocument(DocumentSnapshot ds) {
     Gem gem = Gem();
 
     gem.name = ds['name'];
+    gem.email = ds['email'];
     gem.id = ds['id'];
     gem.name = ds['name'];
     gem.bio = ds['bio'];
@@ -48,17 +49,12 @@ class Gem {
     gem.youTubeID = ds['youTubeID'];
     gem.soundCloudName = ds['soundCloudName'];
     gem.iTunesID = ds['iTunesID'];
-    gem.email = ds['email'];
     gem.phoneNumber = ds['phoneNumber'];
     gem.time = ds['time'].toDate();
 
     return gem;
   }
 }
-
-
-
-
 
 // buildGemCard(Gem gem, BuildContext context) {
 //   return Card(

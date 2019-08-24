@@ -250,14 +250,7 @@ class HomePageState extends State<HomePage>
         'HIDDEN GEMS',
         style: TextStyle(letterSpacing: 2.0),
       ),
-      actions: [
-        IconButton(
-          icon: Icon(Icons.refresh),
-          onPressed: () {
-            Modal.showAlert(context, 'How to Refresh', 'Pull down on page.');
-          },
-        )
-      ],
+      actions: [],
     );
   }
 
