@@ -17,15 +17,41 @@ class LoginPage extends StatefulWidget {
 
 class LoginPageState extends State<LoginPage>
     with SingleTickerProviderStateMixin {
-
   static final String path = "lib/src/pages/login/login2.dart";
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  bool _isLoading = false;
 
   _login() async {
-    _auth.signInWithEmailAndPassword(email: 'trey.a.hope@gmail.com', password: 'Peachy33').then((r){
-      Navigator.pop(context);
-    }).catchError((e){
-    });
+    setState(
+      () {
+        _isLoading = true;
+      },
+    );
+
+    _auth
+        .signInWithEmailAndPassword(
+            email: 'trey.a.hope@gmail.com', password: 'Peachy33')
+        .then(
+      (r) {
+        Navigator.pop(context);
+      },
+    ).catchError(
+      (e) {
+        Modal.showAlert(
+          context,
+          'Error',
+          e.toString(),
+        );
+      },
+    ).whenComplete(
+      () {
+        setState(
+          () {
+            _isLoading = false;
+          },
+        );
+      },
+    );
   }
 
   Widget _buildPageContent(BuildContext context) {
@@ -200,7 +226,11 @@ class LoginPageState extends State<LoginPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _buildPageContent(context),
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : _buildPageContent(context),
     );
   }
 }

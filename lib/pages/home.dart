@@ -2,17 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:hiddengems_flutter/pages/search.dart';
-import 'package:hiddengems_flutter/pages/createGem.dart';
-import 'package:hiddengems_flutter/pages/login.dart';
-import 'package:hiddengems_flutter/constants.dart';
 import 'package:hiddengems_flutter/services/pdInfo.dart';
 import 'package:hiddengems_flutter/widgets/gemSectionHeader.dart';
 import 'package:hiddengems_flutter/widgets/gemSectionLayout.dart';
 import 'package:hiddengems_flutter/widgets/navDrawer.dart';
-
+import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:hiddengems_flutter/models/section.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -255,7 +250,14 @@ class HomePageState extends State<HomePage>
         'HIDDEN GEMS',
         style: TextStyle(letterSpacing: 2.0),
       ),
-      actions: [],
+      actions: [
+        IconButton(
+          icon: Icon(Icons.refresh),
+          onPressed: () {
+            Modal.showAlert(context, 'How to Refresh', 'Pull down on page.');
+          },
+        )
+      ],
     );
   }
 
