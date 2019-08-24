@@ -38,7 +38,7 @@ class GemProfilePageState extends State<GemProfilePage>
 
   _loadPage() async {
     _deviceId = await _pdInfo.getDeviceID();
-    _gem = await _fetchGem();
+    await _fetchGem();
 
     setState(
       () {
@@ -49,28 +49,7 @@ class GemProfilePageState extends State<GemProfilePage>
 
   _fetchGem() async {
     DocumentSnapshot ds = await _db.collection('Gems').document(_id).get();
-    Gem gem = Gem();
-
-    gem.id = ds['id'];
-    gem.name = ds['name'];
-    gem.bio = ds['bio'];
-    gem.category = ds['category'];
-    gem.subCategory = ds['subCategory'];
-    gem.photoUrl = ds['photoUrl'];
-    gem.likes = ds['likes'];
-    gem.instagramName = ds['instagramName'];
-    gem.backgroundUrl = ds['backgroundUrl'];
-    gem.spotifyID = ds['spotifyID'];
-    gem.twitterName = ds['twitterName'];
-    gem.facebookName = ds['facebookName'];
-    gem.youTubeID = ds['youTubeID'];
-    gem.soundCloudName = ds['soundCloudName'];
-    gem.iTunesID = ds['iTunesID'];
-    gem.email = ds['email'];
-    gem.phoneNumber = ds['phoneNumber'];
-    gem.time = ds['time'].toDate();
-
-    return gem;
+    _gem = Gem.extractDocument(ds);
   }
 
   _likeGem() async {
@@ -90,7 +69,7 @@ class GemProfilePageState extends State<GemProfilePage>
   }
 
   _text() async {
-    if (_gem.phoneNumber == null) {
+    if (_gem.phoneNumber.isEmpty) {
       Modal.showAlert(
           context, 'Sorry', 'This user did not provide a phone number.');
     } else {
@@ -111,7 +90,7 @@ class GemProfilePageState extends State<GemProfilePage>
   }
 
   _email() async {
-    if (_gem.email == null) {
+    if (_gem.email.isEmpty) {
       Modal.showAlert(context, 'Sorry', 'This user did not provide an email.');
     } else {
       String uri =
@@ -125,7 +104,7 @@ class GemProfilePageState extends State<GemProfilePage>
   }
 
   _call() async {
-    if (_gem.phoneNumber == null) {
+    if (_gem.phoneNumber.isEmpty) {
       Modal.showAlert(
           context, 'Sorry', 'This user did not provide an phone number.');
     } else {
@@ -381,7 +360,7 @@ class GemProfilePageState extends State<GemProfilePage>
             ),
           ),
           Divider(),
-          _gem.instagramName == null
+          _gem.instagramName.isEmpty
               ? Container()
               : InkWell(
                   child: ListTile(
@@ -398,7 +377,7 @@ class GemProfilePageState extends State<GemProfilePage>
                         'https://www.instagram.com/${_gem.instagramName}');
                   },
                 ),
-          _gem.twitterName == null
+          _gem.twitterName.isEmpty
               ? Container()
               : InkWell(
                   child: ListTile(
@@ -415,7 +394,7 @@ class GemProfilePageState extends State<GemProfilePage>
                         'https://twitter.com/${_gem.twitterName}');
                   },
                 ),
-          _gem.facebookName == null
+          _gem.facebookName.isEmpty
               ? Container()
               : InkWell(
                   child: ListTile(
@@ -432,7 +411,7 @@ class GemProfilePageState extends State<GemProfilePage>
                         'https://www.facebook.com/${_gem.facebookName}');
                   },
                 ),
-          _gem.youTubeID == null
+          _gem.youTubeID.isEmpty
               ? Container()
               : InkWell(
                   child: ListTile(
@@ -449,7 +428,7 @@ class GemProfilePageState extends State<GemProfilePage>
                         'https://www.instagram.com/${_gem.instagramName}');
                   },
                 ),
-          _gem.spotifyID == null
+          _gem.spotifyID.isEmpty
               ? Container()
               : InkWell(
                   child: ListTile(
@@ -466,7 +445,7 @@ class GemProfilePageState extends State<GemProfilePage>
                         'https://open.spotify.com/artist/${_gem.spotifyID}');
                   },
                 ),
-          _gem.iTunesID == null
+          _gem.iTunesID.isEmpty
               ? Container()
               : InkWell(
                   child: ListTile(
@@ -483,7 +462,7 @@ class GemProfilePageState extends State<GemProfilePage>
                         'https://music.apple.com/us/artist/${_gem.iTunesID}');
                   },
                 ),
-          _gem.soundCloudName == null
+          _gem.soundCloudName.isEmpty
               ? Container()
               : InkWell(
                   child: ListTile(

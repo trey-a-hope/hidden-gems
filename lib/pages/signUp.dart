@@ -39,13 +39,21 @@ class SignUpPageState extends State<SignUpPage>
             'name': 'lbooogi_e',
             'email': user.email,
             'category': 'Food',
-            'subCategory': 'Chef',
-            'bio': 'Cheesecakes are fire!',
+            'subCategory': 'Desert Chef',
+            'bio': '',
             'photoUrl':
                 'https://scontent-ort2-2.cdninstagram.com/vp/3a56d7546b56e8ade15bc689fde5d6e2/5DDCEB42/t51.2885-19/s150x150/67434243_2440150902697790_6474788590290206720_n.jpg?_nc_ht=scontent-ort2-2.cdninstagram.com',
             'backgroundUrl': 'https://cdn.wallpapersafari.com/71/53/hb9IVU.jpg',
             'likes': [],
-            'time': DateTime.now()
+            'time': DateTime.now(),
+            'spotifyID': '',
+            'iTunesID': '',
+            'soundCloudName': '',
+            'youTubeID': '',
+            'instagramName': '',
+            'facebookName': '',
+            'twitterName': '',
+            'phoneNumber': ''
           };
 
           DocumentReference dr = await _db.collection('Gems').add(data);
@@ -203,7 +211,7 @@ class SignUpPageState extends State<SignUpPage>
                   borderRadius: BorderRadius.circular(40.0),
                 ),
                 child: Text(
-                  "Submit For Review",
+                  "Submit",
                   style: TextStyle(color: Colors.white70),
                 ),
                 color: Colors.blue,

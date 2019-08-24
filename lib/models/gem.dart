@@ -3,54 +3,48 @@ import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/pages/gemProfile.dart';
 
 class Gem {
-  //Required
-  String name;
-  String email;
-  String category;
-  String subCategory;
-
-  //Default value.
-  String id;
-  String uid;
-  List<dynamic> likes = List<dynamic>(); //List of user IDs
-  DateTime time;
-  bool isSafe;
-  String photoUrl;
   String backgroundUrl;
-
-  //Can be null.
   String bio;
-  String phoneNumber;
-  String spotifyID;
-  String iTunesID;
-  String youTubeID;
-  String instagramName;
+  String category;
+  String email;
   String facebookName;
-  String twitterName;
+  String iTunesID;
+  String id;
+  String instagramName;
+  List<dynamic> likes = List<dynamic>(); //List of user IDs
+  String name;
+  String phoneNumber;
+  String photoUrl;
   String soundCloudName;
+  String spotifyID;
+  String subCategory;
+  DateTime time;
+  String twitterName;
+  String uid; //For authentication.
+  String youTubeID;
 
   static Gem extractDocument(DocumentSnapshot ds) {
     Gem gem = Gem();
 
-    gem.name = ds['name'];
-    gem.email = ds['email'];
-    gem.id = ds['id'];
-    gem.name = ds['name'];
     gem.bio = ds['bio'];
-    gem.category = ds['category'];
-    gem.subCategory = ds['subCategory'];
-    gem.photoUrl = ds['photoUrl'];
-    gem.likes = ds['likes'];
-    gem.instagramName = ds['instagramName'];
     gem.backgroundUrl = ds['backgroundUrl'];
-    gem.spotifyID = ds['spotifyID'];
-    gem.twitterName = ds['twitterName'];
+    gem.category = ds['category'];
+    gem.email = ds['email'];
     gem.facebookName = ds['facebookName'];
-    gem.youTubeID = ds['youTubeID'];
-    gem.soundCloudName = ds['soundCloudName'];
     gem.iTunesID = ds['iTunesID'];
+    gem.id = ds['id'];
+    gem.instagramName = ds['instagramName'];
+    gem.likes = ds['likes'];
+    gem.name = ds['name'];
     gem.phoneNumber = ds['phoneNumber'];
+    gem.photoUrl = ds['photoUrl'];
+    gem.soundCloudName = ds['soundCloudName'];
+    gem.spotifyID = ds['spotifyID'];
+    gem.subCategory = ds['subCategory'];
     gem.time = ds['time'].toDate();
+    gem.twitterName = ds['twitterName'];
+    gem.uid = ds['uid'];
+    gem.youTubeID = ds['youTubeID'];
 
     return gem;
   }
