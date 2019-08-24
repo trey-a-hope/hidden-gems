@@ -1,11 +1,12 @@
 import 'dart:io';
-
+import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-// import 'package:image_picker/image_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class EditImagePage extends StatefulWidget {
   @override
@@ -14,12 +15,13 @@ class EditImagePage extends StatefulWidget {
 
 class EditImagePageState extends State<EditImagePage>
     with SingleTickerProviderStateMixin {
-  File _profileImage, _backgroundImage;
   bool _isLoading = true;
   final _db = Firestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-
+  File _profileImage, _backgroundImage;
+  ImageProvider _profileImageProvider, _backgroundImageProvider;
   Gem _gem;
+
   @override
   void initState() {
     super.initState();
@@ -45,22 +47,26 @@ class EditImagePageState extends State<EditImagePage>
     DocumentSnapshot ds = qs.documents[0];
 
     _gem = Gem.extractDocument(ds);
+
+    _profileImageProvider = NetworkImage(_gem.photoUrl);
+    _backgroundImageProvider = NetworkImage(_gem.backgroundUrl);
   }
 
   Future _pickProfileImage() async {
-    // File image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
-    // setState(() {
-    //   _profileImage = image;
-    // });
+    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _profileImageProvider = FileImage(image);
+      _profileImage = image;
+    });
   }
 
   Future _pickBackgroundImage() async {
-    // File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
 
-    // setState(() {
-    //   _backgroundImage = image;
-    // });
+    setState(() {
+      _backgroundImageProvider = FileImage(image);
+      _backgroundImage = image;
+    });
   }
 
   @override
@@ -82,9 +88,17 @@ class EditImagePageState extends State<EditImagePage>
                         _pickBackgroundImage();
                       },
                       child: CachedNetworkImage(
-                          fit: BoxFit.cover,
-                          fadeInCurve: Curves.easeIn,
-                          imageUrl: _gem.backgroundUrl),
+                        imageUrl: "http://via.placeholder.com/200x150",
+                        fit: BoxFit.cover,
+                        fadeInCurve: Curves.easeIn,
+                        imageBuilder: (context, imageProvider) => Container(
+                          decoration: BoxDecoration(
+                            image: DecorationImage(
+                                image: _backgroundImageProvider,
+                                fit: BoxFit.cover),
+                          ),
+                        ),
+                      ),
                     ),
                   ),
                   Container(
@@ -144,8 +158,7 @@ class EditImagePageState extends State<EditImagePage>
             border: Border.all(width: 2.0, color: Colors.white),
             borderRadius: BorderRadius.circular(10.0),
             image: DecorationImage(
-                image: CachedNetworkImageProvider(_gem.photoUrl),
-                fit: BoxFit.cover),
+                image: _profileImageProvider, fit: BoxFit.cover),
           ),
           margin: EdgeInsets.only(left: 16.0),
           child: InkWell(
@@ -158,7 +171,68 @@ class EditImagePageState extends State<EditImagePage>
     );
   }
 
-  submit() async {}
+  void submit() async {
+    if (_profileImage == null && _backgroundImage == null) {
+      Modal.showAlert(context, 'Error', 'Please select a new image first.');
+    } else {
+      bool confirm = await Modal.showConfirmation(
+          context, 'Save Image(s)', 'Are you sure?');
+      if (confirm) {
+        setState(
+          () {
+            _isLoading = true;
+          },
+        );
+
+        if (_profileImage != null) {
+          String newPhotoUrl = await _uploadProfileImage();
+          await _db
+              .collection('Gems')
+              .document(_gem.id)
+              .updateData({'photoUrl': newPhotoUrl});
+        }
+
+        if (_backgroundImage != null) {
+          String newBackgroundUrl = await _uploadBackgroundImage();
+          await _db
+              .collection('Gems')
+              .document(_gem.id)
+              .updateData({'backgroundUrl': newBackgroundUrl});
+        }
+
+        setState(
+          () {
+            _isLoading = false;
+            Modal.showAlert(context, 'Success', 'Images saved.');
+          },
+        );
+      }
+    }
+  }
+
+  Future<String> _uploadProfileImage() async {
+    final StorageReference ref =
+        FirebaseStorage().ref().child('Images/Users/${_gem.id}/Profile');
+    final StorageUploadTask uploadTask = ref.putFile(_profileImage);
+    // final StreamSubscription<StorageTaskEvent> streamSubscription =
+    //     uploadTask.events.listen((event) {});
+
+
+    StorageReference sr = (await uploadTask.onComplete).ref;
+    // streamSubscription.cancel();
+    return (await sr.getDownloadURL()).toString();
+  }
+
+  Future<String> _uploadBackgroundImage() async {
+    final StorageReference ref =
+        FirebaseStorage().ref().child('Images/Users/${_gem.id}/Background');
+    final StorageUploadTask uploadTask = ref.putFile(_backgroundImage);
+    // final StreamSubscription<StorageTaskEvent> streamSubscription =
+    //     uploadTask.events.listen((event) {});
+    StorageReference sr = (await uploadTask.onComplete).ref;
+    // streamSubscription.cancel();
+    return (await sr.getDownloadURL()).toString();
+  }
 
   AppBar _buildAppBar() {
     return AppBar(
