@@ -214,12 +214,7 @@ class EditImagePageState extends State<EditImagePage>
     final StorageReference ref =
         FirebaseStorage().ref().child('Images/Users/${_gem.id}/Profile');
     final StorageUploadTask uploadTask = ref.putFile(_profileImage);
-    // final StreamSubscription<StorageTaskEvent> streamSubscription =
-    //     uploadTask.events.listen((event) {});
-
-
     StorageReference sr = (await uploadTask.onComplete).ref;
-    // streamSubscription.cancel();
     return (await sr.getDownloadURL()).toString();
   }
 
@@ -227,10 +222,7 @@ class EditImagePageState extends State<EditImagePage>
     final StorageReference ref =
         FirebaseStorage().ref().child('Images/Users/${_gem.id}/Background');
     final StorageUploadTask uploadTask = ref.putFile(_backgroundImage);
-    // final StreamSubscription<StorageTaskEvent> streamSubscription =
-    //     uploadTask.events.listen((event) {});
     StorageReference sr = (await uploadTask.onComplete).ref;
-    // streamSubscription.cancel();
     return (await sr.getDownloadURL()).toString();
   }
 

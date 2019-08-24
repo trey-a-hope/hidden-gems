@@ -3,6 +3,7 @@ import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hiddengems_flutter/constants.dart';
 
 class SignUpPage extends StatefulWidget {
   @override
@@ -34,25 +35,24 @@ class SignUpPageState extends State<SignUpPage>
           final FirebaseUser user = authResult.user;
 
           var data = {
-            'uid': user.uid,
-            'name': 'lbooogi_e',
-            'email': user.email,
-            'category': 'Food',
-            'subCategory': 'Desert Chef',
+            'backgroundUrl': DUMMY_BACKGROUND_PHOTO_URL,
             'bio': '',
-            'photoUrl':
-                'https://scontent-ort2-2.cdninstagram.com/vp/3a56d7546b56e8ade15bc689fde5d6e2/5DDCEB42/t51.2885-19/s150x150/67434243_2440150902697790_6474788590290206720_n.jpg?_nc_ht=scontent-ort2-2.cdninstagram.com',
-            'backgroundUrl': 'https://cdn.wallpapersafari.com/71/53/hb9IVU.jpg',
-            'likes': [],
-            'time': DateTime.now(),
-            'spotifyID': '',
-            'iTunesID': '',
-            'soundCloudName': '',
-            'youTubeID': '',
-            'instagramName': '',
+            'category': '???',
+            'email': user.email,
             'facebookName': '',
+            'iTunesID': '',
+            'instagramName': '',
+            'likes': [],
+            'name': '???',
+            'phoneNumber': '',
+            'photoUrl': DUMMY_PROFILE_PHOTO_URL,
+            'soundCloudName': '',
+            'spotifyID': '',
+            'subCategory': '???',
+            'time': DateTime.now(),
             'twitterName': '',
-            'phoneNumber': ''
+            'uid': user.uid,
+            'youTubeID': '',
           };
 
           DocumentReference dr = await _db.collection('Gems').add(data);
@@ -173,7 +173,6 @@ class SignUpPageState extends State<SignUpPage>
                       ),
                     ),
                   ),
-
                   Container(
                     child: Divider(
                       color: Colors.blue.shade400,
