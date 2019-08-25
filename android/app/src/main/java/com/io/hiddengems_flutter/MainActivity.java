@@ -1,4 +1,4 @@
-package com.example.hiddengems_flutter;
+package com.io.hiddengems_flutter;
 
 import android.os.Bundle;
 import io.flutter.app.FlutterActivity;

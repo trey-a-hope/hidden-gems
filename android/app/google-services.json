@@ -30,6 +30,49 @@
             {
               "client_id": "672823748599-276vgie9ejt7m78tkgf7afrfau1iu4bl.apps.googleusercontent.com",
               "client_type": 3
+            },
+            {
+              "client_id": "672823748599-pr3l77v9jcum00c7ej3d559dfc3q58h0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.hiddengemsFlutter"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:672823748599:android:50ab28c23c83eaad",
+        "android_client_info": {
+          "package_name": "com.io.hiddengems_flutter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "672823748599-276vgie9ejt7m78tkgf7afrfau1iu4bl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCK557hZ5ZJKx-vz-crdn0La2QwWjstZfA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "672823748599-276vgie9ejt7m78tkgf7afrfau1iu4bl.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "672823748599-pr3l77v9jcum00c7ej3d559dfc3q58h0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.hiddengemsFlutter"
+              }
             }
           ]
         }

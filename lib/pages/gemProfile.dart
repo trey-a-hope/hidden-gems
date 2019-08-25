@@ -108,7 +108,7 @@ class GemProfilePageState extends State<GemProfilePage>
   _call() async {
     if (_gem.phoneNumber.isEmpty) {
       Modal.showInSnackBar(
-          _scaffoldKey, 'Sorry - This user did not provide an phone number.');
+          _scaffoldKey, 'Sorry - This user did not provide a phone number.');
     } else {
       // Android
       String uri = 'tel:+1${_gem.phoneNumber}';
