@@ -23,6 +23,7 @@ class EditProfilePageState extends State<EditProfilePage>
   Gem _gem;
   bool _isLoading = true;
   bool _autoValidate = false;
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final _formKey = GlobalKey<FormState>();
 
@@ -192,22 +193,30 @@ class EditProfilePageState extends State<EditProfilePage>
           context, 'Update Profile', 'Are you sure?');
 
       if (confirm) {
-        setState(
-          () {
-            _isLoading = true;
-          },
-        );
+        try {
+          setState(
+            () {
+              _isLoading = true;
+            },
+          );
 
-        await _submitFormData();
-        await _submitImages();
+          await _submitFormData();
+          await _submitImages();
 
-        setState(
-          () {
-            _isLoading = false;
-            Modal.showAlert(context, 'Profile Updated',
-                'Be sure to refresh the home page.');
-          },
-        );
+          setState(
+            () {
+              _isLoading = false;
+              Modal.showInSnackBar(_scaffoldKey, 'Profile updated.');
+            },
+          );
+        } catch (e) {
+          setState(
+            () {
+              _isLoading = false;
+              Modal.showInSnackBar(_scaffoldKey, e.message);
+            },
+          );
+        }
       }
     } else {
       setState(
@@ -268,22 +277,7 @@ class EditProfilePageState extends State<EditProfilePage>
       'youTubeID': _youTubeController.text
     };
 
-    _db
-        .collection('Gems')
-        .document(_gem.id)
-        .updateData(data)
-        .then(
-          (res) {},
-        )
-        .catchError(
-      (e) {
-        Modal.showAlert(
-          context,
-          'Error',
-          e.toString(),
-        );
-      },
-    );
+    await _db.collection('Gems').document(_gem.id).updateData(data);
   }
 
   AppBar _buildAppBar() {
@@ -609,6 +603,7 @@ class EditProfilePageState extends State<EditProfilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       backgroundColor: Colors.grey.shade300,
       appBar: _buildAppBar(),
       body: Builder(

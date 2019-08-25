@@ -70,22 +70,21 @@ class NavDrawerState extends State<NavDrawer>
               color: Colors.black,
             ),
           ),
-          ListTile(
-            leading: Icon(MdiIcons.searchWeb, color: _drawerIconColor),
-            title: Text(
-              'Search Gems',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SearchPage(),
-                ),
-              );
-            },
-          ),
-          Divider(),
+          // ListTile(
+          //   leading: Icon(MdiIcons.searchWeb, color: _drawerIconColor),
+          //   title: Text(
+          //     'Search Gems',
+          //     style: TextStyle(fontWeight: FontWeight.bold),
+          //   ),
+          //   onTap: () {
+          //     Navigator.push(
+          //       context,
+          //       MaterialPageRoute(
+          //         builder: (context) => SearchPage(),
+          //       ),
+          //     );
+          //   },
+          // ),
           user != null ? ListTile(
             leading: Icon(MdiIcons.accountEdit, color: _drawerIconColor),
             title: Text(

@@ -20,7 +20,7 @@ class SignUpPage extends StatefulWidget {
 
 class SignUpPageState extends State<SignUpPage>
     with SingleTickerProviderStateMixin {
-  static final String path = "lib/src/pages/login/signup1.dart";
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String dropdownValue;
 
@@ -66,65 +66,56 @@ class SignUpPageState extends State<SignUpPage>
       bool confirm =
           await Modal.showConfirmation(context, 'Submit', 'Are you ready?');
       if (confirm) {
-        setState(
-          () {
-            _isLoading = true;
-          },
-        );
+        try {
+          setState(
+            () {
+              _isLoading = true;
+            },
+          );
 
-        //Create new user in auth.
-        _auth
-            .createUserWithEmailAndPassword(
-          email: _emailController.text,
-          password: _passwordController.text,
-        )
-            .then(
-          (authResult) async {
-            //Add user info to Database.
-            final FirebaseUser user = authResult.user;
+          //Create new user in auth.
+          AuthResult authResult = await _auth.createUserWithEmailAndPassword(
+            email: _emailController.text,
+            password: _passwordController.text,
+          );
+          final FirebaseUser user = authResult.user;
 
-            var data = {
-              'backgroundUrl': DUMMY_BACKGROUND_PHOTO_URL,
-              'bio': '',
-              'category': _categoryController,
-              'email': user.email,
-              'facebookName': '',
-              'iTunesID': '',
-              'instagramName': '',
-              'likes': [],
-              'name': _nameController.text,
-              'phoneNumber': '',
-              'photoUrl': DUMMY_PROFILE_PHOTO_URL,
-              'soundCloudName': '',
-              'spotifyID': '',
-              'subCategory': _subCategoryController,
-              'time': DateTime.now(),
-              'twitterName': '',
-              'uid': user.uid,
-              'youTubeID': '',
-            };
+          var data = {
+            'backgroundUrl': DUMMY_BACKGROUND_PHOTO_URL,
+            'bio': '',
+            'category': _categoryController,
+            'email': user.email,
+            'facebookName': '',
+            'iTunesID': '',
+            'instagramName': '',
+            'likes': [],
+            'name': _nameController.text,
+            'phoneNumber': '',
+            'photoUrl': DUMMY_PROFILE_PHOTO_URL,
+            'soundCloudName': '',
+            'spotifyID': '',
+            'subCategory': _subCategoryController,
+            'time': DateTime.now(),
+            'twitterName': '',
+            'uid': user.uid,
+            'youTubeID': '',
+          };
 
-            DocumentReference dr = await _db.collection('Gems').add(data);
-            await _db
-                .collection('Gems')
-                .document(dr.documentID)
-                .updateData({'id': dr.documentID});
+          DocumentReference dr = await _db.collection('Gems').add(data);
+          await _db
+              .collection('Gems')
+              .document(dr.documentID)
+              .updateData({'id': dr.documentID});
 
-            Modal.showAlert(context, 'Done', 'New gem created.');
-          },
-        ).catchError(
-          (e) {
-            Modal.showAlert(context, 'Error', e.toString());
-          },
-        ).whenComplete(
-          () {
-            setState(
-              () {
-                _isLoading = false;
-              },
-            );
-          },
-        );
+          Navigator.popUntil(
+              context, ModalRoute.withName(Navigator.defaultRouteName));
+        } catch (e) {
+          setState(
+            () {
+              Modal.showInSnackBar(_scaffoldKey, e.message);
+            },
+          );
+        }
       }
     } else {
       setState(
@@ -138,123 +129,123 @@ class SignUpPageState extends State<SignUpPage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+        key: _scaffoldKey,
         body: Form(
-      key: _formKey,
-      autovalidate: _autoValidate,
-      child: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
-          : SingleChildScrollView(
-              child: Padding(
-                padding: EdgeInsets.all(30),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    const SizedBox(height: 40.0),
-                    Stack(
+          key: _formKey,
+          autovalidate: _autoValidate,
+          child: _isLoading
+              ? Center(
+                  child: CircularProgressIndicator(),
+                )
+              : SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.all(30),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
                       children: <Widget>[
-                        Padding(
-                          padding: const EdgeInsets.only(left: 32.0),
-                          child: Text(
-                            'Create Profile',
-                            style: TextStyle(
-                                fontSize: 30.0,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green),
-                          ),
-                        ),
-                      ],
-                    ),
-                    const SizedBox(height: 60.0),
-                    nameFormField(),
-                    SizedBox(height: 20),
-                    emailFormField(),
-                    SizedBox(height: 30),
-                    passwordFormField(),
-                    SizedBox(height: 20),
-                    Text('Talent Category'),
-                    categoryDropdownField(),
-                    SizedBox(height: 30),
-                    _categoryController == null
-                        ? Container()
-                        : Text('Talent Sub Category'),
-                    _categoryController == null
-                        ? Container()
-                        : subCategoryDropdownField(),
-                    const SizedBox(height: 40.0),
-                    // Align(
-                    //   alignment: Alignment.center,
-                    //   child: ,
-                    // ),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        RaisedButton(
-                          padding:
-                              const EdgeInsets.fromLTRB(40.0, 16.0, 30.0, 16.0),
-                          color: Colors.green,
-                          elevation: 0,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.only(
-                                  topLeft: Radius.circular(30.0),
-                                  bottomLeft: Radius.circular(30.0),
-                                  topRight: Radius.circular(30.0),
-                                  bottomRight: Radius.circular(30.0))),
-                          onPressed: () {
-                            _signUp();
-                          },
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: <Widget>[
-                              Text(
-                                'SUBMIT',
+                        const SizedBox(height: 40.0),
+                        Stack(
+                          children: <Widget>[
+                            Padding(
+                              padding: const EdgeInsets.only(left: 32.0),
+                              child: Text(
+                                'Create Profile',
                                 style: TextStyle(
+                                    fontSize: 30.0,
                                     fontWeight: FontWeight.bold,
-                                    fontSize: 16.0),
+                                    color: Colors.green),
                               ),
-                              const SizedBox(width: 40.0),
-                              Icon(
-                                MdiIcons.arrowRight,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 60.0),
+                        nameFormField(),
+                        SizedBox(height: 20),
+                        emailFormField(),
+                        SizedBox(height: 30),
+                        passwordFormField(),
+                        SizedBox(height: 30),
+                        Text('Talent Category'),
+                        categoryDropdownField(),
+                        SizedBox(height: 30),
+                        _categoryController == null
+                            ? Container()
+                            : Text('Talent Sub Category'),
+                        _categoryController == null
+                            ? Container()
+                            : subCategoryDropdownField(),
+                        const SizedBox(height: 40.0),
+                        // Align(
+                        //   alignment: Alignment.center,
+                        //   child: ,
+                        // ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            RaisedButton(
+                              padding: const EdgeInsets.fromLTRB(
+                                  40.0, 16.0, 30.0, 16.0),
+                              color: Colors.green,
+                              elevation: 0,
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(30.0),
+                                      bottomLeft: Radius.circular(30.0),
+                                      topRight: Radius.circular(30.0),
+                                      bottomRight: Radius.circular(30.0))),
+                              onPressed: () {
+                                _signUp();
+                              },
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: <Widget>[
+                                  Text(
+                                    'SUBMIT',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontWeight: FontWeight.bold,
+                                        fontSize: 16.0),
+                                  ),
+                                  const SizedBox(width: 40.0),
+                                  Icon(MdiIcons.arrowRight,
+                                      size: 18.0, color: Colors.white)
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                        const SizedBox(height: 10.0),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            const SizedBox(width: 10.0),
+                            OutlineButton.icon(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 8.0,
+                                horizontal: 30.0,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0)),
+                              highlightedBorderColor: Colors.indigo,
+                              borderSide: BorderSide(color: Colors.indigo),
+                              color: Colors.indigo,
+                              textColor: Colors.indigo,
+                              icon: Icon(
+                                MdiIcons.arrowLeft,
                                 size: 18.0,
-                              )
-                            ],
-                          ),
+                              ),
+                              label: Text('Go Back To Login'),
+                              onPressed: () {
+                                Navigator.pop(context);
+                              },
+                            ),
+                          ],
                         )
                       ],
                     ),
-                    const SizedBox(height: 10.0),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        const SizedBox(width: 10.0),
-                        OutlineButton.icon(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: 8.0,
-                            horizontal: 30.0,
-                          ),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(20.0)),
-                          highlightedBorderColor: Colors.indigo,
-                          borderSide: BorderSide(color: Colors.indigo),
-                          color: Colors.indigo,
-                          textColor: Colors.indigo,
-                          icon: Icon(
-                            MdiIcons.arrowLeft,
-                            size: 18.0,
-                          ),
-                          label: Text('Go Back To Login'),
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                        ),
-                      ],
-                    )
-                  ],
+                  ),
                 ),
-              ),
-            ),
-    ));
+        ));
   }
 
   Widget nameFormField() {
@@ -302,7 +293,7 @@ class SignUpPageState extends State<SignUpPage>
       maxLengthEnforced: true,
       maxLength: MyFormData.passwordCharLimit,
       onFieldSubmitted: (term) {},
-      validator: Validater.isEmpty,
+      validator: Validater.password,
       onSaved: (value) {},
       decoration: InputDecoration(
         hintText: 'Password',

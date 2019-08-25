@@ -22,6 +22,7 @@ class GemProfilePageState extends State<GemProfilePage>
     with SingleTickerProviderStateMixin {
   GemProfilePageState(this._id);
   final PDInfo _pdInfo = PDInfo();
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   final String _id; //Gem ID
   final Color _iconColor = Colors.grey;
@@ -70,8 +71,8 @@ class GemProfilePageState extends State<GemProfilePage>
 
   _text() async {
     if (_gem.phoneNumber.isEmpty) {
-      Modal.showAlert(
-          context, 'Sorry', 'This user did not provide a phone number.');
+      Modal.showInSnackBar(
+          _scaffoldKey, 'Sorry - This user did not provide a phone number.');
     } else {
       // Android
       String uri = 'sms:+${_gem.phoneNumber}';
@@ -91,7 +92,8 @@ class GemProfilePageState extends State<GemProfilePage>
 
   _email() async {
     if (_gem.email.isEmpty) {
-      Modal.showAlert(context, 'Sorry', 'This user did not provide an email.');
+      Modal.showInSnackBar(
+          _scaffoldKey, 'Sorry - This user did not provide an email.');
     } else {
       String uri =
           'mailto:${_gem.email}?subject=Greetings!&body=Hello ${_gem.name}, how are you?';
@@ -105,8 +107,8 @@ class GemProfilePageState extends State<GemProfilePage>
 
   _call() async {
     if (_gem.phoneNumber.isEmpty) {
-      Modal.showAlert(
-          context, 'Sorry', 'This user did not provide an phone number.');
+      Modal.showInSnackBar(
+          _scaffoldKey, 'Sorry - This user did not provide an phone number.');
     } else {
       // Android
       String uri = 'tel:+1${_gem.phoneNumber}';
@@ -127,6 +129,7 @@ class GemProfilePageState extends State<GemProfilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      key: _scaffoldKey,
       appBar: _buildAppBar(),
       backgroundColor: Colors.grey.shade300,
       floatingActionButton: _buildFAB(),
