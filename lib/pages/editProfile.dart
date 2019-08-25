@@ -4,9 +4,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:hiddengems_flutter/constants.dart';
-import 'package:hiddengems_flutter/pages/editImages.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/services/validater.dart';
+import 'dart:io';
+import 'package:cached_network_image/cached_network_image.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class EditProfilePage extends StatefulWidget {
   @override
@@ -17,18 +20,18 @@ class EditProfilePageState extends State<EditProfilePage>
     with SingleTickerProviderStateMixin {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _db = Firestore.instance;
-  Gem gem;
+  Gem _gem;
   bool _isLoading = true;
   bool _autoValidate = false;
 
   final _formKey = GlobalKey<FormState>();
 
-  List<DropdownMenuItem<String>> musicSubCatDrop,
-      mediaSubCatDrop,
-      entertainmentSubCatDrop,
-      foodSubCatDrop,
-      techSubCatDrop,
-      artSubCatDrop;
+  List<DropdownMenuItem<String>> _musicSubCatDrop,
+      _mediaSubCatDrop,
+      _entertainmentSubCatDrop,
+      _foodSubCatDrop,
+      _techSubCatDrop,
+      _artSubCatDrop;
 
   String _categoryController, _subCategoryController;
 
@@ -42,6 +45,9 @@ class EditProfilePageState extends State<EditProfilePage>
   TextEditingController _facebookController = TextEditingController();
   TextEditingController _twitterController = TextEditingController();
   TextEditingController _youTubeController = TextEditingController();
+
+  File _profileImage, _backgroundImage;
+  ImageProvider _profileImageProvider, _backgroundImageProvider;
 
   @override
   void initState() {
@@ -70,7 +76,7 @@ class EditProfilePageState extends State<EditProfilePage>
     dynamic data = ds.data;
 
     List<String> musicSubCatList = List.from(data['music']['subCategories']);
-    musicSubCatDrop = musicSubCatList.map<DropdownMenuItem<String>>(
+    _musicSubCatDrop = musicSubCatList.map<DropdownMenuItem<String>>(
       (String value) {
         return DropdownMenuItem<String>(
           value: value,
@@ -80,7 +86,7 @@ class EditProfilePageState extends State<EditProfilePage>
     ).toList();
 
     List<String> mediaSubCatList = List.from(data['media']['subCategories']);
-    mediaSubCatDrop = mediaSubCatList.map<DropdownMenuItem<String>>(
+    _mediaSubCatDrop = mediaSubCatList.map<DropdownMenuItem<String>>(
       (String value) {
         return DropdownMenuItem<String>(
           value: value,
@@ -91,7 +97,7 @@ class EditProfilePageState extends State<EditProfilePage>
 
     List<String> entertainmentSubCatList =
         List.from(data['entertainment']['subCategories']);
-    entertainmentSubCatDrop =
+    _entertainmentSubCatDrop =
         entertainmentSubCatList.map<DropdownMenuItem<String>>(
       (String value) {
         return DropdownMenuItem<String>(
@@ -102,7 +108,7 @@ class EditProfilePageState extends State<EditProfilePage>
     ).toList();
 
     List<String> foodSubCatList = List.from(data['food']['subCategories']);
-    foodSubCatDrop = foodSubCatList.map<DropdownMenuItem<String>>(
+    _foodSubCatDrop = foodSubCatList.map<DropdownMenuItem<String>>(
       (String value) {
         return DropdownMenuItem<String>(
           value: value,
@@ -112,7 +118,7 @@ class EditProfilePageState extends State<EditProfilePage>
     ).toList();
 
     List<String> techSubCatList = List.from(data['tech']['subCategories']);
-    techSubCatDrop = techSubCatList.map<DropdownMenuItem<String>>(
+    _techSubCatDrop = techSubCatList.map<DropdownMenuItem<String>>(
       (String value) {
         return DropdownMenuItem<String>(
           value: value,
@@ -122,7 +128,7 @@ class EditProfilePageState extends State<EditProfilePage>
     ).toList();
 
     List<String> artSubCatList = List.from(data['art']['subCategories']);
-    artSubCatDrop = artSubCatList.map<DropdownMenuItem<String>>(
+    _artSubCatDrop = artSubCatList.map<DropdownMenuItem<String>>(
       (String value) {
         return DropdownMenuItem<String>(
           value: value,
@@ -140,58 +146,66 @@ class EditProfilePageState extends State<EditProfilePage>
         .getDocuments();
     DocumentSnapshot ds = qs.documents[0];
 
-    gem = Gem.extractDocument(ds);
+    _gem = Gem.extractDocument(ds);
+
+    _profileImageProvider = NetworkImage(_gem.photoUrl);
+    _backgroundImageProvider = NetworkImage(_gem.backgroundUrl);
   }
 
   Future<void> _setFields() async {
-    _nameController.text = gem.name;
-    _bioController.text = gem.bio;
-    _categoryController = gem.category;
-    _subCategoryController = gem.subCategory;
-    _phoneController.text = gem.phoneNumber;
-    _spotifyController.text = gem.spotifyID;
-    _iTunesController.text = gem.iTunesID;
-    _soundCloudController.text = gem.soundCloudName;
-    _instagramController.text = gem.instagramName;
-    _facebookController.text = gem.facebookName;
-    _twitterController.text = gem.twitterName;
-    _youTubeController.text = gem.youTubeID;
+    _nameController.text = _gem.name;
+    _bioController.text = _gem.bio;
+    _categoryController = _gem.category;
+    _subCategoryController = _gem.subCategory;
+    _phoneController.text = _gem.phoneNumber;
+    _spotifyController.text = _gem.spotifyID;
+    _iTunesController.text = _gem.iTunesID;
+    _soundCloudController.text = _gem.soundCloudName;
+    _instagramController.text = _gem.instagramName;
+    _facebookController.text = _gem.facebookName;
+    _twitterController.text = _gem.twitterName;
+    _youTubeController.text = _gem.youTubeID;
   }
 
-  void submit() async {
+  Future _pickProfileImage() async {
+    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+    setState(() {
+      _profileImageProvider = FileImage(image);
+      _profileImage = image;
+    });
+  }
+
+  Future _pickBackgroundImage() async {
+    File image = await ImagePicker.pickImage(source: ImageSource.gallery);
+
+    setState(() {
+      _backgroundImageProvider = FileImage(image);
+      _backgroundImage = image;
+    });
+  }
+
+  void _submit() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
       bool confirm = await Modal.showConfirmation(
           context, 'Update Profile', 'Are you sure?');
-      if (confirm) {
-        var data = {
-          'bio': _bioController.text,
-          'category': _categoryController,
-          'facebookName': _facebookController.text,
-          'iTunesID': _iTunesController.text,
-          'instagramName': _instagramController.text,
-          'name': _nameController.text,
-          'phoneNumber': _phoneController.text,
-          'soundCloudName': _soundCloudController.text,
-          'spotifyID': _spotifyController.text,
-          'subCategory': _subCategoryController,
-          'twitterName': _twitterController.text,
-          'youTubeID': _youTubeController.text
-        };
 
-        _db.collection('Gems').document(gem.id).updateData(data).then(
-          (res) {
+      if (confirm) {
+        setState(
+          () {
+            _isLoading = true;
+          },
+        );
+
+        await _submitFormData();
+        await _submitImages();
+
+        setState(
+          () {
+            _isLoading = false;
             Modal.showAlert(context, 'Profile Updated',
                 'Be sure to refresh the home page.');
-          },
-        ).catchError(
-          (e) {
-            Modal.showAlert(
-              context,
-              'Error',
-              e.toString(),
-            );
           },
         );
       }
@@ -204,6 +218,74 @@ class EditProfilePageState extends State<EditProfilePage>
     }
   }
 
+  Future<void> _submitImages() async {
+    if (_profileImage != null) {
+      String newPhotoUrl = await _uploadProfileImage();
+      await _db
+          .collection('Gems')
+          .document(_gem.id)
+          .updateData({'photoUrl': newPhotoUrl});
+    }
+
+    if (_backgroundImage != null) {
+      String newBackgroundUrl = await _uploadBackgroundImage();
+      await _db
+          .collection('Gems')
+          .document(_gem.id)
+          .updateData({'backgroundUrl': newBackgroundUrl});
+    }
+  }
+
+  Future<String> _uploadProfileImage() async {
+    final StorageReference ref =
+        FirebaseStorage().ref().child('Images/Users/${_gem.id}/Profile');
+    final StorageUploadTask uploadTask = ref.putFile(_profileImage);
+    StorageReference sr = (await uploadTask.onComplete).ref;
+    return (await sr.getDownloadURL()).toString();
+  }
+
+  Future<String> _uploadBackgroundImage() async {
+    final StorageReference ref =
+        FirebaseStorage().ref().child('Images/Users/${_gem.id}/Background');
+    final StorageUploadTask uploadTask = ref.putFile(_backgroundImage);
+    StorageReference sr = (await uploadTask.onComplete).ref;
+    return (await sr.getDownloadURL()).toString();
+  }
+
+  Future<void> _submitFormData() async {
+    var data = {
+      'bio': _bioController.text,
+      'category': _categoryController,
+      'facebookName': _facebookController.text,
+      'iTunesID': _iTunesController.text,
+      'instagramName': _instagramController.text,
+      'name': _nameController.text,
+      'phoneNumber': _phoneController.text,
+      'soundCloudName': _soundCloudController.text,
+      'spotifyID': _spotifyController.text,
+      'subCategory': _subCategoryController,
+      'twitterName': _twitterController.text,
+      'youTubeID': _youTubeController.text
+    };
+
+    _db
+        .collection('Gems')
+        .document(_gem.id)
+        .updateData(data)
+        .then(
+          (res) {},
+        )
+        .catchError(
+      (e) {
+        Modal.showAlert(
+          context,
+          'Error',
+          e.toString(),
+        );
+      },
+    );
+  }
+
   AppBar _buildAppBar() {
     return AppBar(
       centerTitle: true,
@@ -211,36 +293,24 @@ class EditProfilePageState extends State<EditProfilePage>
         'EDIT PROFILE',
         style: TextStyle(letterSpacing: 2.0),
       ),
-      actions: [
-        IconButton(
-          icon: Icon(MdiIcons.image),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => EditImagePage(),
-              ),
-            );
-          },
-        )
-      ],
+      actions: [],
     );
   }
 
   List<DropdownMenuItem<String>> _getSubCatOptions() {
     switch (_categoryController) {
       case 'Music':
-        return musicSubCatDrop;
+        return _musicSubCatDrop;
       case 'Media':
-        return mediaSubCatDrop;
+        return _mediaSubCatDrop;
       case 'Entertainment':
-        return entertainmentSubCatDrop;
+        return _entertainmentSubCatDrop;
       case 'Food':
-        return foodSubCatDrop;
+        return _foodSubCatDrop;
       case 'Tech':
-        return techSubCatDrop;
+        return _techSubCatDrop;
       case 'Art':
-        return artSubCatDrop;
+        return _artSubCatDrop;
       default:
         return null;
     }
@@ -512,7 +582,7 @@ class EditProfilePageState extends State<EditProfilePage>
       width: MediaQuery.of(context).size.width,
       height: 50.0,
       child: RaisedButton(
-        onPressed: () => submit(),
+        onPressed: () => _submit(),
         color: Colors.blue,
         child: Center(
           child: Row(
@@ -539,6 +609,7 @@ class EditProfilePageState extends State<EditProfilePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.grey.shade300,
       appBar: _buildAppBar(),
       body: Builder(
         builder: (context) => _isLoading
@@ -548,65 +619,209 @@ class EditProfilePageState extends State<EditProfilePage>
             : Form(
                 key: _formKey,
                 autovalidate: _autoValidate,
-                child: Padding(
-                  padding: EdgeInsets.all(15),
-                  child: ListView(
-                    children: <Widget>[
-                      Text('Basic',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.blue)),
-                      SizedBox(height: 20),
-                      nameFormField(),
-                      bioFormField(),
-                      phoneFormField(),
-                      Divider(),
-                      SizedBox(height: 20),
-                      Text('Talent',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.green)),
-                      SizedBox(height: 20),
-                      Text('Category'),
-                      categoryDropdownField(),
-                      SizedBox(height: 20),
-                      Text('Sub Category'),
-                      subCategoryDropdownField(),
-                      Divider(),
-                      SizedBox(height: 20),
-                      Text('Social',
-                          style: TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.red)),
-                      SizedBox(height: 20),
-                      instagramFormField(),
-                      SizedBox(height: 20),
-                      facebookFormField(),
-                      SizedBox(height: 20),
-                      twitterFormField(),
-                      SizedBox(height: 20),
-                      youTubeFormField(),
-                      SizedBox(height: 20),
-                      _categoryController == 'Music'
-                          ? spotifyFormField()
-                          : Container(),
-                      SizedBox(height: 20),
-                      _categoryController == 'Music'
-                          ? iTunesFormField()
-                          : Container(),
-                      SizedBox(height: 20),
-                      _categoryController == 'Music'
-                          ? soundCloudFormField()
-                          : Container()
-                    ],
-                  ),
+                child: ListView(
+                  children: <Widget>[
+                    Stack(
+                      children: <Widget>[
+                        SizedBox(
+                          height: 250,
+                          width: double.infinity,
+                          child: InkWell(
+                            onTap: () {
+                              _pickBackgroundImage();
+                            },
+                            child: CachedNetworkImage(
+                              imageUrl: "http://via.placeholder.com/200x150",
+                              fit: BoxFit.cover,
+                              fadeInCurve: Curves.easeIn,
+                              imageBuilder: (context, imageProvider) =>
+                                  Container(
+                                decoration: BoxDecoration(
+                                  image: DecorationImage(
+                                      image: _backgroundImageProvider,
+                                      fit: BoxFit.cover),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        Container(
+                          margin: EdgeInsets.fromLTRB(16.0, 200.0, 16.0, 16.0),
+                          child: Column(
+                            children: <Widget>[
+                              _buildInfoBox(),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.all(20),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: <Widget>[
+                          _buildBasic(),
+                          SizedBox(height: 20),
+                          _buildTalent(),
+                          SizedBox(height: 20),
+                          _buildSocial()
+                        ],
+                      ),
+                    )
+                  ],
                 ),
               ),
       ),
       bottomNavigationBar: _buildBottomNavigationBar(),
+    );
+  }
+
+  _buildBasic() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('Basic',
+                textAlign: TextAlign.left,
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.blue)),
+            SizedBox(height: 20),
+            nameFormField(),
+            bioFormField(),
+            phoneFormField(),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _buildTalent() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('Talent',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.green)),
+            SizedBox(height: 20),
+            Text('Category'),
+            SizedBox(height: 20),
+            categoryDropdownField(),
+            SizedBox(height: 20),
+            Text('Sub Category'),
+            SizedBox(height: 20),
+            subCategoryDropdownField(),
+            Divider(),
+            SizedBox(height: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _buildSocial() {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(5.0),
+      ),
+      child: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Text('Social',
+                style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.red)),
+            SizedBox(height: 20),
+            instagramFormField(),
+            SizedBox(height: 20),
+            facebookFormField(),
+            SizedBox(height: 20),
+            twitterFormField(),
+            SizedBox(height: 20),
+            youTubeFormField(),
+            SizedBox(height: 20),
+            _categoryController == 'Music' ? spotifyFormField() : Container(),
+            _categoryController == 'Music' ? SizedBox(height: 20) : Container(),
+            _categoryController == 'Music' ? iTunesFormField() : Container(),
+            _categoryController == 'Music' ? SizedBox(height: 20) : Container(),
+            _categoryController == 'Music' ? soundCloudFormField() : Container()
+          ],
+        ),
+      ),
+    );
+  }
+
+  _buildInfoBox() {
+    return Stack(
+      children: <Widget>[
+        Container(
+          padding: EdgeInsets.all(16.0),
+          margin: EdgeInsets.only(top: 20.0),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(5.0),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Container(
+                margin: EdgeInsets.only(left: 110.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      _nameController.text,
+                      style: Theme.of(context).textTheme.title,
+                    ),
+                    ListTile(
+                      contentPadding: EdgeInsets.all(0),
+                      title: Text(_categoryController),
+                      subtitle: Text(_subCategoryController),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(height: 10.0)
+            ],
+          ),
+        ),
+        Container(
+          height: 100,
+          width: 100,
+          decoration: BoxDecoration(
+            border: Border.all(width: 2.0, color: Colors.white),
+            borderRadius: BorderRadius.circular(10.0),
+            image: DecorationImage(
+                image: _profileImageProvider, fit: BoxFit.cover),
+          ),
+          margin: EdgeInsets.only(left: 16.0),
+          child: InkWell(
+            onTap: () {
+              _pickProfileImage();
+            },
+          ),
+        ),
+      ],
     );
   }
 }

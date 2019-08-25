@@ -2,9 +2,9 @@
 
 Mobile application for Dayton artists.
 
-#iOS for Image Picker
-#Sign Up Page
 #Change Email Page
+#Forgot Password
 #Change Password Page
+#iOS for Image Picker
 #Implement better search.
 #Update Splash Screens.

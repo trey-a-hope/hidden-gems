@@ -8,6 +8,7 @@ class MyFormData {
   static int nameCharLimit = 20;
   static int bioCharLimit = 300;
   static int phoneCarLimit = 10;
+  static int passwordCharLimit = 15;
   static List<String> categories = [
     'Music',
     'Media',
