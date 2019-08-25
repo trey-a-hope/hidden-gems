@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/pages/settings.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -7,6 +8,7 @@ import 'package:hiddengems_flutter/pages/editProfile.dart';
 import 'package:hiddengems_flutter/services/pdInfo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
+import 'package:hiddengems_flutter/constants.dart';
 
 class NavDrawer extends StatefulWidget {
   @override
@@ -47,29 +49,33 @@ class NavDrawerState extends State<NavDrawer>
     );
   }
 
+  Widget _buildUserAccountsDrawerHeader() {
+    return UserAccountsDrawerHeader(
+      accountName: Text(
+        'Hidden Gems',
+        style: TextStyle(fontWeight: FontWeight.bold),
+      ),
+      accountEmail: Text('Dayton has more to offer...'),
+      currentAccountPicture: GestureDetector(
+        child: CircleAvatar(
+            backgroundImage:
+                CachedNetworkImageProvider(DUMMY_PROFILE_PHOTO_URL),
+            backgroundColor: Colors.transparent,
+            radius: 10.0),
+      ),
+      decoration: BoxDecoration(
+        color: Colors.black,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Drawer(
       child: Column(
         mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          UserAccountsDrawerHeader(
-            accountName: Text(
-              'Hidden Gems',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            accountEmail: Text('Dayton has more to offer...'),
-            currentAccountPicture: GestureDetector(
-              child: CircleAvatar(
-                backgroundColor: Colors.transparent,
-                radius: 10.0,
-                child: Image.asset('assets/images/logo.jpg'),
-              ),
-            ),
-            decoration: BoxDecoration(
-              color: Colors.black,
-            ),
-          ),
+          _buildUserAccountsDrawerHeader(),
           // ListTile(
           //   leading: Icon(MdiIcons.searchWeb, color: _drawerIconColor),
           //   title: Text(
@@ -85,21 +91,23 @@ class NavDrawerState extends State<NavDrawer>
           //     );
           //   },
           // ),
-          user != null ? ListTile(
-            leading: Icon(MdiIcons.accountEdit, color: _drawerIconColor),
-            title: Text(
-              'Edit Profile',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditProfilePage(),
-                ),
-              );
-            },
-          ) : Container(),
+          user != null
+              ? ListTile(
+                  leading: Icon(MdiIcons.accountEdit, color: _drawerIconColor),
+                  title: Text(
+                    'Edit Profile',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => EditProfilePage(),
+                      ),
+                    );
+                  },
+                )
+              : Container(),
           user == null
               ? ListTile(
                   leading: Icon(MdiIcons.creation, color: _drawerIconColor),
@@ -132,21 +140,23 @@ class NavDrawerState extends State<NavDrawer>
                     }
                   },
                 ),
-          ListTile(
-            leading: Icon(MdiIcons.settings, color: _drawerIconColor),
-            title: Text(
-              'Settings',
-              style: TextStyle(fontWeight: FontWeight.bold),
-            ),
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => SettingsPage(),
+          user == null
+              ? Container()
+              : ListTile(
+                  leading: Icon(MdiIcons.settings, color: _drawerIconColor),
+                  title: Text(
+                    'Settings',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SettingsPage(),
+                      ),
+                    );
+                  },
                 ),
-              );
-            },
-          ),
           Expanded(
             child: Align(
               alignment: Alignment.bottomCenter,

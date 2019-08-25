@@ -159,7 +159,7 @@ class LoginPageState extends State<LoginPage>
                       emailFormField(),
                       SizedBox(height: 30),
                       passwordFormField(),
-                      SizedBox(height: 30),
+                      SizedBox(height: 40),
                       Padding(
                         padding: EdgeInsets.only(left: 32.0),
                         child: InkWell(
@@ -174,7 +174,7 @@ class LoginPageState extends State<LoginPage>
                       //   alignment: Alignment.center,
                       //   child: ,
                       // ),
-                      SizedBox(height: 40),
+                      SizedBox(height: 50),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
@@ -205,7 +205,7 @@ class LoginPageState extends State<LoginPage>
                                 ),
                                 const SizedBox(width: 40.0),
                                 Icon(
-                                  MdiIcons.arrowRight,
+                                  MdiIcons.login,
                                   size: 18.0,
                                   color: Colors.white,
                                 )
@@ -218,7 +218,6 @@ class LoginPageState extends State<LoginPage>
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: <Widget>[
-                          const SizedBox(width: 10.0),
                           OutlineButton.icon(
                             padding: const EdgeInsets.symmetric(
                               vertical: 8.0,
@@ -239,6 +238,11 @@ class LoginPageState extends State<LoginPage>
                               Navigator.pop(context);
                             },
                           ),
+                        ],
+                      ),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: <Widget>[
                           OutlineButton.icon(
                             padding: const EdgeInsets.symmetric(
                               vertical: 8.0,
@@ -246,10 +250,10 @@ class LoginPageState extends State<LoginPage>
                             ),
                             shape: RoundedRectangleBorder(
                                 borderRadius: BorderRadius.circular(20.0)),
-                            highlightedBorderColor: Colors.indigo,
-                            borderSide: BorderSide(color: Colors.indigo),
-                            color: Colors.indigo,
-                            textColor: Colors.indigo,
+                            highlightedBorderColor: Colors.red,
+                            borderSide: BorderSide(color: Colors.red),
+                            color: Colors.red,
+                            textColor: Colors.red,
                             icon: Icon(
                               MdiIcons.arrowRight,
                               size: 18.0,

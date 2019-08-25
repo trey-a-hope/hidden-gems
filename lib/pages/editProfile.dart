@@ -178,7 +178,6 @@ class EditProfilePageState extends State<EditProfilePage>
 
   Future _pickBackgroundImage() async {
     File image = await ImagePicker.pickImage(source: ImageSource.gallery);
-
     setState(() {
       _backgroundImageProvider = FileImage(image);
       _backgroundImage = image;

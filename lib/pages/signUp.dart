@@ -207,7 +207,7 @@ class SignUpPageState extends State<SignUpPage>
                                         fontSize: 16.0),
                                   ),
                                   const SizedBox(width: 40.0),
-                                  Icon(MdiIcons.arrowRight,
+                                  Icon(MdiIcons.send,
                                       size: 18.0, color: Colors.white)
                                 ],
                               ),

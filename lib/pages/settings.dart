@@ -94,6 +94,7 @@ class SettingsPageState extends State<SettingsPage> {
                         },
                       )
                     : Container(),
+                    Divider(),
                 user != null
                     ? ListTile(
                         leading: Icon(MdiIcons.lock, color: Colors.black),
@@ -136,6 +137,7 @@ class SettingsPageState extends State<SettingsPage> {
                         },
                       )
                     : Container(),
+                    Divider()
               ],
             ),
     );
