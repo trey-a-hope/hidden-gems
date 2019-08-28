@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:hiddengems_flutter/common/content_heading_widget.dart';
+import 'package:hiddengems_flutter/common/drawer_widget.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:hiddengems_flutter/widgets/gemSectionHeader.dart';
-import 'package:hiddengems_flutter/widgets/gemSectionLayout.dart';
-import 'package:hiddengems_flutter/widgets/navDrawer.dart';
+import 'package:hiddengems_flutter/common/gem_section_header.dart';
+import 'package:hiddengems_flutter/common/gem_section_layout.dart';
+import 'package:hiddengems_flutter/common/drawer_widget.dart';
 import 'package:hiddengems_flutter/models/section.dart';
+import 'package:hiddengems_flutter/pages/subCategories.dart';
+
+import '../style/colors.dart';
+import '../style/text.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -28,7 +34,7 @@ class HomePageState extends State<HomePage>
   Section _tech = Section('TECH');
   Section _art = Section('ART');
 
-  int _totalGemCount, _totalCategories, _totalSubcategories;
+  int _totalGemCount;
 
   @override
   void initState() {
@@ -140,13 +146,9 @@ class HomePageState extends State<HomePage>
     ];
 
     _totalGemCount = 0;
-    _totalCategories = 0;
-    _totalSubcategories = 0;
 
     for (Section s in sections) {
       _totalGemCount += s.gems.length;
-      _totalCategories += 1;
-      _totalSubcategories += s.subCategories.length;
     }
   }
 
@@ -174,7 +176,7 @@ class HomePageState extends State<HomePage>
     return Scaffold(
       key: _scaffoldKey,
       appBar: _buildAppBar(),
-      drawer: NavDrawer(),
+      drawer: DrawerWidget(),
       body: Builder(
         builder: (context) => _isLoading
             ? Center(
@@ -189,39 +191,199 @@ class HomePageState extends State<HomePage>
                     SliverList(
                       delegate: SliverChildListDelegate(
                         <Widget>[
-                          _buildStatCard(),
-                          GemSectionHeader(_music, true).build(context),
+                          Padding(
+                            padding: const EdgeInsets.all(16),
+                            child: Material(
+                              elevation: 4,
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(12)),
+                              child: Padding(
+                                padding: const EdgeInsets.all(16),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      children: <Widget>[
+                                        Row(
+                                          children: <Widget>[
+                                            Text(
+                                              "TOTAL GEMS",
+                                              style: hoursPlayedLabelTextStyle,
+                                            ),
+                                          ],
+                                        ),
+                                        SizedBox(
+                                          height: 4,
+                                        ),
+                                        Text(
+                                          '$_totalGemCount',
+                                          style: hoursPlayedTextStyle,
+                                        )
+                                      ],
+                                    ),
+                                    Row(
+                                      children: <Widget>[
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SubCategories(
+                                                          _music.title,
+                                                          _music.subCategories,
+                                                          _music.gems,
+                                                          _music.accentColor,
+                                                          _music.icon)),
+                                            );
+                                          },
+                                          child: Icon(MdiIcons.diamondStone,
+                                              color: _music.primaryColor),
+                                        ),
+                                        SizedBox(width: 8),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SubCategories(
+                                                          _media.title,
+                                                          _media.subCategories,
+                                                          _media.gems,
+                                                          _media.accentColor,
+                                                          _media.icon)),
+                                            );
+                                          },
+                                          child: Icon(MdiIcons.diamondStone,
+                                              color: _media.primaryColor),
+                                        ),
+                                        SizedBox(width: 8),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SubCategories(
+                                                          _entertainment.title,
+                                                          _entertainment.subCategories,
+                                                          _entertainment.gems,
+                                                          _entertainment.accentColor,
+                                                          _entertainment.icon)),
+                                            );
+                                          },
+                                          child: Icon(MdiIcons.diamondStone,
+                                              color: _entertainment.primaryColor),
+                                        ),
+                                        SizedBox(width: 8),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SubCategories(
+                                                          _food.title,
+                                                          _food.subCategories,
+                                                          _food.gems,
+                                                          _food.accentColor,
+                                                          _food.icon)),
+                                            );
+                                          },
+                                          child: Icon(MdiIcons.diamondStone,
+                                              color: _food.primaryColor),
+                                        ),
+                                        SizedBox(width: 8),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SubCategories(
+                                                          _tech.title,
+                                                          _tech.subCategories,
+                                                          _tech.gems,
+                                                          _tech.accentColor,
+                                                          _tech.icon)),
+                                            );
+                                          },
+                                          child: Icon(MdiIcons.diamondStone,
+                                              color: _tech.primaryColor),
+                                        ),
+                                        SizedBox(width: 8),
+                                        InkWell(
+                                          onTap: () {
+                                            Navigator.push(
+                                              context,
+                                              MaterialPageRoute(
+                                                  builder: (context) =>
+                                                      SubCategories(
+                                                          _art.title,
+                                                          _art.subCategories,
+                                                          _art.gems,
+                                                          _art.accentColor,
+                                                          _art.icon)),
+                                            );
+                                          },
+                                          child: Icon(MdiIcons.diamondStone,
+                                              color: _art.primaryColor),
+                                        ),
+                                      ],
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
+                          ),
+                          GemSectionHeader(section: _music, isLeft: true)
+                              .build(context),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: ContentHeadingWidget(heading: 'Music'),
+                          ),
+                          GemSectionLayout(section: _music).build(context),
+                          Divider(),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: ContentHeadingWidget(heading: 'Media'),
+                          ),
+                          GemSectionLayout(section: _media).build(context),
                           SizedBox(height: 20),
-                          GemSectionLayout(_music).build(context),
+                          GemSectionHeader(
+                                  section: _entertainment, isLeft: true)
+                              .build(context),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child:
+                                ContentHeadingWidget(heading: 'Entertainment'),
+                          ),
+                          GemSectionLayout(section: _entertainment)
+                              .build(context),
+                          Divider(),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: ContentHeadingWidget(heading: 'Food'),
+                          ),
+                          GemSectionLayout(section: _food).build(context),
                           SizedBox(height: 20),
-                          // Divider(color: Colors.black),
-                          // SizedBox(height: 20),
-                          // GemSectionHeader(_media, false).build(context),
-                          GemSectionLayout(_media).build(context),
-                          SizedBox(height: 20),
-                          // Divider(color: Colors.black),
-                          // SizedBox(height: 20),
-                          GemSectionHeader(_entertainment, true).build(context),
-                          SizedBox(height: 20),
-                          GemSectionLayout(_entertainment).build(context),
-                          // SizedBox(height: 20),
-                          // Divider(color: Colors.black),
-                          // SizedBox(height: 20),
-                          // GemSectionHeader(_food, false).build(context),
-                          SizedBox(height: 20),
-                          GemSectionLayout(_food).build(context),
-                          // SizedBox(height: 20),
-                          // Divider(color: Colors.black),
-                          SizedBox(height: 20),
-                          GemSectionHeader(_tech, true).build(context),
-                          SizedBox(height: 20),
-                          GemSectionLayout(_tech).build(context),
-                          // SizedBox(height: 20),
-                          // Divider(color: Colors.black),
-                          // SizedBox(height: 20),
-                          // GemSectionHeader(_art, false).build(context),
-                          SizedBox(height: 20),
-                          GemSectionLayout(_art).build(context),
+                          GemSectionHeader(section: _tech, isLeft: true)
+                              .build(context),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: ContentHeadingWidget(heading: 'Tech'),
+                          ),
+                          GemSectionLayout(section: _tech).build(context),
+                          Divider(),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: ContentHeadingWidget(heading: 'Art'),
+                          ),
+                          GemSectionLayout(section: _art).build(context),
                           SizedBox(height: 20),
                         ],
                       ),
@@ -241,55 +403,6 @@ class HomePageState extends State<HomePage>
         style: TextStyle(letterSpacing: 2.0),
       ),
       actions: [],
-    );
-  }
-
-  _buildStatCard() {
-    return Container(
-      padding: EdgeInsets.all(10),
-      child: Card(
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceAround,
-          children: <Widget>[
-            Column(
-              children: <Widget>[
-                Container(
-                    padding: EdgeInsets.only(top: 15, bottom: 5),
-                    child: Text('$_totalGemCount',
-                        style: TextStyle(color: Colors.black54))),
-                Container(
-                    padding: EdgeInsets.only(bottom: 15),
-                    child: Text("Gems",
-                        style: TextStyle(color: Colors.black87, fontSize: 16))),
-              ],
-            ),
-            Column(
-              children: <Widget>[
-                Container(
-                    padding: EdgeInsets.only(top: 15, bottom: 5),
-                    child: Text('$_totalCategories',
-                        style: TextStyle(color: Colors.black54))),
-                Container(
-                    padding: EdgeInsets.only(bottom: 15),
-                    child: Text("Categories",
-                        style: TextStyle(color: Colors.black87, fontSize: 16))),
-              ],
-            ),
-            Column(
-              children: <Widget>[
-                Container(
-                    padding: EdgeInsets.only(top: 10, bottom: 5),
-                    child: Text('$_totalSubcategories',
-                        style: TextStyle(color: Colors.black54))),
-                Container(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: Text("Subcategories",
-                        style: TextStyle(color: Colors.black87, fontSize: 16))),
-              ],
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

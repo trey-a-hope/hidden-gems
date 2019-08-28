@@ -5,7 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 
 class GemCard extends StatelessWidget {
   final Gem gem;
-  GemCard(this.gem);
+  const GemCard({Key key, this.gem}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -53,7 +53,7 @@ class GemCard extends StatelessWidget {
   Widget get gemCard {
     return Container(
       width: 290.0,
-      height: 115.0,
+      height: 100.0,
       child: Card(
         elevation: 4,
         color: Colors.white,

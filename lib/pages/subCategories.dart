@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
-import 'package:hiddengems_flutter/widgets/gemCard.dart';
+import 'package:hiddengems_flutter/common/gem_card.dart';
 
 class SubCategories extends StatelessWidget {
   final String mainCategory;
@@ -16,7 +16,7 @@ class SubCategories extends StatelessWidget {
       padding: EdgeInsets.all(6),
       itemCount: gems.length,
       itemBuilder: (BuildContext context, int index) {
-        return GemCard(gems[index]);
+        return GemCard(gem: gems[index]);
       },
     );
   }

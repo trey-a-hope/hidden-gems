@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:hiddengems_flutter/widgets/searchBar.dart';
+import 'package:hiddengems_flutter/common/search_bar_widget.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hiddengems_flutter/widgets/gemCard.dart';
+import 'package:hiddengems_flutter/common/gem_card.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -79,7 +79,7 @@ class _SearchPageState extends State<SearchPage> {
                 gem.subCategory = ds['subCategory'];
                 gem.photoUrl = ds['photoUrl'];
 
-                return GemCard(gem);
+                return GemCard(gem: gem);
               },
             );
         },

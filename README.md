@@ -36,7 +36,6 @@ samples, guidance on mobile development, and a full API reference.
 mipmap-xxxhdpi in the Android folder when using App Icon tends to work best for both platforms.
 
 #TODO For Next Update:
-#Update splash screens.
 
 ##iPhone Dimensions
 iPhone 3+4 (3.5 Inch)
@@ -49,11 +48,9 @@ iPhone 6 Plus, iPhone 6S Plus, iPhone 7 Plus, iPhone 8 Plus (5.5 Inch)
     1242 x 2208
 iPhone X (5.8 Inch)
     1125 x 2436
-iPhone XR (6.1 Inch)
-    828 x 1792
 iPhone XS (5.8 Inch)
     1125 x 2436
-iPhone XS Max (6.5 Inch)
+iPhone XS Max, iPhone XR (6.5 Inch)
     1242 x 2688
 iPad Mini 2, iPad Mini 3, iPad Mini 4 (7.9 Inch)
     1536 x 2048

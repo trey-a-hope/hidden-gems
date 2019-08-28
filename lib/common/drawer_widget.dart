@@ -3,19 +3,21 @@ import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/pages/settings.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/pages/login.dart';
-import 'package:hiddengems_flutter/pages/search.dart';
 import 'package:hiddengems_flutter/pages/editProfile.dart';
 import 'package:hiddengems_flutter/services/pdInfo.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:hiddengems_flutter/constants.dart';
 
-class NavDrawer extends StatefulWidget {
+class DrawerWidget extends StatefulWidget {
+
+  const DrawerWidget({Key key}):super(key:key);
+
   @override
-  State createState() => NavDrawerState();
+  State createState() => DrawerWidgetState();
 }
 
-class NavDrawerState extends State<NavDrawer>
+class DrawerWidgetState extends State<DrawerWidget>
     with SingleTickerProviderStateMixin {
   final PDInfo _pdInfo = PDInfo();
   final _drawerIconColor = Colors.blueGrey;
