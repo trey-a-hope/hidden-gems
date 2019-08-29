@@ -117,6 +117,9 @@ class DrawerWidgetState extends State<DrawerWidget>
                     'Are You A Gem?',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
+                  subtitle: Text(
+                    'Login or create a Gem profile.'
+                  ),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -165,7 +168,7 @@ class DrawerWidgetState extends State<DrawerWidget>
               child: Padding(
                 padding: EdgeInsets.all(20),
                 child: Text(
-                  'Version $_projectVersion / Build $_projectCode. App created by Tr3umphant.Designs, LLC',
+                  'Version $_projectVersion / Build $_projectCode.\nCreated by Tr3umphant.Designs, LLC.\nSearch powered by Algolia.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: Colors.grey),
                 ),

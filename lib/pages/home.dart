@@ -3,6 +3,7 @@ import 'package:hiddengems_flutter/common/content_heading_widget.dart';
 import 'package:hiddengems_flutter/common/drawer_widget.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hiddengems_flutter/pages/search.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/common/gem_section_header.dart';
 import 'package:hiddengems_flutter/common/gem_section_layout.dart';
@@ -270,14 +271,17 @@ class HomePageState extends State<HomePage>
                                                   builder: (context) =>
                                                       SubCategories(
                                                           _entertainment.title,
-                                                          _entertainment.subCategories,
+                                                          _entertainment
+                                                              .subCategories,
                                                           _entertainment.gems,
-                                                          _entertainment.accentColor,
+                                                          _entertainment
+                                                              .accentColor,
                                                           _entertainment.icon)),
                                             );
                                           },
                                           child: Icon(MdiIcons.diamondStone,
-                                              color: _entertainment.primaryColor),
+                                              color:
+                                                  _entertainment.primaryColor),
                                         ),
                                         SizedBox(width: 8),
                                         InkWell(
@@ -402,7 +406,19 @@ class HomePageState extends State<HomePage>
         'HIDDEN GEMS',
         style: TextStyle(letterSpacing: 2.0),
       ),
-      actions: [],
+      actions: [
+        IconButton(
+          icon: Icon(Icons.search),
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SearchPage(),
+              ),
+            );
+          },
+        )
+      ],
     );
   }
 }

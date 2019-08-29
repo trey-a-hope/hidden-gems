@@ -1,8 +1,11 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/common/search_bar_widget.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hiddengems_flutter/common/gem_card.dart';
+import 'package:algolia/algolia.dart';
+import 'package:hiddengems_flutter/pages/gemProfile.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -11,8 +14,12 @@ class SearchPage extends StatefulWidget {
 
 class _SearchPageState extends State<SearchPage> {
   SearchBar _searchAppBar;
-  String _searchText = '';
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
+  List<AlgoliaObjectSnapshot> _results = [];
+  bool _searching = false;
+
+  final String ALGOLIA_APP_ID = 'ZWB00DM8S2';
+  final String ALGOLIA_SEARCH_API_KEY = 'c769ba8629b5635bf600cd5fb6dee47c';
 
   @override
   void initState() {
@@ -35,8 +42,58 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   void onSubmitted(String value) {
-    _searchText = value;
-    print(_searchText);
+    _search(value);
+  }
+
+  _search(String value) async {
+    setState(
+      () {
+        _searching = true;
+      },
+    );
+
+    Algolia algolia = Algolia.init(
+      applicationId: ALGOLIA_APP_ID,
+      apiKey: ALGOLIA_SEARCH_API_KEY,
+    );
+
+    AlgoliaQuery query = algolia.instance.index('Gems');
+    query = query.search(value);
+
+    _results = (await query.getObjects()).hits;
+
+    setState(
+      () {
+        _searching = false;
+      },
+    );
+  }
+
+  Widget _buildListTile(AlgoliaObjectSnapshot snap) {
+    return Column(
+      children: <Widget>[
+        InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => GemProfilePage(snap.data['id']),
+              ),
+            );
+          },
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundImage:
+                  CachedNetworkImageProvider(snap.data["photoUrl"]),
+            ),
+            title: Text(snap.data["name"]),
+            subtitle: Text('${snap.data['category']} / ${snap.data['subCategory']}' ),
+            trailing: Icon(Icons.chevron_right),
+          ),
+        ),
+        Divider()
+      ],
+    );
   }
 
   @override
@@ -44,46 +101,21 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: _searchAppBar.build(context),
-      body: StreamBuilder(
-        stream: Firestore.instance
-            .collection('Gems')
-            .orderBy('name')
-            .startAt([_searchText])
-            .endAt([_searchText + '\u{f8ff}'])
-            .limit(25)
-            .snapshots(),
-        builder: (context, snapshot) {
-          if (!snapshot.hasData)
-            return Column(children: <Widget>[
-              Text('Loading...',
-                  textAlign: TextAlign.center, style: TextStyle(fontSize: 30.0))
-            ]);
-          else if (_searchText.isEmpty)
-            return Center(
-              child: Text('Search for gems...'),
-            );
-          else if (snapshot.data.documents.length == 0)
-            return Center(
-              child: Text('No gems found...'),
-            );
-          else
-            return ListView.builder(
-              itemCount: snapshot.data.documents.length,
-              itemBuilder: (context, index) {
-                DocumentSnapshot ds = snapshot.data.documents[index];
-                Gem gem = Gem();
-
-                gem.id = ds['id'];
-                gem.name = ds['name'];
-                gem.category = ds['category'];
-                gem.subCategory = ds['subCategory'];
-                gem.photoUrl = ds['photoUrl'];
-
-                return GemCard(gem: gem);
-              },
-            );
-        },
-      ),
+      body: _searching == true
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : _results.length == 0
+              ? Center(
+                  child: Text("No results found."),
+                )
+              : ListView.builder(
+                  itemCount: _results.length,
+                  itemBuilder: (BuildContext ctx, int index) {
+                    AlgoliaObjectSnapshot snap = _results[index];
+                    return _buildListTile(snap);
+                  },
+                ),
     );
   }
 }
