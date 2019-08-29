@@ -415,7 +415,7 @@ class GemProfilePageState extends State<GemProfilePage>
                   ),
                   onTap: () {
                     URLLauncher.launchUrl(
-                        'https://www.instagram.com/${_gem.instagramName}');
+                        'https://www.youtube.com/channel/${_gem.youTubeID}');
                   },
                 ),
           _gem.spotifyID.isEmpty

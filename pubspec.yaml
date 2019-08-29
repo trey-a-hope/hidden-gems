@@ -3,7 +3,7 @@ description: Resource app for all the talent in Dayton, OH.
 author: Trey Hope <tr3designs.prints@gmail.com>
 
 #Increase like so [ 1.0.0+0, 1.0.1+1, 1.0.2+2]
-version: 1.0.3+3
+version: 1.0.4+4
 
 environment:
   sdk: ">=2.1.0 <3.0.0"
