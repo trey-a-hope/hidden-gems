@@ -171,7 +171,7 @@ DEPENDENCIES:
   - url_launcher (from `.symlinks/plugins/url_launcher/ios`)
 
 SPEC REPOS:
-  https://github.com/cocoapods/specs.git:
+  https://github.com/CocoaPods/Specs.git:
     - BoringSSL-GRPC
     - Firebase
     - FirebaseAnalytics
@@ -259,4 +259,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: f867230bc448bf6640e2765d01a35c241c375c46
 
-COCOAPODS: 1.6.1
+COCOAPODS: 1.8.0.beta.2

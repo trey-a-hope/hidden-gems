@@ -35,8 +35,6 @@ samples, guidance on mobile development, and a full API reference.
 ## Splash Screen
 mipmap-xxxhdpi in the Android folder when using App Icon tends to work best for both platforms.
 
-#TODO For Next Update:
-
 ##iPhone Dimensions
 iPhone 3+4 (3.5 Inch)
     640 x 960

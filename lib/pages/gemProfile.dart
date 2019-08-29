@@ -195,16 +195,6 @@ class GemProfilePageState extends State<GemProfilePage>
             shape: CircleBorder(),
             children: [
               SpeedDialChild(
-                  child: List.from(_gem.likes).contains(_deviceId)
-                      ? Icon(Icons.thumb_down, color: Colors.red)
-                      : Icon(Icons.thumb_up, color: Colors.green),
-                  backgroundColor: Colors.white,
-                  label: List.from(_gem.likes).contains(_deviceId)
-                      ? 'Unlike'
-                      : 'Like',
-                  labelStyle: TextStyle(fontSize: 18.0),
-                  onTap: () => _likeGem()),
-              SpeedDialChild(
                 child: Icon(Icons.email, color: Colors.blue),
                 backgroundColor: Colors.white,
                 label: 'Email',
@@ -227,15 +217,6 @@ class GemProfilePageState extends State<GemProfilePage>
               )
             ],
           );
-    // FloatingActionButton(
-    //     backgroundColor: Colors.white,
-    //     child: List.from(_gem.likes).contains(_deviceId)
-    //         ? Icon(Icons.favorite, color: Colors.red)
-    //         : Icon(Icons.favorite_border, color: Colors.red),
-    //     onPressed: () {
-    //       _likeGem();
-    //     },
-    //   );
   }
 
   _buildInfoBox() {
@@ -315,12 +296,18 @@ class GemProfilePageState extends State<GemProfilePage>
   }
 
   _buildAppBar() {
-    return AppBar(
+    return _isLoading ? null : AppBar(
       centerTitle: true,
       title: Text(
         'GEM DETAILS',
         style: TextStyle(letterSpacing: 2.0),
       ),
+      actions: <Widget>[
+        IconButton(
+          icon: List.from(_gem.likes).contains(_deviceId) ? Icon(Icons.favorite, color: Colors.red) : Icon(Icons.favorite_border),
+          onPressed: () { _likeGem(); },
+        )
+      ],
     );
   }
 
@@ -368,10 +355,10 @@ class GemProfilePageState extends State<GemProfilePage>
               : InkWell(
                   child: ListTile(
                     title: Text("Instagram"),
-                    subtitle: Text('@${_gem.instagramName}'),
+                    // subtitle: Text('@${_gem.instagramName}'),
                     leading: Icon(
                       MdiIcons.instagram,
-                      color: _iconColor,
+                      color: Colors.pink,
                     ),
                     trailing: Icon(Icons.chevron_right),
                   ),
@@ -385,10 +372,10 @@ class GemProfilePageState extends State<GemProfilePage>
               : InkWell(
                   child: ListTile(
                     title: Text("Twitter"),
-                    subtitle: Text('@${_gem.twitterName}'),
+                    // subtitle: Text('@${_gem.twitterName}'),
                     leading: Icon(
                       MdiIcons.twitter,
-                      color: _iconColor,
+                      color: Colors.lightBlue,
                     ),
                     trailing: Icon(Icons.chevron_right),
                   ),
@@ -402,10 +389,10 @@ class GemProfilePageState extends State<GemProfilePage>
               : InkWell(
                   child: ListTile(
                     title: Text("Facebook"),
-                    subtitle: Text('${_gem.facebookName}'),
+                    // subtitle: Text('${_gem.facebookName}'),
                     leading: Icon(
                       MdiIcons.facebook,
-                      color: _iconColor,
+                      color: Colors.blue,
                     ),
                     trailing: Icon(Icons.chevron_right),
                   ),
@@ -419,10 +406,10 @@ class GemProfilePageState extends State<GemProfilePage>
               : InkWell(
                   child: ListTile(
                     title: Text("YouTube"),
-                    subtitle: Text('${_gem.youTubeID}'),
+                    // subtitle: Text('${_gem.youTubeID}'),
                     leading: Icon(
                       MdiIcons.youtube,
-                      color: _iconColor,
+                      color: Colors.red,
                     ),
                     trailing: Icon(Icons.chevron_right),
                   ),
@@ -436,10 +423,10 @@ class GemProfilePageState extends State<GemProfilePage>
               : InkWell(
                   child: ListTile(
                     title: Text("Spotify"),
-                    subtitle: Text('${_gem.spotifyID}'),
+                    // subtitle: Text('${_gem.spotifyID}'),
                     leading: Icon(
                       MdiIcons.spotify,
-                      color: _iconColor,
+                      color: Colors.green,
                     ),
                     trailing: Icon(Icons.chevron_right),
                   ),
@@ -453,10 +440,10 @@ class GemProfilePageState extends State<GemProfilePage>
               : InkWell(
                   child: ListTile(
                     title: Text("iTunes"),
-                    subtitle: Text('${_gem.iTunesID}'),
+                    // subtitle: Text('${_gem.iTunesID}'),
                     leading: Icon(
                       MdiIcons.itunes,
-                      color: _iconColor,
+                      color: Colors.grey,
                     ),
                     trailing: Icon(Icons.chevron_right),
                   ),
@@ -470,10 +457,10 @@ class GemProfilePageState extends State<GemProfilePage>
               : InkWell(
                   child: ListTile(
                     title: Text("SoundCloud"),
-                    subtitle: Text('${_gem.soundCloudName}'),
+                    // subtitle: Text('${_gem.soundCloudName}'),
                     leading: Icon(
                       MdiIcons.soundcloud,
-                      color: _iconColor,
+                      color: Colors.orange,
                     ),
                     trailing: Icon(Icons.chevron_right),
                   ),
