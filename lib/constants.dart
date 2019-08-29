@@ -14,7 +14,7 @@ class MyFormData {
     'Media',
     'Entertainment',
     'Food',
-    'Tech',
+    'Technology',
     'Art'
   ];
 }

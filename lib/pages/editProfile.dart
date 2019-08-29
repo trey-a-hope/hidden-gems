@@ -31,7 +31,7 @@ class EditProfilePageState extends State<EditProfilePage>
       _mediaSubCatDrop,
       _entertainmentSubCatDrop,
       _foodSubCatDrop,
-      _techSubCatDrop,
+      _technologySubCatDrop,
       _artSubCatDrop;
 
   String _categoryController, _subCategoryController;
@@ -118,8 +118,8 @@ class EditProfilePageState extends State<EditProfilePage>
       },
     ).toList();
 
-    List<String> techSubCatList = List.from(data['tech']['subCategories']);
-    _techSubCatDrop = techSubCatList.map<DropdownMenuItem<String>>(
+    List<String> technologySubCatList = List.from(data['technology']['subCategories']);
+    _technologySubCatDrop = technologySubCatList.map<DropdownMenuItem<String>>(
       (String value) {
         return DropdownMenuItem<String>(
           value: value,
@@ -300,8 +300,8 @@ class EditProfilePageState extends State<EditProfilePage>
         return _entertainmentSubCatDrop;
       case 'Food':
         return _foodSubCatDrop;
-      case 'Tech':
-        return _techSubCatDrop;
+      case 'Technology':
+        return _technologySubCatDrop;
       case 'Art':
         return _artSubCatDrop;
       default:

@@ -34,7 +34,7 @@ class SignUpPageState extends State<SignUpPage>
       _mediaSubCatDrop,
       _entertainmentSubCatDrop,
       _foodSubCatDrop,
-      _techSubCatDrop,
+      _technologySubCatDrop,
       _artSubCatDrop;
 
   TextEditingController _nameController = TextEditingController();
@@ -407,8 +407,8 @@ class SignUpPageState extends State<SignUpPage>
       },
     ).toList();
 
-    List<String> techSubCatList = List.from(data['tech']['subCategories']);
-    _techSubCatDrop = techSubCatList.map<DropdownMenuItem<String>>(
+    List<String> technologySubCatList = List.from(data['technology']['subCategories']);
+    _technologySubCatDrop = technologySubCatList.map<DropdownMenuItem<String>>(
       (String value) {
         return DropdownMenuItem<String>(
           value: value,
@@ -438,8 +438,8 @@ class SignUpPageState extends State<SignUpPage>
         return _entertainmentSubCatDrop;
       case 'Food':
         return _foodSubCatDrop;
-      case 'Tech':
-        return _techSubCatDrop;
+      case 'Technology':
+        return _technologySubCatDrop;
       case 'Art':
         return _artSubCatDrop;
       default:

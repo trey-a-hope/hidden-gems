@@ -32,7 +32,7 @@ class HomePageState extends State<HomePage>
   Section _media = Section('MEDIA');
   Section _entertainment = Section('ENTERTAINMENT');
   Section _food = Section('FOOD');
-  Section _tech = Section('TECH');
+  Section _technology = Section('TECHNOLOGY');
   Section _art = Section('ART');
 
   int _totalGemCount;
@@ -110,14 +110,14 @@ class HomePageState extends State<HomePage>
     _food.accentColor = Colors.red[50];
     _food.icon = MdiIcons.food;
 
-    dynamic techData = data['tech'];
-    _tech.quote = techData['quote'];
-    _tech.subQuote = techData['subQuote'];
-    _tech.photoUrl = techData['photoUrl'];
-    _tech.subCategories = List.from(techData['subCategories']);
-    _tech.primaryColor = Colors.blue;
-    _tech.accentColor = Colors.blue[50];
-    _tech.icon = MdiIcons.laptop;
+    dynamic technologyData = data['technology'];
+    _technology.quote = technologyData['quote'];
+    _technology.subQuote = technologyData['subQuote'];
+    _technology.photoUrl = technologyData['photoUrl'];
+    _technology.subCategories = List.from(technologyData['subCategories']);
+    _technology.primaryColor = Colors.blue;
+    _technology.accentColor = Colors.blue[50];
+    _technology.icon = MdiIcons.laptop;
 
     dynamic artData = data['art'];
     _art.quote = artData['quote'];
@@ -134,7 +134,7 @@ class HomePageState extends State<HomePage>
     _media.gems = await _getGems('Media');
     _entertainment.gems = await _getGems('Entertainment');
     _food.gems = await _getGems('Food');
-    _tech.gems = await _getGems('Tech');
+    _technology.gems = await _getGems('Technology');
     _art.gems = await _getGems('Art');
 
     List<Section> sections = [
@@ -142,7 +142,7 @@ class HomePageState extends State<HomePage>
       _media,
       _entertainment,
       _food,
-      _tech,
+      _technology,
       _art
     ];
 
@@ -309,15 +309,15 @@ class HomePageState extends State<HomePage>
                                               MaterialPageRoute(
                                                   builder: (context) =>
                                                       SubCategories(
-                                                          _tech.title,
-                                                          _tech.subCategories,
-                                                          _tech.gems,
-                                                          _tech.accentColor,
-                                                          _tech.icon)),
+                                                          _technology.title,
+                                                          _technology.subCategories,
+                                                          _technology.gems,
+                                                          _technology.accentColor,
+                                                          _technology.icon)),
                                             );
                                           },
                                           child: Icon(MdiIcons.diamondStone,
-                                              color: _tech.primaryColor),
+                                              color: _technology.primaryColor),
                                         ),
                                         SizedBox(width: 8),
                                         InkWell(
@@ -375,13 +375,13 @@ class HomePageState extends State<HomePage>
                           ),
                           GemSectionLayout(section: _food).build(context),
                           SizedBox(height: 20),
-                          GemSectionHeader(section: _tech, isLeft: true)
+                          GemSectionHeader(section: _technology, isLeft: true)
                               .build(context),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16),
-                            child: ContentHeadingWidget(heading: 'Tech'),
+                            child: ContentHeadingWidget(heading: 'Technology'),
                           ),
-                          GemSectionLayout(section: _tech).build(context),
+                          GemSectionLayout(section: _technology).build(context),
                           Divider(),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16),
