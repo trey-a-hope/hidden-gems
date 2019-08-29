@@ -720,7 +720,8 @@ class EditProfilePageState extends State<EditProfilePage>
             SizedBox(height: 20),
             Text('Sub Category'),
             SizedBox(height: 20),
-            subCategoryDropdownField()
+            subCategoryDropdownField(),
+            Container()
           ],
         ),
       ),
