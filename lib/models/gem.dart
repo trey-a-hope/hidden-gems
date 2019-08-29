@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:algolia/algolia.dart';
 
 class Gem {
   String backgroundUrl;
@@ -43,6 +44,32 @@ class Gem {
     gem.twitterName = ds['twitterName'];
     gem.uid = ds['uid'];
     gem.youTubeID = ds['youTubeID'];
+
+    return gem;
+  }
+
+  static Gem extractAlgoliaObjectSnapshot(AlgoliaObjectSnapshot aob) {
+    Gem gem = Gem();
+
+    gem.bio = aob.data['bio'];
+    gem.backgroundUrl = aob.data['backgroundUrl'];
+    gem.category = aob.data['category'];
+    gem.email = aob.data['email'];
+    gem.facebookName = aob.data['facebookName'];
+    gem.iTunesID = aob.data['iTunesID'];
+    gem.id = aob.data['id'];
+    gem.instagramName = aob.data['instagramName'];
+    gem.likes = aob.data['likes'];
+    gem.name = aob.data['name'];
+    gem.phoneNumber = aob.data['phoneNumber'];
+    gem.photoUrl = aob.data['photoUrl'];
+    gem.soundCloudName = aob.data['soundCloudName'];
+    gem.spotifyID = aob.data['spotifyID'];
+    gem.subCategory = aob.data['subCategory'];
+    // gem.time = aob.data['time'].toDate();
+    gem.twitterName = aob.data['twitterName'];
+    gem.uid = aob.data['uid'];
+    gem.youTubeID = aob.data['youTubeID'];
 
     return gem;
   }

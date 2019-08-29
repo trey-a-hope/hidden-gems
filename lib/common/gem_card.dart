@@ -9,79 +9,30 @@ class GemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 0.0),
-        child: Container(
-          height: 115.0,
-          child: Stack(
-            children: <Widget>[
-              Positioned(
-                left: 50.0,
-                child: gemCard,
+    return Column(
+      children: <Widget>[
+        InkWell(
+          onTap: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => GemProfilePage(gem.id),
               ),
-              Positioned(top: 7.5, child: gemImage),
-            ],
+            );
+          },
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundImage:
+                  CachedNetworkImageProvider(gem.photoUrl),
+            ),
+            title: Text(gem.name),
+            subtitle:
+                Text('${gem.category} / ${gem.subCategory}'),
+            trailing: Icon(Icons.chevron_right),
           ),
         ),
-      ),
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => GemProfilePage(gem.id),
-          ),
-        );
-      },
-    );
-  }
-
-  Widget get gemImage {
-    return Container(
-      width: 100.0,
-      height: 100.0,
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        image: DecorationImage(
-          fit: BoxFit.cover,
-          image: CachedNetworkImageProvider(gem.photoUrl),
-        ),
-      ),
-    );
-  }
-
-  Widget get gemCard {
-    return Container(
-      width: 290.0,
-      height: 100.0,
-      child: Card(
-        elevation: 4,
-        color: Colors.white,
-        child: Padding(
-          padding: const EdgeInsets.only(
-            top: 8.0,
-            bottom: 8.0,
-            left: 64.0,
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
-            children: <Widget>[
-              Text(gem.name, style: TextStyle(color: Colors.black, fontSize: 20)),
-              Text(gem.subCategory,style: TextStyle(color: Colors.grey, fontSize: 16)),
-              Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.thumb_up
-                  ),
-                  SizedBox(width: 10),
-                  Text(gem.likes.length == 1 ? '1 like' : '${gem.likes.length} likes')
-                ],
-              )
-            ],
-          ),
-        ),
-      ),
+        Divider()
+      ],
     );
   }
 }

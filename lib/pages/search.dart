@@ -1,11 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
+import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/common/search_bar_widget.dart';
-import 'package:hiddengems_flutter/models/gem.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hiddengems_flutter/common/gem_card.dart';
 import 'package:algolia/algolia.dart';
-import 'package:hiddengems_flutter/pages/gemProfile.dart';
+import 'package:hiddengems_flutter/common/gem_card.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -69,33 +66,6 @@ class _SearchPageState extends State<SearchPage> {
     );
   }
 
-  Widget _buildListTile(AlgoliaObjectSnapshot snap) {
-    return Column(
-      children: <Widget>[
-        InkWell(
-          onTap: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => GemProfilePage(snap.data['id']),
-              ),
-            );
-          },
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundImage:
-                  CachedNetworkImageProvider(snap.data["photoUrl"]),
-            ),
-            title: Text(snap.data["name"]),
-            subtitle: Text('${snap.data['category']} / ${snap.data['subCategory']}' ),
-            trailing: Icon(Icons.chevron_right),
-          ),
-        ),
-        Divider()
-      ],
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -113,7 +83,8 @@ class _SearchPageState extends State<SearchPage> {
                   itemCount: _results.length,
                   itemBuilder: (BuildContext ctx, int index) {
                     AlgoliaObjectSnapshot snap = _results[index];
-                    return _buildListTile(snap);
+                    Gem gem = Gem.extractAlgoliaObjectSnapshot(snap);
+                    return GemCard(gem: gem);
                   },
                 ),
     );
