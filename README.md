@@ -15,10 +15,6 @@ For help getting started with Flutter, view our
 [online documentation](https://flutter.io/docs), which offers tutorials, 
 samples, guidance on mobile development, and a full API reference.
 
-## TODO FOR NEXT UPDATE.
-- Update UI on Login/Signup
-- Prevent loading for more than 10 seconds.
-
 ## Create keystore file.
 - Command [keytool -genkey -v -keystore ~/key.jks -keyalg RSA -keysize 2048 -validity 10000 -alias key]
 

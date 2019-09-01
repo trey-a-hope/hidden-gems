@@ -1,0 +1,24 @@
+service cloud.firestore {
+  match /databases/{database}/documents {
+  	//Allow anyone to read all documents.
+    match /{document=**} {
+      allow read;
+      allow write;
+    }
+    //TODO: Determine how to only let 'likes' on a document be updated by anyone.
+    //Only allow an authenticated user to write to their document.
+    // match /Gems/{id} {
+    // 	allow write: if request.auth.uid == resource.data.uid;
+    // }
+  }
+}
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /images/{imageId} {
+      // Only allow uploads of any image file that's less than 5MB
+      allow write: if request.resource.size < 5 * 1024 * 1024
+                   && request.resource.contentType.matches('image/.*');
+    }
+  }
+}
