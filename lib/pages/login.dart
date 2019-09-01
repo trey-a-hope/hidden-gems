@@ -153,6 +153,26 @@ class LoginPageState extends State<LoginPage>
                           stops: [0, 1]),
                     ),
                   ),
+                  Positioned(
+                    left: (screenWidth * 0.1) / 2,
+                    top: 50,
+                    child: Text(
+                      'Login',
+                      style: TextStyle(color: Colors.white, fontSize: 30),
+                    ),
+                  ),
+                  Positioned(
+                    left: (screenWidth * 0.1) / 2,
+                    bottom: (screenWidth * 0.1) / 2,
+                    child: FloatingActionButton(
+                      mini: true,
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                      backgroundColor: Colors.blue,
+                      child: Icon(Icons.arrow_back),
+                    ),
+                  ),
                   Container(
                     height: 350,
                     width: screenWidth * 0.9,
@@ -195,7 +215,7 @@ class LoginPageState extends State<LoginPage>
                                 mainAxisSize: MainAxisSize.min,
                                 children: <Widget>[
                                   Text(
-                                    'LOGIN',
+                                    'SUBMIT',
                                     style: TextStyle(
                                         color: Colors.white,
                                         fontWeight: FontWeight.bold,
@@ -203,7 +223,7 @@ class LoginPageState extends State<LoginPage>
                                   ),
                                   const SizedBox(width: 40.0),
                                   Icon(
-                                    MdiIcons.login,
+                                    MdiIcons.send,
                                     size: 18.0,
                                     color: Colors.white,
                                   )
@@ -211,59 +231,32 @@ class LoginPageState extends State<LoginPage>
                               ),
                             ),
                             Divider(),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                              children: <Widget>[
-                                OutlineButton.icon(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 8.0,
-                                    horizontal: 30.0,
+                            OutlineButton.icon(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 8.0,
+                                horizontal: 30.0,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0)),
+                              highlightedBorderColor: Colors.blue,
+                              borderSide: BorderSide(color: Colors.blue),
+                              color: Colors.blue,
+                              textColor: Colors.blue,
+                              icon: Icon(
+                                MdiIcons.arrowRight,
+                                size: 18.0,
+                              ),
+                              label: Text('Sign Up'),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        SignUpPage(),
                                   ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(20.0)),
-                                  highlightedBorderColor: Colors.blue,
-                                  borderSide: BorderSide(color: Colors.blue),
-                                  color: Colors.blue,
-                                  textColor: Colors.blue,
-                                  icon: Icon(
-                                    MdiIcons.arrowLeft,
-                                    size: 18.0,
-                                  ),
-                                  label: Text('Go Back'),
-                                  onPressed: () {
-                                    Navigator.of(context).pop();
-                                  },
-                                ),
-                                OutlineButton.icon(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 8.0,
-                                    horizontal: 30.0,
-                                  ),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius:
-                                          BorderRadius.circular(20.0)),
-                                  highlightedBorderColor: Colors.blue,
-                                  borderSide: BorderSide(color: Colors.blue),
-                                  color: Colors.blue,
-                                  textColor: Colors.blue,
-                                  icon: Icon(
-                                    MdiIcons.arrowRight,
-                                    size: 18.0,
-                                  ),
-                                  label: Text('Sign Up'),
-                                  onPressed: () {
-                                    Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                        builder: (BuildContext context) =>
-                                            SignUpPage(),
-                                      ),
-                                    );
-                                  },
-                                )
-                              ],
-                            ),
+                                );
+                              },
+                            )
                           ],
                         ),
                       ),

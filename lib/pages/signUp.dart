@@ -11,6 +11,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hiddengems_flutter/constants.dart';
 import 'package:hiddengems_flutter/services/validater.dart';
+import 'package:hiddengems_flutter/asset_images.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SignUpPage extends StatefulWidget {
@@ -62,6 +63,11 @@ class SignUpPageState extends State<SignUpPage>
   _signUp() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
+
+      if (_categoryController == null) {
+        Modal.showInSnackBar(_scaffoldKey, 'Please select a talent first.');
+        return;
+      }
 
       bool confirm =
           await Modal.showConfirmation(context, 'Submit', 'Are you ready?');
@@ -128,127 +134,152 @@ class SignUpPageState extends State<SignUpPage>
 
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-        key: _scaffoldKey,
-        body: Form(
-          key: _formKey,
-          autovalidate: _autoValidate,
-          child: _isLoading
-              ? Center(
-                  child: CircularProgressIndicator(),
-                )
-              : SingleChildScrollView(
-                  child: Padding(
-                    padding: EdgeInsets.all(30),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        const SizedBox(height: 40.0),
-                        Stack(
-                          children: <Widget>[
-                            Padding(
-                              padding: const EdgeInsets.only(left: 32.0),
-                              child: Text(
-                                'Create Profile',
-                                style: TextStyle(
-                                    fontSize: 30.0,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.green),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 60.0),
-                        nameFormField(),
-                        SizedBox(height: 20),
-                        emailFormField(),
-                        SizedBox(height: 30),
-                        passwordFormField(),
-                        SizedBox(height: 30),
-                        Text('Talent Category'),
-                        categoryDropdownField(),
-                        SizedBox(height: 30),
-                        _categoryController == null
-                            ? Container()
-                            : Text('Talent Sub Category'),
-                        _categoryController == null
-                            ? Container()
-                            : subCategoryDropdownField(),
-                        const SizedBox(height: 40.0),
-                        // Align(
-                        //   alignment: Alignment.center,
-                        //   child: ,
-                        // ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            RaisedButton(
-                              padding: const EdgeInsets.fromLTRB(
-                                  40.0, 16.0, 30.0, 16.0),
-                              color: Colors.green,
-                              elevation: 0,
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(30.0),
-                                      bottomLeft: Radius.circular(30.0),
-                                      topRight: Radius.circular(30.0),
-                                      bottomRight: Radius.circular(30.0))),
-                              onPressed: () {
-                                _signUp();
-                              },
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: <Widget>[
-                                  Text(
-                                    'SUBMIT',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 16.0),
-                                  ),
-                                  const SizedBox(width: 40.0),
-                                  Icon(MdiIcons.send,
-                                      size: 18.0, color: Colors.white)
-                                ],
-                              ),
-                            )
-                          ],
-                        ),
-                        const SizedBox(height: 10.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            const SizedBox(width: 10.0),
-                            OutlineButton.icon(
-                              padding: const EdgeInsets.symmetric(
-                                vertical: 8.0,
-                                horizontal: 30.0,
-                              ),
-                              shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(20.0)),
-                              highlightedBorderColor: Colors.indigo,
-                              borderSide: BorderSide(color: Colors.indigo),
-                              color: Colors.indigo,
-                              textColor: Colors.indigo,
-                              icon: Icon(
-                                MdiIcons.arrowLeft,
-                                size: 18.0,
-                              ),
-                              label: Text('Go Back To Login'),
-                              onPressed: () {
-                                Navigator.pop(context);
-                              },
-                            ),
-                          ],
-                        )
-                      ],
-                    ),
+      key: _scaffoldKey,
+      body: _isLoading
+          ? Center(
+              child: CircularProgressIndicator(),
+            )
+          : Stack(
+              alignment: Alignment.center,
+              children: <Widget>[
+                Positioned(
+                  left: (screenWidth * 0.1) / 2,
+                  bottom: (screenWidth * 0.1) / 2,
+                  child: FloatingActionButton(
+                    mini: true,
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    backgroundColor: Colors.blue,
+                    child: Icon(Icons.arrow_back),
                   ),
                 ),
-        ));
+                Container(
+                  decoration: BoxDecoration(
+                      image: DecorationImage(
+                          image: dayton_background_two,
+                          fit: BoxFit.cover,
+                          alignment: Alignment.center)),
+                ),
+                Container(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                        colors: [
+                          Colors.green.withOpacity(0.5),
+                          Colors.blue.withOpacity(0.9)
+                        ],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        stops: [0, 1]),
+                  ),
+                ),
+                SingleChildScrollView(
+                  child: Column(
+                    children: <Widget>[
+                      Container(
+                        height: 550,
+                        width: screenWidth * 0.9,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(8),
+                          color: Colors.white,
+                          boxShadow: [
+                            BoxShadow(
+                                color: Colors.black12,
+                                offset: Offset(0, 6),
+                                blurRadius: 6),
+                          ],
+                        ),
+                        child: Padding(
+                          padding: EdgeInsets.all(20),
+                          child: Form(
+                            key: _formKey,
+                            autovalidate: _autoValidate,
+                            child: Column(
+                              children: <Widget>[
+                                _nameFormField(),
+                                SizedBox(height: 20),
+                                _emailFormField(),
+                                SizedBox(height: 30),
+                                _passwordFormField(),
+                                SizedBox(height: 30),
+                                Text('Talent Category'),
+                                _categoryDropdownField(),
+                                SizedBox(height: 30),
+                                _categoryController == null
+                                    ? Container()
+                                    : Text('Talent Sub Category'),
+                                _categoryController == null
+                                    ? Container()
+                                    : _subCategoryDropdownField(),
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceEvenly,
+                                  children: <Widget>[
+                                    _cancelButton(),
+                                    _signUpButton()
+                                  ],
+                                )
+                              ],
+                            ),
+                          ),
+                        ),
+                      )
+                    ],
+                  ),
+                )
+              ],
+            ),
+    );
   }
 
-  Widget nameFormField() {
+  Widget _cancelButton() {
+    return OutlineButton.icon(
+      padding: const EdgeInsets.symmetric(
+        vertical: 8.0,
+        horizontal: 15.0,
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+      highlightedBorderColor: Colors.red,
+      borderSide: BorderSide(color: Colors.red),
+      color: Colors.red,
+      textColor: Colors.red,
+      icon: Icon(
+        MdiIcons.arrowLeft,
+        size: 18.0,
+      ),
+      label: Text('Cancel'),
+      onPressed: () {
+        Navigator.of(context).pop();
+      },
+    );
+  }
+
+  Widget _signUpButton() {
+    return OutlineButton.icon(
+      padding: const EdgeInsets.symmetric(
+        vertical: 8.0,
+        horizontal: 15.0,
+      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20.0)),
+      highlightedBorderColor: Colors.blue,
+      borderSide: BorderSide(color: Colors.blue),
+      color: Colors.blue,
+      textColor: Colors.blue,
+      icon: Icon(
+        MdiIcons.send,
+        size: 18.0,
+      ),
+      label: Text('Submit'),
+      onPressed: () {
+        _signUp();
+      },
+    );
+  }
+
+  Widget _nameFormField() {
     return TextFormField(
       controller: _nameController,
       keyboardType: TextInputType.text,
@@ -266,7 +297,7 @@ class SignUpPageState extends State<SignUpPage>
     );
   }
 
-  Widget emailFormField() {
+  Widget _emailFormField() {
     return TextFormField(
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
@@ -284,7 +315,7 @@ class SignUpPageState extends State<SignUpPage>
     );
   }
 
-  Widget passwordFormField() {
+  Widget _passwordFormField() {
     return TextFormField(
       controller: _passwordController,
       keyboardType: TextInputType.text,
@@ -303,7 +334,7 @@ class SignUpPageState extends State<SignUpPage>
     );
   }
 
-  Widget categoryDropdownField() {
+  Widget _categoryDropdownField() {
     return Container(
       width: 300.0,
       child: DropdownButtonHideUnderline(
@@ -335,7 +366,7 @@ class SignUpPageState extends State<SignUpPage>
     );
   }
 
-  Widget subCategoryDropdownField() {
+  Widget _subCategoryDropdownField() {
     return Container(
       width: 300.0,
       child: DropdownButtonHideUnderline(
@@ -407,7 +438,8 @@ class SignUpPageState extends State<SignUpPage>
       },
     ).toList();
 
-    List<String> technologySubCatList = List.from(data['technology']['subCategories']);
+    List<String> technologySubCatList =
+        List.from(data['technology']['subCategories']);
     _technologySubCatDrop = technologySubCatList.map<DropdownMenuItem<String>>(
       (String value) {
         return DropdownMenuItem<String>(
