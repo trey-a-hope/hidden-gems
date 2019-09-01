@@ -34,8 +34,8 @@ class HomePageState extends State<HomePage>
   Section _food = Section('FOOD');
   Section _technology = Section('TECHNOLOGY');
   Section _art = Section('ART');
-
-  int _totalGemCount;
+  Section _trade = Section('TRADE');
+  Section _beauty = Section('BEAUTY');
 
   @override
   void initState() {
@@ -127,6 +127,24 @@ class HomePageState extends State<HomePage>
     _art.primaryColor = Colors.brown;
     _art.accentColor = Colors.brown[50];
     _art.icon = MdiIcons.formatPaint;
+
+    dynamic tradeData = data['trade'];
+    _trade.quote = tradeData['quote'];
+    _trade.subQuote = tradeData['subQuote'];
+    _trade.photoUrl = tradeData['photoUrl'];
+    _trade.subCategories = List.from(tradeData['subCategories']);
+    _trade.primaryColor = Colors.cyan;
+    _trade.accentColor = Colors.cyan[50];
+    _trade.icon = MdiIcons.electricSwitch;
+
+    dynamic beautyData = data['beauty'];
+    _beauty.quote = beautyData['quote'];
+    _beauty.subQuote = beautyData['subQuote'];
+    _beauty.photoUrl = beautyData['photoUrl'];
+    _beauty.subCategories = List.from(beautyData['subCategories']);
+    _beauty.primaryColor = Colors.amber;
+    _beauty.accentColor = Colors.amber[50];
+    _beauty.icon = MdiIcons.bagPersonalOutline;
   }
 
   _attachGems() async {
@@ -136,6 +154,8 @@ class HomePageState extends State<HomePage>
     _food.gems = await _getGems('Food');
     _technology.gems = await _getGems('Technology');
     _art.gems = await _getGems('Art');
+    _trade.gems = await _getGems('Trade');
+    _beauty.gems = await _getGems('Beauty');
 
     List<Section> sections = [
       _music,
@@ -143,14 +163,10 @@ class HomePageState extends State<HomePage>
       _entertainment,
       _food,
       _technology,
-      _art
+      _art,
+      _trade,
+      _beauty
     ];
-
-    _totalGemCount = 0;
-
-    for (Section s in sections) {
-      _totalGemCount += s.gems.length;
-    }
   }
 
   void loadPage() async {
@@ -194,155 +210,7 @@ class HomePageState extends State<HomePage>
                         <Widget>[
                           Padding(
                             padding: const EdgeInsets.all(16),
-                            child: Material(
-                              elevation: 4,
-                              borderRadius:
-                                  const BorderRadius.all(Radius.circular(12)),
-                              child: Padding(
-                                padding: const EdgeInsets.all(16),
-                                child: Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
-                                  children: <Widget>[
-                                    Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      children: <Widget>[
-                                        Row(
-                                          children: <Widget>[
-                                            Text(
-                                              "TOTAL GEMS",
-                                              style: hoursPlayedLabelTextStyle,
-                                            ),
-                                          ],
-                                        ),
-                                        SizedBox(
-                                          height: 4,
-                                        ),
-                                        Text(
-                                          '$_totalGemCount',
-                                          style: hoursPlayedTextStyle,
-                                        )
-                                      ],
-                                    ),
-                                    Row(
-                                      children: <Widget>[
-                                        InkWell(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SubCategories(
-                                                          _music.title,
-                                                          _music.subCategories,
-                                                          _music.gems,
-                                                          _music.accentColor,
-                                                          _music.icon)),
-                                            );
-                                          },
-                                          child: Icon(MdiIcons.diamondStone,
-                                              color: _music.primaryColor),
-                                        ),
-                                        SizedBox(width: 8),
-                                        InkWell(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SubCategories(
-                                                          _media.title,
-                                                          _media.subCategories,
-                                                          _media.gems,
-                                                          _media.accentColor,
-                                                          _media.icon)),
-                                            );
-                                          },
-                                          child: Icon(MdiIcons.diamondStone,
-                                              color: _media.primaryColor),
-                                        ),
-                                        SizedBox(width: 8),
-                                        InkWell(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SubCategories(
-                                                          _entertainment.title,
-                                                          _entertainment
-                                                              .subCategories,
-                                                          _entertainment.gems,
-                                                          _entertainment
-                                                              .accentColor,
-                                                          _entertainment.icon)),
-                                            );
-                                          },
-                                          child: Icon(MdiIcons.diamondStone,
-                                              color:
-                                                  _entertainment.primaryColor),
-                                        ),
-                                        SizedBox(width: 8),
-                                        InkWell(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SubCategories(
-                                                          _food.title,
-                                                          _food.subCategories,
-                                                          _food.gems,
-                                                          _food.accentColor,
-                                                          _food.icon)),
-                                            );
-                                          },
-                                          child: Icon(MdiIcons.diamondStone,
-                                              color: _food.primaryColor),
-                                        ),
-                                        SizedBox(width: 8),
-                                        InkWell(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SubCategories(
-                                                          _technology.title,
-                                                          _technology.subCategories,
-                                                          _technology.gems,
-                                                          _technology.accentColor,
-                                                          _technology.icon)),
-                                            );
-                                          },
-                                          child: Icon(MdiIcons.diamondStone,
-                                              color: _technology.primaryColor),
-                                        ),
-                                        SizedBox(width: 8),
-                                        InkWell(
-                                          onTap: () {
-                                            Navigator.push(
-                                              context,
-                                              MaterialPageRoute(
-                                                  builder: (context) =>
-                                                      SubCategories(
-                                                          _art.title,
-                                                          _art.subCategories,
-                                                          _art.gems,
-                                                          _art.accentColor,
-                                                          _art.icon)),
-                                            );
-                                          },
-                                          child: Icon(MdiIcons.diamondStone,
-                                              color: _art.primaryColor),
-                                        ),
-                                      ],
-                                    )
-                                  ],
-                                ),
-                              ),
-                            ),
+                            child: _buildGemShortcut(),
                           ),
                           GemSectionHeader(section: _music, isLeft: true)
                               .build(context),
@@ -389,6 +257,21 @@ class HomePageState extends State<HomePage>
                           ),
                           GemSectionLayout(section: _art).build(context),
                           SizedBox(height: 20),
+                          GemSectionHeader(section: _trade, isLeft: true)
+                              .build(context),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child: ContentHeadingWidget(heading: 'Trade'),
+                          ),
+                          GemSectionLayout(section: _trade).build(context),
+                          Divider(),
+                          Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 16),
+                            child:
+                                ContentHeadingWidget(heading: 'Beauty & Hair'),
+                          ),
+                          GemSectionLayout(section: _beauty).build(context),
+                          SizedBox(height: 20),
                         ],
                       ),
                     )
@@ -419,6 +302,143 @@ class HomePageState extends State<HomePage>
           },
         )
       ],
+    );
+  }
+
+  _buildGemShortcut() {
+    return Material(
+      elevation: 4,
+      borderRadius: const BorderRadius.all(Radius.circular(12)),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: <Widget>[
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SubCategories(
+                          _music.title,
+                          _music.subCategories,
+                          _music.gems,
+                          _music.accentColor,
+                          _music.icon)),
+                );
+              },
+              child: Icon(MdiIcons.diamondStone, color: _music.primaryColor),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SubCategories(
+                          _media.title,
+                          _media.subCategories,
+                          _media.gems,
+                          _media.accentColor,
+                          _media.icon)),
+                );
+              },
+              child: Icon(MdiIcons.diamondStone, color: _media.primaryColor),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SubCategories(
+                          _entertainment.title,
+                          _entertainment.subCategories,
+                          _entertainment.gems,
+                          _entertainment.accentColor,
+                          _entertainment.icon)),
+                );
+              },
+              child: Icon(MdiIcons.diamondStone,
+                  color: _entertainment.primaryColor),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SubCategories(
+                          _food.title,
+                          _food.subCategories,
+                          _food.gems,
+                          _food.accentColor,
+                          _food.icon)),
+                );
+              },
+              child: Icon(MdiIcons.diamondStone, color: _food.primaryColor),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SubCategories(
+                          _technology.title,
+                          _technology.subCategories,
+                          _technology.gems,
+                          _technology.accentColor,
+                          _technology.icon)),
+                );
+              },
+              child:
+                  Icon(MdiIcons.diamondStone, color: _technology.primaryColor),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SubCategories(
+                          _art.title,
+                          _art.subCategories,
+                          _art.gems,
+                          _art.accentColor,
+                          _art.icon)),
+                );
+              },
+              child: Icon(MdiIcons.diamondStone, color: _art.primaryColor),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SubCategories(
+                          _trade.title,
+                          _trade.subCategories,
+                          _trade.gems,
+                          _trade.accentColor,
+                          _trade.icon)),
+                );
+              },
+              child: Icon(MdiIcons.diamondStone, color: _trade.primaryColor),
+            ),
+            InkWell(
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SubCategories(
+                          _beauty.title,
+                          _beauty.subCategories,
+                          _beauty.gems,
+                          _beauty.accentColor,
+                          _beauty.icon)),
+                );
+              },
+              child: Icon(MdiIcons.diamondStone, color: _beauty.primaryColor),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }

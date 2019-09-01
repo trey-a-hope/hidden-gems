@@ -15,7 +15,9 @@ class MyFormData {
     'Entertainment',
     'Food',
     'Technology',
-    'Art'
+    'Art',
+    'Trade',
+    'Beauty'
   ];
 }
 
