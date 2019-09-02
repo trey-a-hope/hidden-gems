@@ -69,8 +69,12 @@ Apple Watch Series 4 - 44mm (1.78 Inch)
 
 #How to Add Local Project to Bit Bucket
 
-#Git clone an existing repository.
-#git init
-#git remote add origin [my-repo]
-#git fetch
-#git checkout origin/master -ft
+Git clone an existing repository.
+git init
+git remote add origin [my-repo]
+git fetch
+git checkout origin/master -ft
+
+#Remove file.
+rm -rf stripe_functions.js
+
