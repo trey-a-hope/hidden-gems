@@ -56,7 +56,7 @@ class GemSectionLayout extends StatelessWidget {
                     ],
                   ),
                 ),
-                SizedBox(height: 130)
+                SizedBox(height: 140)
               ],
             ),
           ),

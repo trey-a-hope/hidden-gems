@@ -32,7 +32,9 @@ class EditProfilePageState extends State<EditProfilePage>
       _entertainmentSubCatDrop,
       _foodSubCatDrop,
       _technologySubCatDrop,
-      _artSubCatDrop;
+      _artSubCatDrop,
+      _tradeSubCatDrop,
+      _beautySubCatDrop;
 
   String _categoryController, _subCategoryController;
 
@@ -118,7 +120,8 @@ class EditProfilePageState extends State<EditProfilePage>
       },
     ).toList();
 
-    List<String> technologySubCatList = List.from(data['technology']['subCategories']);
+    List<String> technologySubCatList =
+        List.from(data['technology']['subCategories']);
     _technologySubCatDrop = technologySubCatList.map<DropdownMenuItem<String>>(
       (String value) {
         return DropdownMenuItem<String>(
@@ -130,6 +133,26 @@ class EditProfilePageState extends State<EditProfilePage>
 
     List<String> artSubCatList = List.from(data['art']['subCategories']);
     _artSubCatDrop = artSubCatList.map<DropdownMenuItem<String>>(
+      (String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      },
+    ).toList();
+
+    List<String> tradeSubCatList = List.from(data['trade']['subCategories']);
+    _tradeSubCatDrop = tradeSubCatList.map<DropdownMenuItem<String>>(
+      (String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      },
+    ).toList();
+
+    List<String> beautySubCatList = List.from(data['beauty']['subCategories']);
+    _beautySubCatDrop = beautySubCatList.map<DropdownMenuItem<String>>(
       (String value) {
         return DropdownMenuItem<String>(
           value: value,
@@ -304,6 +327,10 @@ class EditProfilePageState extends State<EditProfilePage>
         return _technologySubCatDrop;
       case 'Art':
         return _artSubCatDrop;
+      case 'Trade':
+        return _tradeSubCatDrop;
+      case 'Beauty':
+        return _beautySubCatDrop;
       default:
         return null;
     }

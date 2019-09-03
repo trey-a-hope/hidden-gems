@@ -60,7 +60,14 @@ class RoundedImageWidget extends StatelessWidget {
             ],
           ),
         ),
-        Text(name, style: bodyTextStyle,)
+        Container(
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.all(Radius.circular(10)),
+            color: Colors.black
+          ),
+          padding: EdgeInsets.all(10),
+          child: Text(name, style: TextStyle(color: Colors.white),),
+        )
       ],
     );
   }
