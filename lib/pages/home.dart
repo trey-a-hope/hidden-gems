@@ -7,12 +7,8 @@ import 'package:hiddengems_flutter/pages/search.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/common/gem_section_header.dart';
 import 'package:hiddengems_flutter/common/gem_section_layout.dart';
-import 'package:hiddengems_flutter/common/drawer_widget.dart';
 import 'package:hiddengems_flutter/models/section.dart';
 import 'package:hiddengems_flutter/pages/subCategories.dart';
-
-import '../style/colors.dart';
-import '../style/text.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -28,14 +24,14 @@ class HomePageState extends State<HomePage>
 
   bool _isLoading = true;
 
-  Section _music = Section('MUSIC');
-  Section _media = Section('MEDIA');
-  Section _entertainment = Section('ENTERTAINMENT');
-  Section _food = Section('FOOD');
-  Section _technology = Section('TECHNOLOGY');
-  Section _art = Section('ART');
-  Section _trade = Section('TRADE');
-  Section _beauty = Section('BEAUTY');
+  Section _music = Section('Music');
+  Section _media = Section('Media');
+  Section _entertainment = Section('Entertainment');
+  Section _food = Section('Food');
+  Section _technology = Section('Technology');
+  Section _art = Section('Art');
+  Section _trade = Section('Trade');
+  Section _beauty = Section('Beauty');
 
   @override
   void initState() {
@@ -44,23 +40,25 @@ class HomePageState extends State<HomePage>
     loadPage();
   }
 
-  //Fetch gems based on their category and limit them.
+  //Fetch 5 most recent gems in each category.
   Future<List<Gem>> _getGems(String category) async {
-    QuerySnapshot qs = await _db
+    QuerySnapshot querySnapshot = await _db
         .collection('Gems')
         .where('category', isEqualTo: category)
+        .orderBy('time', descending: true)
+        .limit(5)
         .getDocuments();
-    List<DocumentSnapshot> dss = qs.documents;
+    List<DocumentSnapshot> docSnapshots = querySnapshot.documents;
     List<Gem> gems = List<Gem>();
-    for (DocumentSnapshot ds in dss) {
+    for (DocumentSnapshot docSnapshot in docSnapshots) {
       Gem gem = Gem();
 
-      gem.id = ds['id'];
-      gem.name = ds['name'];
-      gem.category = ds['category'];
-      gem.subCategory = ds['subCategory'];
-      gem.photoUrl = ds['photoUrl'];
-      gem.likes = ds['likes'];
+      gem.id = docSnapshot['id'];
+      gem.name = docSnapshot['name'];
+      gem.category = docSnapshot['category'];
+      gem.subCategory = docSnapshot['subCategory'];
+      gem.photoUrl = docSnapshot['photoUrl'];
+      gem.likes = docSnapshot['likes'];
 
       gems.add(gem);
     }
@@ -148,25 +146,14 @@ class HomePageState extends State<HomePage>
   }
 
   _attachGems() async {
-    _music.gems = await _getGems('Music');
-    _media.gems = await _getGems('Media');
-    _entertainment.gems = await _getGems('Entertainment');
-    _food.gems = await _getGems('Food');
-    _technology.gems = await _getGems('Technology');
-    _art.gems = await _getGems('Art');
-    _trade.gems = await _getGems('Trade');
-    _beauty.gems = await _getGems('Beauty');
-
-    List<Section> sections = [
-      _music,
-      _media,
-      _entertainment,
-      _food,
-      _technology,
-      _art,
-      _trade,
-      _beauty
-    ];
+    _music.previewGems = await _getGems('Music');
+    _media.previewGems = await _getGems('Media');
+    _entertainment.previewGems = await _getGems('Entertainment');
+    _food.previewGems = await _getGems('Food');
+    _technology.previewGems = await _getGems('Technology');
+    _art.previewGems = await _getGems('Art');
+    _trade.previewGems = await _getGems('Trade');
+    _beauty.previewGems = await _getGems('Beauty');
   }
 
   void loadPage() async {
@@ -268,7 +255,7 @@ class HomePageState extends State<HomePage>
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16),
                             child:
-                                ContentHeadingWidget(heading: 'Beauty & Hair'),
+                                ContentHeadingWidget(heading: 'Beauty'),
                           ),
                           GemSectionLayout(section: _beauty).build(context),
                           SizedBox(height: 20),
@@ -319,10 +306,9 @@ class HomePageState extends State<HomePage>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SubCategories(
+                      builder: (context) => SubCategoriesPage(
                           _music.title,
                           _music.subCategories,
-                          _music.gems,
                           _music.accentColor,
                           _music.icon)),
                 );
@@ -334,12 +320,9 @@ class HomePageState extends State<HomePage>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SubCategories(
-                          _media.title,
-                          _media.subCategories,
-                          _media.gems,
-                          _media.accentColor,
-                          _media.icon)),
+                    builder: (context) => SubCategoriesPage(_media.title,
+                        _media.subCategories, _media.accentColor, _media.icon),
+                  ),
                 );
               },
               child: Icon(MdiIcons.diamondStone, color: _media.primaryColor),
@@ -349,10 +332,9 @@ class HomePageState extends State<HomePage>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SubCategories(
+                      builder: (context) => SubCategoriesPage(
                           _entertainment.title,
                           _entertainment.subCategories,
-                          _entertainment.gems,
                           _entertainment.accentColor,
                           _entertainment.icon)),
                 );
@@ -365,10 +347,9 @@ class HomePageState extends State<HomePage>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SubCategories(
+                      builder: (context) => SubCategoriesPage(
                           _food.title,
                           _food.subCategories,
-                          _food.gems,
                           _food.accentColor,
                           _food.icon)),
                 );
@@ -380,10 +361,9 @@ class HomePageState extends State<HomePage>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SubCategories(
+                      builder: (context) => SubCategoriesPage(
                           _technology.title,
                           _technology.subCategories,
-                          _technology.gems,
                           _technology.accentColor,
                           _technology.icon)),
                 );
@@ -396,10 +376,9 @@ class HomePageState extends State<HomePage>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SubCategories(
+                      builder: (context) => SubCategoriesPage(
                           _art.title,
                           _art.subCategories,
-                          _art.gems,
                           _art.accentColor,
                           _art.icon)),
                 );
@@ -411,10 +390,9 @@ class HomePageState extends State<HomePage>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SubCategories(
+                      builder: (context) => SubCategoriesPage(
                           _trade.title,
                           _trade.subCategories,
-                          _trade.gems,
                           _trade.accentColor,
                           _trade.icon)),
                 );
@@ -426,10 +404,9 @@ class HomePageState extends State<HomePage>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SubCategories(
+                      builder: (context) => SubCategoriesPage(
                           _beauty.title,
                           _beauty.subCategories,
-                          _beauty.gems,
                           _beauty.accentColor,
                           _beauty.icon)),
                 );

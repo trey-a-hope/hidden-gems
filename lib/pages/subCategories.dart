@@ -1,15 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:hiddengems_flutter/common/gem_card.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class SubCategories extends StatelessWidget {
+class SubCategoriesPage extends StatefulWidget {
   final String mainCategory;
-  final List<String> subCategories;
-  final List<Gem> gems;
   final Color titleColor;
   final IconData titleIcon;
+  final List<String> subCategories;
 
-  SubCategories(this.mainCategory, this.subCategories, this.gems, this.titleColor, this.titleIcon);
+  SubCategoriesPage(
+      this.mainCategory, this.subCategories, this.titleColor, this.titleIcon);
+
+  @override
+  State createState() => SubCategoriesPageState(
+        this.mainCategory,
+        this.subCategories,
+        this.titleColor,
+        this.titleIcon,
+      );
+}
+
+class SubCategoriesPageState extends State<SubCategoriesPage>
+    with SingleTickerProviderStateMixin {
+  final String mainCategory;
+  final List<String> subCategories;
+  final Color titleColor;
+  final IconData titleIcon;
+  final _db = Firestore.instance;
+  
+  List<Gem> gems = List<Gem>();
+  bool _isLoading = true;
+
+  SubCategoriesPageState(
+      this.mainCategory, this.subCategories, this.titleColor, this.titleIcon);
 
   _buildGemListing(List<Gem> gems) {
     return ListView.builder(
@@ -21,8 +45,46 @@ class SubCategories extends StatelessWidget {
     );
   }
 
+  Future<List<Gem>> _getGems() async {
+    QuerySnapshot qs = await _db
+        .collection('Gems')
+        .where('category', isEqualTo: mainCategory)
+        .getDocuments();
+    List<DocumentSnapshot> docSnapshots = qs.documents;
+    List<Gem> gems = List<Gem>();
+    for (DocumentSnapshot docSnapshot in docSnapshots) {
+      Gem gem = Gem();
+
+      gem.id = docSnapshot['id'];
+      gem.name = docSnapshot['name'];
+      gem.category = docSnapshot['category'];
+      gem.subCategory = docSnapshot['subCategory'];
+      gem.photoUrl = docSnapshot['photoUrl'];
+      gem.likes = docSnapshot['likes'];
+
+      gems.add(gem);
+    }
+    return gems;
+  }
+
   @override
-  Widget build(BuildContext context) {
+  void initState() {
+    super.initState();
+
+    loadPage();
+  }
+
+  void loadPage() async {
+    gems = await _getGems();
+
+    setState(
+      () {
+        _isLoading = false;
+      },
+    );
+  }
+
+  Widget _buildPage() {
     List<Tab> tabs = List<Tab>();
     List<ListView> listViewSubCategories = List<ListView>();
 
@@ -55,7 +117,7 @@ class SubCategories extends StatelessWidget {
                 Icon(titleIcon, color: titleColor),
                 SizedBox(width: 10),
                 Text(
-                  mainCategory,
+                  mainCategory.toUpperCase(),
                   style: TextStyle(letterSpacing: 2.0, color: titleColor),
                 ),
               ],
@@ -65,5 +127,19 @@ class SubCategories extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return _isLoading
+        ? Container(
+            width: double.infinity,
+            height: double.infinity,
+            color: Colors.white,
+            child: Center(
+              child: CircularProgressIndicator(),
+            ),
+          )
+        : _buildPage();
   }
 }

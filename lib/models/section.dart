@@ -10,7 +10,7 @@ class Section {
   Color primaryColor;
   Color accentColor;
   IconData icon;
-  List<Gem> gems = List<Gem>();
+  List<Gem> previewGems = List<Gem>();
 
   Section(String title){
     this.title = title;

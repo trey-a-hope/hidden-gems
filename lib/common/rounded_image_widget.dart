@@ -12,7 +12,7 @@ class RoundedImageWidget extends StatelessWidget {
   final String name;
   final imageSize = 80.0;
 
-  const RoundedImageWidget({Key key, this.isOnline = false, this.showRanking = false, this.ranking, @required this.imagePath, this.name = ""})
+  const RoundedImageWidget({Key key, this.isOnline = false, this.showRanking = false, this.ranking, @required this.imagePath, @required this.name})
       : super(key: key);
 
   @override
@@ -60,7 +60,7 @@ class RoundedImageWidget extends StatelessWidget {
             ],
           ),
         ),
-        if (name != null) Text(name, style: bodyTextStyle,)
+        Text(name, style: bodyTextStyle,)
       ],
     );
   }

@@ -283,7 +283,7 @@ class GemProfilePageState extends State<GemProfilePage>
           height: 100,
           width: 100,
           decoration: BoxDecoration(
-            border: Border.all(width: 2.0, color: Colors.white),
+            border: Border.all(width: 2.0, color: Colors.black),
             borderRadius: BorderRadius.circular(10.0),
             image: DecorationImage(
                 image: CachedNetworkImageProvider(_gem.photoUrl),

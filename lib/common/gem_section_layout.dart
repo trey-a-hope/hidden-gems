@@ -29,9 +29,7 @@ class GemSectionLayout extends StatelessWidget {
                     children: <Widget>[
                       Row(
                         children: <Widget>[
-                          Icon(section.icon, color: section.primaryColor),
-                          SizedBox(width: 20),
-                          Text(section.gems.length == 1 ? '1 gem' : '${section.gems.length} gems')
+                          Icon(section.icon, color: section.primaryColor)
                         ],
                       ),
                       InkWell(
@@ -47,10 +45,9 @@ class GemSectionLayout extends StatelessWidget {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                                builder: (context) => SubCategories(
+                                builder: (context) => SubCategoriesPage(
                                     section.title,
                                     section.subCategories,
-                                    section.gems,
                                     section.accentColor,
                                     section.icon)),
                           );
@@ -72,18 +69,18 @@ class GemSectionLayout extends StatelessWidget {
               padding: const EdgeInsets.all(2.0),
               child: Row(
                 children: <Widget>[
-                  for (var i = 0; i < section.gems.length; i++)
+                  for (var i = 0; i < section.previewGems.length; i++)
                     InkWell(
                       child: RoundedImageWidget(
-                        imagePath: section.gems[i].photoUrl,
+                        imagePath: section.previewGems[i].photoUrl,
                         isOnline: true,
-                        name: section.gems[i].name,
+                        name: section.previewGems[i].name,
                       ),
                       onTap: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(
-                            builder: (context) => GemProfilePage(section.gems[i].id),
+                            builder: (context) => GemProfilePage(section.previewGems[i].id),
                           ),
                         );
                       },
