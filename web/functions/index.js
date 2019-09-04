@@ -4,8 +4,6 @@ const algoliasearch = require('algoliasearch');
 const algoliaSync = require('algolia-firestore-sync');
 const stripe = require("stripe")("sk_test_7VBBm17Ry1fpkpa8u7w1esNA");
 
-const stripe_functions = require('../functions/stripe_functions');
-
 const ALGOLIA_APP_ID = 'ZWB00DM8S2';
 const ALGOLIA_ADMIN_KEY = '5425be19aea3a951b40826e5549c03f1';
 const ALGOLIA_INDEX_NAME = 'Gems';
