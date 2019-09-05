@@ -354,7 +354,7 @@ class EditProfilePageState extends State<EditProfilePage>
       onSaved: (value) {},
       decoration: InputDecoration(
         hintText: 'Name',
-        icon: Icon(Icons.person),
+        icon: Icon(Icons.person, color: Colors.red),
         fillColor: Colors.white,
       ),
     );
@@ -373,7 +373,7 @@ class EditProfilePageState extends State<EditProfilePage>
       onSaved: (value) {},
       decoration: InputDecoration(
         hintText: 'Bio',
-        icon: Icon(Icons.info),
+        icon: Icon(Icons.info, color: Colors.amber),
         fillColor: Colors.white,
       ),
     );
@@ -392,7 +392,7 @@ class EditProfilePageState extends State<EditProfilePage>
       onSaved: (value) {},
       decoration: InputDecoration(
         hintText: 'Phone Number',
-        icon: Icon(MdiIcons.phone),
+        icon: Icon(MdiIcons.phone, color: Colors.blue),
         fillColor: Colors.white,
       ),
     );
@@ -410,9 +410,7 @@ class EditProfilePageState extends State<EditProfilePage>
       // validator: Validater.mobile,
       onSaved: (value) {},
       decoration: InputDecoration(
-        hintMaxLines: 2,
-        hintText: 'Spotify Artist ID, (\"4AeeMMRvpOKMeWAcgQ8O6p\")',
-        icon: Icon(MdiIcons.spotify),
+        icon: Icon(MdiIcons.spotify, color: Colors.green),
         fillColor: Colors.white,
       ),
     );
@@ -430,9 +428,7 @@ class EditProfilePageState extends State<EditProfilePage>
       // validator: Validater.mobile,
       onSaved: (value) {},
       decoration: InputDecoration(
-        hintMaxLines: 2,
-        hintText: 'iTunes Artist ID, (\"travisty/1469723679\")',
-        icon: Icon(MdiIcons.itunes),
+        icon: Icon(MdiIcons.itunes, color: Colors.grey),
         fillColor: Colors.white,
       ),
     );
@@ -450,9 +446,7 @@ class EditProfilePageState extends State<EditProfilePage>
       // validator: Validater.mobile,
       onSaved: (value) {},
       decoration: InputDecoration(
-        hintMaxLines: 2,
-        hintText: 'SoundCloud name, (\"trey-hope\")',
-        icon: Icon(MdiIcons.soundcloud),
+        icon: Icon(MdiIcons.soundcloud, color: Colors.orange),
         fillColor: Colors.white,
       ),
     );
@@ -467,12 +461,10 @@ class EditProfilePageState extends State<EditProfilePage>
       // maxLength: MyFormData.phoneCarLimit,
       maxLines: 1,
       onFieldSubmitted: (term) {},
-      // validator: Validater.mobile,
+      // validator: Validater.instagram,
       onSaved: (value) {},
       decoration: InputDecoration(
-        hintMaxLines: 2,
-        hintText: 'Instagram, (\"tr3.designs\")',
-        icon: Icon(MdiIcons.instagram),
+        icon: Icon(MdiIcons.instagram, color: Colors.pink),
         fillColor: Colors.white,
       ),
     );
@@ -490,9 +482,7 @@ class EditProfilePageState extends State<EditProfilePage>
       // validator: Validater.mobile,
       onSaved: (value) {},
       decoration: InputDecoration(
-        hintMaxLines: 2,
-        hintText: 'Facebook, (\"tr3designs\")',
-        icon: Icon(MdiIcons.facebook),
+        icon: Icon(MdiIcons.facebook, color: Colors.blue),
         fillColor: Colors.white,
       ),
     );
@@ -507,12 +497,10 @@ class EditProfilePageState extends State<EditProfilePage>
       // maxLength: MyFormData.phoneCarLimit,
       maxLines: 1,
       onFieldSubmitted: (term) {},
-      // validator: Validater.mobile,
+      // validator: Validater.twitter,
       onSaved: (value) {},
       decoration: InputDecoration(
-        hintMaxLines: 2,
-        hintText: 'Twitter, (\"tr3Designs\")',
-        icon: Icon(MdiIcons.twitter),
+        icon: Icon(MdiIcons.twitter, color: Colors.lightBlue),
         fillColor: Colors.white,
       ),
     );
@@ -530,9 +518,7 @@ class EditProfilePageState extends State<EditProfilePage>
       // validator: Validater.mobile,
       onSaved: (value) {},
       decoration: InputDecoration(
-        hintMaxLines: 2,
-        hintText: 'YouTube Channel ID, (\"UCyMTUp7B-lFoRbDfLr3QuJw\")',
-        icon: Icon(MdiIcons.youtube),
+        icon: Icon(MdiIcons.youtube, color: Colors.red),
         fillColor: Colors.white,
       ),
     );
@@ -761,32 +747,163 @@ class EditProfilePageState extends State<EditProfilePage>
         color: Colors.white,
         borderRadius: BorderRadius.circular(5.0),
       ),
-      child: Padding(
-        padding: EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text('Social',
-                style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.red)),
-            SizedBox(height: 20),
-            instagramFormField(),
-            SizedBox(height: 20),
-            facebookFormField(),
-            SizedBox(height: 20),
-            twitterFormField(),
-            SizedBox(height: 20),
-            youTubeFormField(),
-            SizedBox(height: 20),
-            _categoryController == 'Music' ? spotifyFormField() : Container(),
-            _categoryController == 'Music' ? SizedBox(height: 20) : Container(),
-            _categoryController == 'Music' ? iTunesFormField() : Container(),
-            _categoryController == 'Music' ? SizedBox(height: 20) : Container(),
-            _categoryController == 'Music' ? soundCloudFormField() : Container()
-          ],
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.all(20),
+            child: Text(
+              'Social',
+              style: TextStyle(
+                  fontSize: 20, fontWeight: FontWeight.bold, color: Colors.red),
+            ),
+          ),
+          //INSTAGRAM
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text('Enter your Instagram Name'),
+          ),
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'https://www.instagram.com/?',
+                style: TextStyle(color: Colors.grey),
+              )),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: instagramFormField(),
+          ),
+          SizedBox(height: 20),
+          Divider(),
+          SizedBox(height: 20),
+          //FACEBOOK
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text('Enter your Facebook Name'),
+          ),
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'https://www.facebook.com/?',
+                style: TextStyle(color: Colors.grey),
+              )),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: facebookFormField(),
+          ),
+          SizedBox(height: 20),
+          Divider(),
+          SizedBox(height: 20),
+          //TWITTER
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text('Enter your Twitter Name'),
+          ),
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'https://twitter.com/?',
+                style: TextStyle(color: Colors.grey),
+              )),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: twitterFormField(),
+          ),
+          SizedBox(height: 20),
+          Divider(),
+          SizedBox(height: 20),
+          //YOUTUBE
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: Text('Enter your YouTube Channel ID'),
+          ),
+          Padding(
+              padding: EdgeInsets.symmetric(horizontal: 20),
+              child: Text(
+                'https://www.youtube.com/channel/?',
+                style: TextStyle(color: Colors.grey),
+              )),
+          Padding(
+            padding: EdgeInsets.symmetric(horizontal: 20),
+            child: youTubeFormField(),
+          ),
+          SizedBox(height: 20),
+           _categoryController == 'Music' ? Divider() : Container(),
+           _categoryController == 'Music' ? SizedBox(height: 20) : Container(),
+          //SPOTIFY
+          _categoryController == 'Music'
+              ? Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text('Enter your Spotify Artist ID'),
+                )
+              : Container(),
+          _categoryController == 'Music'
+              ? Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    'https://open.spotify.com/artist/?',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                )
+              : Container(),
+          _categoryController == 'Music'
+              ? Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: spotifyFormField(),
+                )
+              : Container(),
+          _categoryController == 'Music' ? SizedBox(height: 20) : Container(),
+          _categoryController == 'Music' ? Divider() : Container(),
+          _categoryController == 'Music' ? SizedBox(height: 20) : Container(),
+          //iTunes
+          _categoryController == 'Music'
+              ? Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text('Enter your iTunes Artist ID'),
+                )
+              : Container(),
+          _categoryController == 'Music'
+              ? Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    'https://music.apple.com/us/artist/?/?',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                )
+              : Container(),
+          _categoryController == 'Music'
+              ? Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: iTunesFormField(),
+                )
+              : Container(),
+          _categoryController == 'Music' ? SizedBox(height: 20) : Container(),
+          _categoryController == 'Music' ? Divider() : Container(),
+          _categoryController == 'Music' ? SizedBox(height: 20) : Container(),
+          //SOUNDCLOUD
+          _categoryController == 'Music'
+              ? Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text('Enter your SoundCloud name'),
+                )
+              : Container(),
+          _categoryController == 'Music'
+              ? Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: Text(
+                    'https://soundcloud.com/?',
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                )
+              : Container(),
+          _categoryController == 'Music'
+              ? Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 20),
+                  child: soundCloudFormField(),
+                )
+              : Container(),
+          _categoryController == 'Music' ? SizedBox(height: 20) : Container()
+        ],
       ),
     );
   }
