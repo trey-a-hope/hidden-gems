@@ -2,7 +2,7 @@ import 'package:flutter/widgets.dart';
 import 'package:hiddengems_flutter/common/rounded_image_widget.dart';
 import 'package:hiddengems_flutter/models/section.dart';
 import 'package:flutter/material.dart';
-import 'package:hiddengems_flutter/pages/subCategories.dart';
+import 'package:hiddengems_flutter/pages/sub_categories.dart';
 import 'package:hiddengems_flutter/pages/gemProfile.dart';
 
 class GemSectionLayout extends StatelessWidget {

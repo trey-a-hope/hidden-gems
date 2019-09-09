@@ -8,7 +8,7 @@ import 'package:material_design_icons_flutter/material_design_icons_flutter.dart
 import 'package:hiddengems_flutter/common/gem_section_header.dart';
 import 'package:hiddengems_flutter/common/gem_section_layout.dart';
 import 'package:hiddengems_flutter/models/section.dart';
-import 'package:hiddengems_flutter/pages/subCategories.dart';
+import 'package:hiddengems_flutter/pages/sub_categories.dart';
 
 class HomePage extends StatefulWidget {
   @override

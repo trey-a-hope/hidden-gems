@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:hiddengems_flutter/services/urlLauncher.dart';
+import 'package:hiddengems_flutter/services/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
-import 'package:hiddengems_flutter/services/pdInfo.dart';
-import 'package:clipboard_manager/clipboard_manager.dart';
+import 'package:hiddengems_flutter/services/pd_info.dart';
 
 class GemProfilePage extends StatefulWidget {
   final String id;
@@ -72,15 +72,19 @@ class GemProfilePageState extends State<GemProfilePage>
 
   _copyToClipboard(String text) async {
     try {
-      if(text.isEmpty){
+      if (text.isEmpty) {
         Modal.showInSnackBar(_scaffoldKey, 'User did not provide this info.');
         return;
       }
-      bool success = await ClipboardManager.copyToClipBoard(text);
-      if (success)
-        Modal.showInSnackBar(_scaffoldKey, 'Copied to clipboard.');
-      else
-        Modal.showInSnackBar(_scaffoldKey, 'Could not copy to clipboard.');
+
+      await Clipboard.setData(ClipboardData(text: text));
+      Modal.showInSnackBar(_scaffoldKey, 'Copied to clipboard.');
+      // bool success = await ClipboardManager.copyToClipBoard(text);
+      // if (success)
+      //   Modal.showInSnackBar(_scaffoldKey, 'Copied to clipboard.');
+      // else
+      //   Modal.showInSnackBar(_scaffoldKey, 'Could not copy to clipboard.');
+
     } catch (e) {
       Modal.showInSnackBar(_scaffoldKey, e.toString());
     }
