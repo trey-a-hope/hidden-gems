@@ -60,7 +60,7 @@ class LoginPageState extends State<LoginPage>
     return TextFormField(
       controller: _emailController,
       keyboardType: TextInputType.emailAddress,
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       maxLengthEnforced: true,
       // maxLength: MyFormData.nameCharLimit,
       onFieldSubmitted: (term) {},
@@ -78,7 +78,7 @@ class LoginPageState extends State<LoginPage>
     return TextFormField(
       controller: _passwordController,
       keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       obscureText: true,
       onFieldSubmitted: (term) {},
       validator: Validater.isEmpty,

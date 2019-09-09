@@ -94,7 +94,7 @@ class Modal {
           child: TextFormField(
             controller: emailController,
             keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
+            textInputAction: TextInputAction.done,
             maxLengthEnforced: true,
             // maxLength: MyFormData.nameCharLimit,
             onFieldSubmitted: (term) {},
@@ -146,7 +146,7 @@ class Modal {
           child: TextFormField(
             controller: emailController,
             keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.next,
+            textInputAction: TextInputAction.done,
             maxLengthEnforced: true,
             // maxLength: MyFormData.nameCharLimit,
             onFieldSubmitted: (term) {},
@@ -198,7 +198,7 @@ class Modal {
           child: TextFormField(
             controller: passwordController,
             keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.next,
+            textInputAction: TextInputAction.done,
             maxLengthEnforced: true,
 
             // maxLength: MyFormData.nameCharLimit,

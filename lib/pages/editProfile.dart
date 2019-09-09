@@ -346,7 +346,7 @@ class EditProfilePageState extends State<EditProfilePage>
     return TextFormField(
       controller: _nameController,
       keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       maxLengthEnforced: true,
       maxLength: MyFormData.nameCharLimit,
       onFieldSubmitted: (term) {},
@@ -364,7 +364,7 @@ class EditProfilePageState extends State<EditProfilePage>
     return TextFormField(
       controller: _bioController,
       keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       maxLengthEnforced: true,
       maxLength: MyFormData.bioCharLimit,
       maxLines: 10,
@@ -383,7 +383,7 @@ class EditProfilePageState extends State<EditProfilePage>
     return TextFormField(
       controller: _phoneController,
       keyboardType: TextInputType.phone,
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       maxLengthEnforced: true,
       maxLength: MyFormData.phoneCarLimit,
       maxLines: 1,
@@ -402,7 +402,7 @@ class EditProfilePageState extends State<EditProfilePage>
     return TextFormField(
       controller: _spotifyController,
       keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       maxLengthEnforced: true,
       // maxLength: MyFormData.phoneCarLimit,
       maxLines: 1,
@@ -420,7 +420,7 @@ class EditProfilePageState extends State<EditProfilePage>
     return TextFormField(
       controller: _iTunesController,
       keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       maxLengthEnforced: true,
       // maxLength: MyFormData.phoneCarLimit,
       maxLines: 1,
@@ -438,7 +438,7 @@ class EditProfilePageState extends State<EditProfilePage>
     return TextFormField(
       controller: _soundCloudController,
       keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       maxLengthEnforced: true,
       // maxLength: MyFormData.phoneCarLimit,
       maxLines: 1,
@@ -456,7 +456,7 @@ class EditProfilePageState extends State<EditProfilePage>
     return TextFormField(
       controller: _instagramController,
       keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       maxLengthEnforced: true,
       // maxLength: MyFormData.phoneCarLimit,
       maxLines: 1,
@@ -474,7 +474,7 @@ class EditProfilePageState extends State<EditProfilePage>
     return TextFormField(
       controller: _facebookController,
       keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       maxLengthEnforced: true,
       // maxLength: MyFormData.phoneCarLimit,
       maxLines: 1,
@@ -492,7 +492,7 @@ class EditProfilePageState extends State<EditProfilePage>
     return TextFormField(
       controller: _twitterController,
       keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       maxLengthEnforced: true,
       // maxLength: MyFormData.phoneCarLimit,
       maxLines: 1,
@@ -510,7 +510,7 @@ class EditProfilePageState extends State<EditProfilePage>
     return TextFormField(
       controller: _youTubeController,
       keyboardType: TextInputType.text,
-      textInputAction: TextInputAction.next,
+      textInputAction: TextInputAction.done,
       maxLengthEnforced: true,
       // maxLength: MyFormData.phoneCarLimit,
       maxLines: 1,
