@@ -9,6 +9,7 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:hiddengems_flutter/services/pdInfo.dart';
+import 'package:clipboard_manager/clipboard_manager.dart';
 
 class GemProfilePage extends StatefulWidget {
   final String id;
@@ -69,60 +70,19 @@ class GemProfilePageState extends State<GemProfilePage>
     });
   }
 
-  _text() async {
-    if (_gem.phoneNumber.isEmpty) {
-      Modal.showInSnackBar(
-          _scaffoldKey, 'Sorry - This user did not provide a phone number.');
-    } else {
-      // Android
-      String uri = 'sms:+${_gem.phoneNumber}';
-      if (await canLaunch(uri)) {
-        await launch(uri);
-      } else {
-        // iOS
-        String uri = 'sms:00${_gem.phoneNumber}';
-        if (await canLaunch(uri)) {
-          await launch(uri);
-        } else {
-          throw 'Could not launch $uri';
-        }
+  _copyToClipboard(String text) async {
+    try {
+      if(text.isEmpty){
+        Modal.showInSnackBar(_scaffoldKey, 'User did not provide this info.');
+        return;
       }
-    }
-  }
-
-  _email() async {
-    if (_gem.email.isEmpty) {
-      Modal.showInSnackBar(
-          _scaffoldKey, 'Sorry - This user did not provide an email.');
-    } else {
-      String uri =
-          'mailto:${_gem.email}?subject=Greetings!&body=Hello ${_gem.name}, how are you?';
-      if (await canLaunch(uri)) {
-        await launch(uri);
-      } else {
-        throw 'Could not launch $uri';
-      }
-    }
-  }
-
-  _call() async {
-    if (_gem.phoneNumber.isEmpty) {
-      Modal.showInSnackBar(
-          _scaffoldKey, 'Sorry - This user did not provide a phone number.');
-    } else {
-      // Android
-      String uri = 'tel:+1${_gem.phoneNumber}';
-      if (await canLaunch(uri)) {
-        await launch(uri);
-      } else {
-        // iOS
-        String uri = 'tel:00${_gem.phoneNumber}8';
-        if (await canLaunch(uri)) {
-          await launch(uri);
-        } else {
-          throw 'Could not launch $uri';
-        }
-      }
+      bool success = await ClipboardManager.copyToClipBoard(text);
+      if (success)
+        Modal.showInSnackBar(_scaffoldKey, 'Copied to clipboard.');
+      else
+        Modal.showInSnackBar(_scaffoldKey, 'Could not copy to clipboard.');
+    } catch (e) {
+      Modal.showInSnackBar(_scaffoldKey, e.toString());
     }
   }
 
@@ -199,21 +159,14 @@ class GemProfilePageState extends State<GemProfilePage>
                 backgroundColor: Colors.white,
                 label: 'Email',
                 labelStyle: TextStyle(fontSize: 18.0),
-                onTap: () => _email(),
+                onTap: () => _copyToClipboard(_gem.email),
               ),
               SpeedDialChild(
                 child: Icon(Icons.phone, color: Colors.orange),
                 backgroundColor: Colors.white,
                 label: 'Call',
                 labelStyle: TextStyle(fontSize: 18.0),
-                onTap: () => _call(),
-              ),
-              SpeedDialChild(
-                child: Icon(Icons.textsms, color: Colors.purple),
-                backgroundColor: Colors.white,
-                label: 'Text',
-                labelStyle: TextStyle(fontSize: 18.0),
-                onTap: () => _text(),
+                onTap: () => _copyToClipboard(_gem.phoneNumber),
               )
             ],
           );
@@ -296,19 +249,25 @@ class GemProfilePageState extends State<GemProfilePage>
   }
 
   _buildAppBar() {
-    return _isLoading ? null : AppBar(
-      centerTitle: true,
-      title: Text(
-        'GEM DETAILS',
-        style: TextStyle(letterSpacing: 2.0),
-      ),
-      actions: <Widget>[
-        IconButton(
-          icon: List.from(_gem.likes).contains(_deviceId) ? Icon(Icons.favorite, color: Colors.red) : Icon(Icons.favorite_border),
-          onPressed: () { _likeGem(); },
-        )
-      ],
-    );
+    return _isLoading
+        ? null
+        : AppBar(
+            centerTitle: true,
+            title: Text(
+              'GEM DETAILS',
+              style: TextStyle(letterSpacing: 2.0),
+            ),
+            actions: <Widget>[
+              IconButton(
+                icon: List.from(_gem.likes).contains(_deviceId)
+                    ? Icon(Icons.favorite, color: Colors.red)
+                    : Icon(Icons.favorite_border),
+                onPressed: () {
+                  _likeGem();
+                },
+              )
+            ],
+          );
   }
 
   _buildBio() {
