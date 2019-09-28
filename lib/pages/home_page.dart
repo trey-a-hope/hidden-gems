@@ -3,12 +3,12 @@ import 'package:hiddengems_flutter/common/content_heading_widget.dart';
 import 'package:hiddengems_flutter/common/drawer_widget.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:hiddengems_flutter/pages/search.dart';
+import 'package:hiddengems_flutter/pages/search_page.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/common/gem_section_header.dart';
 import 'package:hiddengems_flutter/common/gem_section_layout.dart';
 import 'package:hiddengems_flutter/models/section.dart';
-import 'package:hiddengems_flutter/pages/sub_categories.dart';
+import 'package:hiddengems_flutter/pages/sub_categories_page.dart';
 
 class HomePage extends StatefulWidget {
   @override

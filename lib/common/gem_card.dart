@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hiddengems_flutter/pages/gemProfile.dart';
+import 'package:hiddengems_flutter/pages/profile/gem_profile_page.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 

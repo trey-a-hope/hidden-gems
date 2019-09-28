@@ -1,9 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:hiddengems_flutter/pages/settings.dart';
+import 'package:hiddengems_flutter/pages/settings_page.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:hiddengems_flutter/pages/login.dart';
-import 'package:hiddengems_flutter/pages/edit_profile.dart';
+import 'package:hiddengems_flutter/pages/login_page.dart';
+import 'package:hiddengems_flutter/pages/profile/edit_profile_page.dart';
 import 'package:hiddengems_flutter/services/pd_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
