@@ -10,17 +10,18 @@ class Gem {
   String iTunesID;
   String id;
   String instagramName;
-  List<dynamic> likes = List<dynamic>(); //List of user IDs
   String name;
+  List<dynamic> likes = List<dynamic>(); //List of user IDs
   String phoneNumber;
-  String photoUrl;
   String soundCloudName;
   String spotifyID;
   String subCategory;
-  DateTime time;
   String twitterName;
-  String uid; //For authentication.
   String youTubeID;
+  String photoUrl;
+  DateTime time;
+  String uid;
+  bool isSitter;
 
   static Gem extractDocument(DocumentSnapshot ds) {
     Gem gem = Gem();
@@ -44,6 +45,7 @@ class Gem {
     gem.twitterName = ds['twitterName'];
     gem.uid = ds['uid'];
     gem.youTubeID = ds['youTubeID'];
+    gem.isSitter = ds['isSitter'];
 
     return gem;
   }
@@ -74,59 +76,3 @@ class Gem {
     return gem;
   }
 }
-
-// buildGemCard(Gem gem, BuildContext context) {
-//   return Card(
-//     elevation: 3,
-//     child: InkWell(
-//       child: Row(
-//         children: <Widget>[
-//           Container(
-//             height: 125,
-//             width: 110,
-//             padding: EdgeInsets.only(left: 0, top: 10, bottom: 70, right: 20),
-//             decoration: BoxDecoration(
-//               image: DecorationImage(
-//                   image: NetworkImage(gem.photoUrl), fit: BoxFit.cover),
-//             ),
-//           ),
-//           Padding(
-//             padding: const EdgeInsets.all(8.0),
-//             child: Column(
-//               mainAxisAlignment: MainAxisAlignment.center,
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: <Widget>[
-//                 Text(
-//                   gem.name,
-//                   style: TextStyle(
-//                       color: Colors.deepOrange,
-//                       fontWeight: FontWeight.w700,
-//                       fontSize: 17),
-//                 ),
-//                 Text(
-//                   gem.category,
-//                   style: TextStyle(fontSize: 14, color: Colors.black87),
-//                 ),
-//                 Text(
-//                   gem.subCategory,
-//                   style: TextStyle(fontSize: 14, color: Colors.black87),
-//                 ),
-//                 SizedBox(
-//                   height: 10,
-//                 ),
-//               ],
-//             ),
-//           ),
-//         ],
-//       ),
-//       onTap: () {
-//         Navigator.push(
-//           context,
-//           MaterialPageRoute(
-//             builder: (context) => GemProfilePage(gem.id),
-//           ),
-//         );
-//       },
-//     ),
-//   );
-// }

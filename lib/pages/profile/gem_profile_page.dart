@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hiddengems_flutter/models/gem.dart';
@@ -11,6 +12,8 @@ import 'package:timeago/timeago.dart' as timeago;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:hiddengems_flutter/services/pd_info.dart';
 
+// https://pub.dev/packages/algolia
+
 class GemProfilePage extends StatefulWidget {
   final String id;
   GemProfilePage(this.id);
@@ -21,16 +24,20 @@ class GemProfilePage extends StatefulWidget {
 
 class GemProfilePageState extends State<GemProfilePage>
     with SingleTickerProviderStateMixin {
+
   GemProfilePageState(this._id);
+
   final PDInfo _pdInfo = PDInfo();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  final FirebaseAuth _auth = FirebaseAuth.instance;
   final String _id; //Gem ID
   final Color _iconColor = Colors.grey;
   final _db = Firestore.instance;
   String _deviceId; //Viewer ID
   Gem _gem;
   bool _isLoading = true;
+  // User _currentUser;
+  Gem _currentGem;
 
   @override
   void initState() {
@@ -38,9 +45,33 @@ class GemProfilePageState extends State<GemProfilePage>
     _loadPage();
   }
 
+  // _getCurrentUser() async {
+  //   FirebaseUser firebaseUser = await _auth.currentUser();
+  //   if (firebaseUser != null) {
+  //     QuerySnapshot userColQuery = await _db
+  //         .collection('Users')
+  //         .where('uid', isEqualTo: firebaseUser.uid)
+  //         .getDocuments();
+  //     QuerySnapshot gemColQuery = await _db
+  //         .collection('Gems')
+  //         .where('uid', isEqualTo: firebaseUser.uid)
+  //         .getDocuments();
+
+  //     DocumentSnapshot documentSnapshot;
+  //     if (gemColQuery.documents.isEmpty) {
+  //       documentSnapshot = userColQuery.documents.first;
+  //       _currentUser = User.extractDocument(documentSnapshot);
+  //     } else {
+  //       documentSnapshot = gemColQuery.documents.first;
+  //       _currentGem = User.extractDocument(documentSnapshot);
+  //     }
+  //   }
+  // }
+
   _loadPage() async {
     _deviceId = await _pdInfo.getDeviceID();
     await _fetchGem();
+    // await _getCurrentUser();
 
     setState(
       () {

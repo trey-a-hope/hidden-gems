@@ -55,6 +55,7 @@ class _SearchPageState extends State<SearchPage> {
     );
 
     AlgoliaQuery query = algolia.instance.index('Gems');
+    query = query.setFacetFilter('isGem:true');
     query = query.search(value);
 
     _results = (await query.getObjects()).hits;
