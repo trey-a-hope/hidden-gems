@@ -1,14 +1,82 @@
-const functions = require('firebase-functions');
-const admin = require('firebase-admin');
-const algoliasearch = require('algoliasearch');
-const algoliaSync = require('algolia-firestore-sync');
-const stripe = require("stripe")("sk_test_7VBBm17Ry1fpkpa8u7w1esNA");
+const functions = require('firebase-functions');//Default
+const admin = require('firebase-admin');//Default
+const algoliasearch = require('algoliasearch');//Hidden Gems
+const algoliaSync = require('algolia-firestore-sync');//Hidden Gems
+const stripe = require('stripe')('sk_test_7VBBm17Ry1fpkpa8u7w1esNA');//Camp Central
+const paypal = require('paypal-rest-sdk');//Nanny McTea Sitters
 
-const ALGOLIA_APP_ID = 'ZWB00DM8S2';
-const ALGOLIA_ADMIN_KEY = '5425be19aea3a951b40826e5549c03f1';
-const ALGOLIA_INDEX_NAME = 'Gems';
+const ALGOLIA_APP_ID = 'ZWB00DM8S2';//Hidden Gems
+const ALGOLIA_ADMIN_KEY = '5425be19aea3a951b40826e5549c03f1';//Hidden Gems
+const ALGOLIA_INDEX_NAME = 'Gems';//Hidden Gems
 
+const CLIENT_SECRET = 'ELPBoRBNTzm3Lms4Ppb4GWmzXynihrOFKx08SN2RBt8ufUfkquPL10h0MQKPFYnkZ74AEmLOfYJi9ecv';
+const CLIENT_ID = 'ARGe9IWt26EnBy9sIp3AYtOOQWLPKhw3_Ar5A9mpgriPZHi6WXrmvTyrUd08E5zDb_nRau_QqOQ_Tzgc';
+
+/*
+    Initializations
+*/
 admin.initializeApp(functions.config().firebase);
+
+paypal.configure({
+    'mode': 'sandbox', //sandbox or live
+    'client_id': CLIENT_ID,
+    'client_secret': CLIENT_SECRET
+});
+
+exports.createPayment = functions.https.onRequest((request, response) => {
+    var create_payment_json = {
+        "intent": "sale",
+        "payer": {
+            "payment_method": "paypal"
+        },
+        "redirect_urls": {
+            "return_url": "http://return.url",
+            "cancel_url": "http://cancel.url"
+        },
+        "transactions": [{
+            "item_list": {
+                "items": [{
+                    "name": "item",
+                    "sku": "item",
+                    "price": "1.00",
+                    "currency": "USD",
+                    "quantity": 1
+                }]
+            },
+            "amount": {
+                "currency": "USD",
+                "total": "1.00"
+            },
+            "description": "This is the payment description."
+        }]
+    };
+
+    paypal.payment.create(create_payment_json, function (err, payment) {
+        if (err) {
+            response.send(err);
+        } else {
+            response.send(payment);
+        }
+    });
+    // const token = request.query.type;
+    // const email = request.query.email;
+
+    // return stripe.sources.create({
+    //     token: token,
+    //     currency: 'usd',
+    //     owner: {
+    //         email: email
+    //     }
+    // }, (err, charge) => {
+    //     if (err) {
+    //         response.send(err);
+    //     } else {
+    //         response.send(charge);
+    //     }
+    // });
+
+});
+
 
 /*
     SYNC FIRESTORE WITH ALGOLIA
