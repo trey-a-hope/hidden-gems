@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
@@ -9,11 +11,11 @@ class SettingsPage extends StatefulWidget {
 }
 
 class SettingsPageState extends State<SettingsPage> {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   FirebaseUser user;
   bool _isLoading = true;
+  final GetIt getIt = GetIt.I;
 
   @override
   void initState() {
@@ -23,19 +25,12 @@ class SettingsPageState extends State<SettingsPage> {
   }
 
   _load() async {
-    await _fetchUser();
+    await getIt<Auth>().getFirebaseUser();
     setState(
       () {
         _isLoading = false;
       },
     );
-  }
-
-  _fetchUser() async {
-    FirebaseUser firebaseUser = await _auth.currentUser();
-    setState(() {
-      user = firebaseUser;
-    });
   }
 
   @override
@@ -60,7 +55,7 @@ class SettingsPageState extends State<SettingsPage> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         onTap: () {
-                          Modal.showChangeEmail(context).then(
+                          getIt<Modal>().showChangeEmail(context: context).then(
                             (email) async {
                               if (email != null) {
                                 try {
@@ -75,16 +70,16 @@ class SettingsPageState extends State<SettingsPage> {
                                   setState(
                                     () {
                                       _isLoading = false;
-                                      Modal.showInSnackBar(
-                                          _scaffoldKey, 'Email updated.');
+                                      getIt<Modal>().showInSnackBar(
+                                          scaffoldKey: _scaffoldKey, message: 'Email updated.');
                                     },
                                   );
                                 } catch (e) {
                                   setState(
                                     () {
                                       _isLoading = false;
-                                      Modal.showInSnackBar(
-                                          _scaffoldKey, e.message);
+                                      getIt<Modal>().showInSnackBar(
+                                          scaffoldKey: _scaffoldKey, message: e.message);
                                     },
                                   );
                                 }
@@ -94,7 +89,7 @@ class SettingsPageState extends State<SettingsPage> {
                         },
                       )
                     : Container(),
-                    Divider(),
+                Divider(),
                 user != null
                     ? ListTile(
                         leading: Icon(MdiIcons.lock, color: Colors.black),
@@ -103,41 +98,41 @@ class SettingsPageState extends State<SettingsPage> {
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
                         onTap: () async {
-                          Modal.showChangePassword(context).then(
-                            (password) async {
-                              if (password != null) {
-                                try {
-                                  setState(
-                                    () {
-                                      _isLoading = true;
-                                    },
-                                  );
+                          // getIt<Modal>().showChangePassword(context: context).then(
+                          //   (password) async {
+                          //     if (password != null) {
+                          //       try {
+                          //         setState(
+                          //           () {
+                          //             _isLoading = true;
+                          //           },
+                          //         );
 
-                                  await user.updatePassword(password);
+                          //         await user.updatePassword(password);
 
-                                  setState(
-                                    () {
-                                      _isLoading = false;
-                                      Modal.showInSnackBar(
-                                          _scaffoldKey, 'Password updated.');
-                                    },
-                                  );
-                                } catch (e) {
-                                  setState(
-                                    () {
-                                      _isLoading = false;
-                                      Modal.showInSnackBar(
-                                          _scaffoldKey, e.message);
-                                    },
-                                  );
-                                }
-                              }
-                            },
-                          );
+                          //         setState(
+                          //           () {
+                          //             _isLoading = false;
+                          //             getIt<Modal>().showInSnackBar(
+                          //                 scaffoldKey: _scaffoldKey, message: 'Password updated.');
+                          //           },
+                          //         );
+                          //       } catch (e) {
+                          //         setState(
+                          //           () {
+                          //             _isLoading = false;
+                          //             getIt<Modal>().showInSnackBar(
+                          //                 scaffoldKey: _scaffoldKey, message: e.message);
+                          //           },
+                          //         );
+                          //       }
+                          //     }
+                          //   },
+                          // );
                         },
                       )
                     : Container(),
-                    Divider()
+                Divider()
               ],
             ),
     );

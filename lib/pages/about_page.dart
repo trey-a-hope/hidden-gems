@@ -5,8 +5,7 @@ class AboutPage extends StatefulWidget {
   State createState() => AboutPageState();
 }
 
-class AboutPageState extends State<AboutPage>
-    with SingleTickerProviderStateMixin {
+class AboutPageState extends State<AboutPage> {
   @override
   void initState() {
     super.initState();

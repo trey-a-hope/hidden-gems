@@ -5,8 +5,7 @@ class NewPagePage extends StatefulWidget {
   State createState() => NewPagePageState();
 }
 
-class NewPagePageState extends State<NewPagePage>
-    with SingleTickerProviderStateMixin {
+class NewPagePageState extends State<NewPagePage> {
   @override
   void initState() {
     super.initState();

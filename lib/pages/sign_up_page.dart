@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
+import 'package:get_it/get_it.dart';
+import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -19,14 +21,11 @@ class SignUpPage extends StatefulWidget {
   State createState() => SignUpPageState();
 }
 
-class SignUpPageState extends State<SignUpPage>
-    with SingleTickerProviderStateMixin {
+class SignUpPageState extends State<SignUpPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String dropdownValue;
 
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final _db = Firestore.instance;
   final _formKey = GlobalKey<FormState>();
   bool _autoValidate = false;
   bool _isLoading = true;
@@ -44,7 +43,12 @@ class SignUpPageState extends State<SignUpPage>
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
 
-  String _categoryController, _subCategoryController;
+  String _categoryController;
+  String _subCategoryController;
+  final GetIt getIt = GetIt.I;
+  final CollectionReference _usersDB = Firestore.instance.collection('Users');
+  final CollectionReference _miscellaneousDB =
+      Firestore.instance.collection('Miscellaneous');
 
   @override
   void initState() {
@@ -67,12 +71,14 @@ class SignUpPageState extends State<SignUpPage>
       _formKey.currentState.save();
 
       if (_categoryController == null) {
-        Modal.showInSnackBar(_scaffoldKey, 'Please select a talent first.');
+        getIt<Modal>().showInSnackBar(
+            scaffoldKey: _scaffoldKey,
+            message: 'Please select a talent first.');
         return;
       }
 
-      bool confirm =
-          await Modal.showConfirmation(context, 'Submit', 'Are you ready?');
+      bool confirm = await getIt<Modal>().showConfirmation(
+          context: context, title: 'Submit', message: 'Are you ready?');
       if (confirm) {
         try {
           setState(
@@ -82,10 +88,12 @@ class SignUpPageState extends State<SignUpPage>
           );
 
           //Create new user in auth.
-          AuthResult authResult = await _auth.createUserWithEmailAndPassword(
+          AuthResult authResult =
+              await getIt<Auth>().createUserWithEmailAndPassword(
             email: _emailController.text,
             password: _passwordController.text,
           );
+
           final FirebaseUser user = authResult.user;
 
           var data = {
@@ -109,9 +117,8 @@ class SignUpPageState extends State<SignUpPage>
             'youTubeID': '',
           };
 
-          DocumentReference dr = await _db.collection('Gems').add(data);
-          await _db
-              .collection('Gems')
+          DocumentReference dr = await _usersDB.add(data);
+          await _usersDB
               .document(dr.documentID)
               .updateData({'id': dr.documentID});
 
@@ -120,7 +127,8 @@ class SignUpPageState extends State<SignUpPage>
         } catch (e) {
           setState(
             () {
-              Modal.showInSnackBar(_scaffoldKey, e.message);
+              getIt<Modal>().showInSnackBar(
+                  scaffoldKey: _scaffoldKey, message: e.message);
             },
           );
         }
@@ -393,8 +401,7 @@ class SignUpPageState extends State<SignUpPage>
 
   //Convert SubCategories into DropdownMenuItem lists.
   Future<void> _fetchSubCategories() async {
-    DocumentSnapshot ds =
-        await _db.collection('Miscellaneous').document('HomePage').get();
+    DocumentSnapshot ds = await _miscellaneousDB.document('HomePage').get();
 
     dynamic data = ds.data;
 
@@ -470,7 +477,6 @@ class SignUpPageState extends State<SignUpPage>
         );
       },
     ).toList();
-
 
     List<String> beautySubCatList = List.from(data['beauty']['subCategories']);
     _beautySubCatDrop = beautySubCatList.map<DropdownMenuItem<String>>(

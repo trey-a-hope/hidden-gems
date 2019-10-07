@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hiddengems_flutter/pages/sign_up_page.dart';
+import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hiddengems_flutter/services/validater.dart';
@@ -11,16 +13,14 @@ class LoginPage extends StatefulWidget {
   State createState() => LoginPageState();
 }
 
-class LoginPageState extends State<LoginPage>
-    with SingleTickerProviderStateMixin {
+class LoginPageState extends State<LoginPage> {
   static final String path = "lib/src/pages/login/login2.dart";
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
   TextEditingController _emailController = TextEditingController();
   TextEditingController _passwordController = TextEditingController();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+  final GetIt getIt = GetIt.I;
   bool _autoValidate = false;
 
   _login() async {
@@ -33,16 +33,16 @@ class LoginPageState extends State<LoginPage>
             _isLoading = true;
           },
         );
-        AuthResult authResult = await _auth.signInWithEmailAndPassword(
+        AuthResult authResult = await getIt<Auth>().signInWithEmailAndPassword(
             email: _emailController.text, password: _passwordController.text);
         Navigator.pop(context);
       } catch (e) {
         setState(
           () {
             _isLoading = false;
-            Modal.showInSnackBar(
-              _scaffoldKey,
-              e.message,
+            getIt<Modal>().showInSnackBar(
+              scaffoldKey: _scaffoldKey,
+              message: e.message,
             );
           },
         );
@@ -93,7 +93,7 @@ class LoginPageState extends State<LoginPage>
 
   _sendForgotEmail() async {
     try {
-      String email = await Modal.showPasswordResetEmail(context);
+      String email = await getIt<Modal>().showChangeEmail(context: context);
       if (email != null) {
         setState(
           () {
@@ -101,13 +101,15 @@ class LoginPageState extends State<LoginPage>
           },
         );
 
-        await _auth.sendPasswordResetEmail(email: email);
+        //await getIt<Auth>(). sendPasswordResetEmail(email: email);
 
         setState(
           () {
             _isLoading = false;
-            Modal.showInSnackBar(_scaffoldKey,
-                'Sent - A link to reset your password has been sent via the email provided.');
+            getIt<Modal>().showInSnackBar(
+                scaffoldKey: _scaffoldKey,
+                message:
+                    'Sent - A link to reset your password has been sent via the email provided.');
           },
         );
       }
@@ -115,7 +117,8 @@ class LoginPageState extends State<LoginPage>
       setState(
         () {
           _isLoading = false;
-          Modal.showInSnackBar(_scaffoldKey, e.message);
+          getIt<Modal>()
+              .showInSnackBar(scaffoldKey: _scaffoldKey, message: e.message);
         },
       );
     }

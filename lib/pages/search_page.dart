@@ -1,8 +1,8 @@
-import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/common/search_bar_widget.dart';
 import 'package:algolia/algolia.dart';
 import 'package:hiddengems_flutter/common/gem_card.dart';
+import 'package:hiddengems_flutter/models/user.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -54,7 +54,7 @@ class _SearchPageState extends State<SearchPage> {
       apiKey: ALGOLIA_SEARCH_API_KEY,
     );
 
-    AlgoliaQuery query = algolia.instance.index('Gems');
+    AlgoliaQuery query = algolia.instance.index('Users');
     query = query.setFacetFilter('isGem:true');
     query = query.search(value);
 
@@ -84,7 +84,7 @@ class _SearchPageState extends State<SearchPage> {
                   itemCount: _results.length,
                   itemBuilder: (BuildContext ctx, int index) {
                     AlgoliaObjectSnapshot snap = _results[index];
-                    Gem gem = Gem.extractAlgoliaObjectSnapshot(snap);
+                    User gem = User.extractAlgoliaObjectSnapshot(snap);
                     return GemCard(gem: gem);
                   },
                 ),

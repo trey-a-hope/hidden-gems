@@ -1,8 +1,20 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hiddengems_flutter/pages/home_page.dart';
 import 'package:flutter/services.dart';
+import 'package:hiddengems_flutter/services/auth.dart';
+import 'package:hiddengems_flutter/services/modal.dart';
+import 'package:hiddengems_flutter/services/storage.dart';
 
-void main() => runApp(MyApp());
+final GetIt getIt = GetIt.instance;
+
+void main() {
+  getIt.registerSingleton<Auth>(AuthImplementation(), signalsReady: true);
+  getIt.registerSingleton<Modal>(ModalImplementation(), signalsReady: true);
+  getIt.registerSingleton<Storage>(StorageImplementation(), signalsReady: true);
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   @override

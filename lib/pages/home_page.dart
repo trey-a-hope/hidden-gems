@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hiddengems_flutter/common/content_heading_widget.dart';
 import 'package:hiddengems_flutter/common/drawer_widget.dart';
-import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/pages/search_page.dart';
+import 'package:hiddengems_flutter/services/auth.dart';
+import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/common/gem_section_header.dart';
 import 'package:hiddengems_flutter/common/gem_section_layout.dart';
@@ -15,12 +18,14 @@ class HomePage extends StatefulWidget {
   State createState() => HomePageState();
 }
 
-class HomePageState extends State<HomePage>
-    with SingleTickerProviderStateMixin {
+class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
-  final _db = Firestore.instance;
+  final CollectionReference _miscellaneousDB =
+      Firestore.instance.collection('Miscellaneous');
+  final CollectionReference _usersDB = Firestore.instance.collection('Users');
+  final CollectionReference _gemsDB = Firestore.instance.collection('Gems');
 
   bool _isLoading = true;
 
@@ -33,41 +38,54 @@ class HomePageState extends State<HomePage>
   Section _trade = Section('Trade');
   Section _beauty = Section('Beauty');
 
+  final GetIt getIt = GetIt.I;
+
   @override
   void initState() {
     super.initState();
 
-    loadPage();
+    _load();
   }
 
-  //Fetch 5 most recent gems in each category.
-  Future<List<Gem>> _getGems(String category) async {
-    QuerySnapshot querySnapshot = await _db
-        .collection('Gems')
-        .where('category', isEqualTo: category)
-        .orderBy('time', descending: true)
-        .limit(5)
-        .getDocuments();
-    List<DocumentSnapshot> docSnapshots = querySnapshot.documents;
-    List<Gem> gems = List<Gem>();
-    for (DocumentSnapshot docSnapshot in docSnapshots) {
-      Gem gem = Gem();
+  void moveGemsToUsersTable() async {
+    QuerySnapshot querySnapshot = await _gemsDB.getDocuments();
+    for (int i = 0; i < querySnapshot.documents.length; i++) {
+      Map<String, dynamic> data = querySnapshot.documents[i].data;
+      User user = User(
+          backgroundUrl: data['backgroundUrl'],
+          instagramUrl: '',
+          category: data['category'],
+          email: data['email'],
+          phoneNumber: data['phoneNumber'],
+          facebookUrl: '',
+          id: '',
+          spotifyUrl: '',
+          uid: data['uid'],
+          isGem: true,
+          iTunesUrl: '',
+          soundCloudUrl: '',
+          time: data['time'].toDate(),
+          name: data['name'],
+          photoUrl: data['photoUrl'],
+          subCategory: data['subCategory'],
+          youTubeUrl: '',
+          twitterUrl: '',
+          fcmToken: '',
+          bio: data['bio']);
+      DocumentReference docRef = await _usersDB.add(
+        user.toMap(),
+      );
 
-      gem.id = docSnapshot['id'];
-      gem.name = docSnapshot['name'];
-      gem.category = docSnapshot['category'];
-      gem.subCategory = docSnapshot['subCategory'];
-      gem.photoUrl = docSnapshot['photoUrl'];
-      gem.likes = docSnapshot['likes'];
-
-      gems.add(gem);
+      _usersDB.document(docRef.documentID).updateData(
+        {'id': docRef.documentID},
+      );
     }
-    return gems;
+    getIt<Modal>()
+        .showInSnackBar(scaffoldKey: _scaffoldKey, message: 'Users added.');
   }
 
   _getHeaderWidgets() async {
-    DocumentSnapshot ds =
-        await _db.collection('Miscellaneous').document('HomePage').get();
+    DocumentSnapshot ds = await _miscellaneousDB.document('HomePage').get();
 
     dynamic data = ds.data;
 
@@ -145,20 +163,28 @@ class HomePageState extends State<HomePage>
     _beauty.icon = MdiIcons.bagPersonalOutline;
   }
 
-  _attachGems() async {
-    _music.previewGems = await _getGems('Music');
-    _media.previewGems = await _getGems('Media');
-    _entertainment.previewGems = await _getGems('Entertainment');
-    _food.previewGems = await _getGems('Food');
-    _technology.previewGems = await _getGems('Technology');
-    _art.previewGems = await _getGems('Art');
-    _trade.previewGems = await _getGems('Trade');
-    _beauty.previewGems = await _getGems('Beauty');
+  _getGems() async {
+    _music.previewGems =
+        await getIt<Auth>().getGems(limit: 5, category: 'Music');
+    _media.previewGems =
+        await getIt<Auth>().getGems(limit: 5, category: 'Media');
+    _entertainment.previewGems =
+        await getIt<Auth>().getGems(limit: 5, category: 'Entertainment');
+    _food.previewGems = await getIt<Auth>().getGems(limit: 5, category: 'Food');
+    _technology.previewGems =
+        await getIt<Auth>().getGems(limit: 5, category: 'Technology');
+    _art.previewGems = await getIt<Auth>().getGems(limit: 5, category: 'Art');
+    _trade.previewGems =
+        await getIt<Auth>().getGems(limit: 5, category: 'Trade');
+    _beauty.previewGems =
+        await getIt<Auth>().getGems(limit: 5, category: 'Beauty');
   }
 
-  void loadPage() async {
+  void _load() async {
     await _getHeaderWidgets();
-    await _attachGems();
+    await _getGems();
+
+    // moveGemsToUsersTable();
 
     setState(
       () {
@@ -169,7 +195,7 @@ class HomePageState extends State<HomePage>
 
   Future<void> _refresh() async {
     await _getHeaderWidgets();
-    await _attachGems();
+    await _getGems();
     setState(
       () {},
     );
@@ -254,8 +280,7 @@ class HomePageState extends State<HomePage>
                           Divider(),
                           Padding(
                             padding: EdgeInsets.symmetric(horizontal: 16),
-                            child:
-                                ContentHeadingWidget(heading: 'Beauty'),
+                            child: ContentHeadingWidget(heading: 'Beauty'),
                           ),
                           GemSectionLayout(section: _beauty).build(context),
                           SizedBox(height: 20),
@@ -347,11 +372,8 @@ class HomePageState extends State<HomePage>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SubCategoriesPage(
-                          _food.title,
-                          _food.subCategories,
-                          _food.accentColor,
-                          _food.icon)),
+                      builder: (context) => SubCategoriesPage(_food.title,
+                          _food.subCategories, _food.accentColor, _food.icon)),
                 );
               },
               child: Icon(MdiIcons.diamondStone, color: _food.primaryColor),
@@ -376,11 +398,8 @@ class HomePageState extends State<HomePage>
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SubCategoriesPage(
-                          _art.title,
-                          _art.subCategories,
-                          _art.accentColor,
-                          _art.icon)),
+                      builder: (context) => SubCategoriesPage(_art.title,
+                          _art.subCategories, _art.accentColor, _art.icon)),
                 );
               },
               child: Icon(MdiIcons.diamondStone, color: _art.primaryColor),

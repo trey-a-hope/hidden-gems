@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hiddengems_flutter/models/gem.dart';
+import 'package:hiddengems_flutter/models/user.dart';
 
 class Section {
   String title;
@@ -10,7 +10,7 @@ class Section {
   Color primaryColor;
   Color accentColor;
   IconData icon;
-  List<Gem> previewGems = List<Gem>();
+  List<User> previewGems = List<User>();
 
   Section(String title){
     this.title = title;

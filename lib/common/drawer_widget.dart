@@ -1,29 +1,29 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:hiddengems_flutter/pages/profile/edit_gem_profile_page.dart';
 import 'package:hiddengems_flutter/pages/settings_page.dart';
+import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/pages/login_page.dart';
-import 'package:hiddengems_flutter/pages/profile/edit_profile_page.dart';
 import 'package:hiddengems_flutter/services/pd_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:hiddengems_flutter/constants.dart';
 
 class DrawerWidget extends StatefulWidget {
-
-  const DrawerWidget({Key key}):super(key:key);
+  const DrawerWidget({Key key}) : super(key: key);
 
   @override
   State createState() => DrawerWidgetState();
 }
 
-class DrawerWidgetState extends State<DrawerWidget>
-    with SingleTickerProviderStateMixin {
+class DrawerWidgetState extends State<DrawerWidget> {
   final PDInfo _pdInfo = PDInfo();
   final _drawerIconColor = Colors.blueGrey;
   String _projectVersion, _projectCode;
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   FirebaseUser user;
+  final GetIt getIt = GetIt.I;
 
   @override
   void initState() {
@@ -31,7 +31,7 @@ class DrawerWidgetState extends State<DrawerWidget>
 
     load();
 
-    _auth.onAuthStateChanged.listen(
+    getIt<Auth>().onAuthStateChanged().listen(
       (firebaseUser) {
         setState(
           () {
@@ -104,7 +104,7 @@ class DrawerWidgetState extends State<DrawerWidget>
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => EditProfilePage(),
+                        builder: (context) => EditGemProfilePage(),
                       ),
                     );
                   },
@@ -117,9 +117,7 @@ class DrawerWidgetState extends State<DrawerWidget>
                     'Are You A Gem?',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  subtitle: Text(
-                    'Login or create a Gem profile.'
-                  ),
+                  subtitle: Text('Login or create a Gem profile.'),
                   onTap: () {
                     Navigator.push(
                       context,
@@ -136,12 +134,12 @@ class DrawerWidgetState extends State<DrawerWidget>
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   onTap: () async {
-                    bool confirm = await Modal.showConfirmation(
-                        context, 'Sign Out', 'Are you sure?');
+                    bool confirm = await getIt<Modal>().showConfirmation(
+                        context: context,
+                        title: 'Sign Out',
+                        message: 'Are you sure?');
                     if (confirm) {
-                      _auth.signOut().then(
-                            (r) {},
-                          );
+                      await getIt<Auth>().signOut();
                     }
                   },
                 ),

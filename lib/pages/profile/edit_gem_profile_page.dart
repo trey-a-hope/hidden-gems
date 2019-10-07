@@ -1,9 +1,11 @@
+import 'package:get_it/get_it.dart';
+import 'package:hiddengems_flutter/models/user.dart';
+import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hiddengems_flutter/models/gem.dart';
 import 'package:hiddengems_flutter/constants.dart';
+import 'package:hiddengems_flutter/services/storage.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/services/validater.dart';
 import 'dart:io';
@@ -11,16 +13,17 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
-class EditProfilePage extends StatefulWidget {
+class EditGemProfilePage extends StatefulWidget {
   @override
-  State createState() => EditProfilePageState();
+  State createState() => EditGemProfilePageState();
 }
 
-class EditProfilePageState extends State<EditProfilePage>
-    with SingleTickerProviderStateMixin {
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-  final _db = Firestore.instance;
-  Gem _gem;
+class EditGemProfilePageState extends State<EditGemProfilePage> {
+  final CollectionReference _miscellaneousDB =
+      Firestore.instance.collection('Miscellaneous');
+  final CollectionReference _usersDB = Firestore.instance.collection('Users');
+
+  User _gem;
   bool _isLoading = true;
   bool _autoValidate = false;
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
@@ -36,21 +39,26 @@ class EditProfilePageState extends State<EditProfilePage>
       _tradeSubCatDrop,
       _beautySubCatDrop;
 
-  String _categoryController, _subCategoryController;
+  String _categoryController;
+  String _subCategoryController;
 
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _bioController = TextEditingController();
-  TextEditingController _phoneController = TextEditingController();
-  TextEditingController _spotifyController = TextEditingController();
-  TextEditingController _iTunesController = TextEditingController();
-  TextEditingController _soundCloudController = TextEditingController();
-  TextEditingController _instagramController = TextEditingController();
-  TextEditingController _facebookController = TextEditingController();
-  TextEditingController _twitterController = TextEditingController();
-  TextEditingController _youTubeController = TextEditingController();
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _bioController = TextEditingController();
+  final TextEditingController _phoneController = TextEditingController();
+  final TextEditingController _spotifyController = TextEditingController();
+  final TextEditingController _iTunesController = TextEditingController();
+  final TextEditingController _soundCloudController = TextEditingController();
+  final TextEditingController _instagramController = TextEditingController();
+  final TextEditingController _facebookController = TextEditingController();
+  final TextEditingController _twitterController = TextEditingController();
+  final TextEditingController _youTubeController = TextEditingController();
 
-  File _profileImage, _backgroundImage;
-  ImageProvider _profileImageProvider, _backgroundImageProvider;
+  File _profileImage;
+  File _backgroundImage;
+  ImageProvider _profileImageProvider;
+  ImageProvider _backgroundImageProvider;
+
+  final GetIt getIt = GetIt.I;
 
   @override
   void initState() {
@@ -61,8 +69,24 @@ class EditProfilePageState extends State<EditProfilePage>
 
   _load() async {
     await _fetchSubCategories();
-    await _fetchUserProfile();
-    await _setFields();
+
+    _gem = await getIt<Auth>().getCurrentUser();
+
+    _profileImageProvider = NetworkImage(_gem.photoUrl);
+    _backgroundImageProvider = NetworkImage(_gem.backgroundUrl);
+
+    _nameController.text = _gem.name;
+    _bioController.text = _gem.bio;
+    _categoryController = _gem.category;
+    _subCategoryController = _gem.subCategory;
+    _phoneController.text = _gem.phoneNumber;
+    _spotifyController.text = _gem.spotifyUrl;
+    _iTunesController.text = _gem.iTunesUrl;
+    _soundCloudController.text = _gem.soundCloudUrl;
+    _instagramController.text = _gem.instagramUrl;
+    _facebookController.text = _gem.facebookUrl;
+    _twitterController.text = _gem.twitterUrl;
+    _youTubeController.text = _gem.youTubeUrl;
 
     setState(
       () {
@@ -72,123 +96,33 @@ class EditProfilePageState extends State<EditProfilePage>
   }
 
   //Convert SubCategories into DropdownMenuItem lists.
+  List<DropdownMenuItem<String>> _fetchSubCategoriesHelper(
+      {@required dynamic data}) {
+    List<String> list = List.from(data['subCategories']);
+    return list.map<DropdownMenuItem<String>>(
+      (String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      },
+    ).toList();
+  }
+
   Future<void> _fetchSubCategories() async {
-    DocumentSnapshot ds =
-        await _db.collection('Miscellaneous').document('HomePage').get();
+    DocumentSnapshot ds = await _miscellaneousDB.document('HomePage').get();
 
     dynamic data = ds.data;
 
-    List<String> musicSubCatList = List.from(data['music']['subCategories']);
-    _musicSubCatDrop = musicSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-
-    List<String> mediaSubCatList = List.from(data['media']['subCategories']);
-    _mediaSubCatDrop = mediaSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-
-    List<String> entertainmentSubCatList =
-        List.from(data['entertainment']['subCategories']);
+    _musicSubCatDrop = _fetchSubCategoriesHelper(data: data['music']);
+    _mediaSubCatDrop = _fetchSubCategoriesHelper(data: data['media']);
     _entertainmentSubCatDrop =
-        entertainmentSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-
-    List<String> foodSubCatList = List.from(data['food']['subCategories']);
-    _foodSubCatDrop = foodSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-
-    List<String> technologySubCatList =
-        List.from(data['technology']['subCategories']);
-    _technologySubCatDrop = technologySubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-
-    List<String> artSubCatList = List.from(data['art']['subCategories']);
-    _artSubCatDrop = artSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-
-    List<String> tradeSubCatList = List.from(data['trade']['subCategories']);
-    _tradeSubCatDrop = tradeSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-
-    List<String> beautySubCatList = List.from(data['beauty']['subCategories']);
-    _beautySubCatDrop = beautySubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-  }
-
-  Future<void> _fetchUserProfile() async {
-    FirebaseUser user = await _auth.currentUser();
-    QuerySnapshot qs = await _db
-        .collection('Gems')
-        .where('uid', isEqualTo: user.uid)
-        .getDocuments();
-    DocumentSnapshot ds = qs.documents[0];
-
-    _gem = Gem.extractDocument(ds);
-
-    _profileImageProvider = NetworkImage(_gem.photoUrl);
-    _backgroundImageProvider = NetworkImage(_gem.backgroundUrl);
-  }
-
-  Future<void> _setFields() async {
-    _nameController.text = _gem.name;
-    _bioController.text = _gem.bio;
-    _categoryController = _gem.category;
-    _subCategoryController = _gem.subCategory;
-    _phoneController.text = _gem.phoneNumber;
-    _spotifyController.text = _gem.spotifyID;
-    _iTunesController.text = _gem.iTunesID;
-    _soundCloudController.text = _gem.soundCloudName;
-    _instagramController.text = _gem.instagramName;
-    _facebookController.text = _gem.facebookName;
-    _twitterController.text = _gem.twitterName;
-    _youTubeController.text = _gem.youTubeID;
+        _fetchSubCategoriesHelper(data: data['entertainment']);
+    _foodSubCatDrop = _fetchSubCategoriesHelper(data: data['food']);
+    _technologySubCatDrop = _fetchSubCategoriesHelper(data: data['technology']);
+    _artSubCatDrop = _fetchSubCategoriesHelper(data: data['art']);
+    _tradeSubCatDrop = _fetchSubCategoriesHelper(data: data['trade']);
+    _beautySubCatDrop = _fetchSubCategoriesHelper(data: data['beauty']);
   }
 
   Future _pickProfileImage() async {
@@ -211,8 +145,8 @@ class EditProfilePageState extends State<EditProfilePage>
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
 
-      bool confirm = await Modal.showConfirmation(
-          context, 'Update Profile', 'Are you sure?');
+      bool confirm = await getIt<Modal>().showConfirmation(
+          context: context, title: 'Update Profile', message: 'Are you sure?');
 
       if (confirm) {
         try {
@@ -228,14 +162,16 @@ class EditProfilePageState extends State<EditProfilePage>
           setState(
             () {
               _isLoading = false;
-              Modal.showInSnackBar(_scaffoldKey, 'Profile updated.');
+              getIt<Modal>().showInSnackBar(
+                  scaffoldKey: _scaffoldKey, message: 'Profile updated.');
             },
           );
         } catch (e) {
           setState(
             () {
               _isLoading = false;
-              Modal.showInSnackBar(_scaffoldKey, e.message);
+              getIt<Modal>().showInSnackBar(
+                  scaffoldKey: _scaffoldKey, message: e.message());
             },
           );
         }
@@ -251,55 +187,53 @@ class EditProfilePageState extends State<EditProfilePage>
 
   Future<void> _submitImages() async {
     if (_profileImage != null) {
-      String newPhotoUrl = await _uploadProfileImage();
-      await _db
-          .collection('Gems')
-          .document(_gem.id)
-          .updateData({'photoUrl': newPhotoUrl});
+      String newPhotoUrl = await getIt<Storage>().uploadImage(
+          file: _profileImage, path: 'Images/Users/${_gem.id}/Profile');
+      await _usersDB.document(_gem.id).updateData({'photoUrl': newPhotoUrl});
     }
 
     if (_backgroundImage != null) {
-      String newBackgroundUrl = await _uploadBackgroundImage();
-      await _db
-          .collection('Gems')
+      String newBackgroundUrl = await getIt<Storage>().uploadImage(
+          file: _backgroundImage, path: 'Images/Users/${_gem.id}/Background');
+      await _usersDB
           .document(_gem.id)
           .updateData({'backgroundUrl': newBackgroundUrl});
     }
   }
 
-  Future<String> _uploadProfileImage() async {
-    final StorageReference ref =
-        FirebaseStorage().ref().child('Images/Users/${_gem.id}/Profile');
-    final StorageUploadTask uploadTask = ref.putFile(_profileImage);
-    StorageReference sr = (await uploadTask.onComplete).ref;
-    return (await sr.getDownloadURL()).toString();
-  }
+  // Future<String> _uploadProfileImage() async {
+  //   final StorageReference ref =
+  //       FirebaseStorage().ref().child('Images/Users/${_gem.id}/Profile');
+  //   final StorageUploadTask uploadTask = ref.putFile(_profileImage);
+  //   StorageReference sr = (await uploadTask.onComplete).ref;
+  //   return (await sr.getDownloadURL()).toString();
+  // }
 
-  Future<String> _uploadBackgroundImage() async {
-    final StorageReference ref =
-        FirebaseStorage().ref().child('Images/Users/${_gem.id}/Background');
-    final StorageUploadTask uploadTask = ref.putFile(_backgroundImage);
-    StorageReference sr = (await uploadTask.onComplete).ref;
-    return (await sr.getDownloadURL()).toString();
-  }
+  // Future<String> _uploadBackgroundImage() async {
+  //   final StorageReference ref =
+  //       FirebaseStorage().ref().child('Images/Users/${_gem.id}/Background');
+  //   final StorageUploadTask uploadTask = ref.putFile(_backgroundImage);
+  //   StorageReference sr = (await uploadTask.onComplete).ref;
+  //   return (await sr.getDownloadURL()).toString();
+  // }
 
   Future<void> _submitFormData() async {
     var data = {
       'bio': _bioController.text,
       'category': _categoryController,
-      'facebookName': _facebookController.text,
-      'iTunesID': _iTunesController.text,
-      'instagramName': _instagramController.text,
+      'facebookUrl': _facebookController.text,
+      'iTunesUrl': _iTunesController.text,
+      'instagramUrl': _instagramController.text,
       'name': _nameController.text,
       'phoneNumber': _phoneController.text,
-      'soundCloudName': _soundCloudController.text,
-      'spotifyID': _spotifyController.text,
+      'soundCloudUrl': _soundCloudController.text,
+      'spotifyUrl': _spotifyController.text,
       'subCategory': _subCategoryController,
-      'twitterName': _twitterController.text,
-      'youTubeID': _youTubeController.text
+      'twitterUrl': _twitterController.text,
+      'youTubeUrl': _youTubeController.text
     };
 
-    await _db.collection('Gems').document(_gem.id).updateData(data);
+    await _usersDB.document(_gem.id).updateData(data);
   }
 
   AppBar _buildAppBar() {
@@ -412,6 +346,7 @@ class EditProfilePageState extends State<EditProfilePage>
       decoration: InputDecoration(
         icon: Icon(MdiIcons.spotify, color: Colors.green),
         fillColor: Colors.white,
+        hintText: 'https://open.spotify.com/artist/4AeeMMRvpOKMeWAcgQ8O6p?si=boRhW5JkRW2T9tp3Xob74Q'
       ),
     );
   }
@@ -430,6 +365,7 @@ class EditProfilePageState extends State<EditProfilePage>
       decoration: InputDecoration(
         icon: Icon(MdiIcons.itunes, color: Colors.grey),
         fillColor: Colors.white,
+        hintText: 'https://music.apple.com/us/artist/travisty/1469723679'
       ),
     );
   }
@@ -448,6 +384,7 @@ class EditProfilePageState extends State<EditProfilePage>
       decoration: InputDecoration(
         icon: Icon(MdiIcons.soundcloud, color: Colors.orange),
         fillColor: Colors.white,
+        hintText: 'https://soundcloud.com/trey-hope'
       ),
     );
   }
@@ -462,10 +399,12 @@ class EditProfilePageState extends State<EditProfilePage>
       maxLines: 1,
       onFieldSubmitted: (term) {},
       // validator: Validater.instagram,
+      
       onSaved: (value) {},
       decoration: InputDecoration(
         icon: Icon(MdiIcons.instagram, color: Colors.pink),
         fillColor: Colors.white,
+        hintText: 'https://www.instagram.com/trey.a.hope'
       ),
     );
   }
@@ -484,6 +423,7 @@ class EditProfilePageState extends State<EditProfilePage>
       decoration: InputDecoration(
         icon: Icon(MdiIcons.facebook, color: Colors.blue),
         fillColor: Colors.white,
+        hintText: 'https://www.facebook.com/trey.a.hope'
       ),
     );
   }
@@ -502,6 +442,7 @@ class EditProfilePageState extends State<EditProfilePage>
       decoration: InputDecoration(
         icon: Icon(MdiIcons.twitter, color: Colors.lightBlue),
         fillColor: Colors.white,
+        hintText: 'https://twitter.com/travisty92'
       ),
     );
   }
@@ -520,6 +461,7 @@ class EditProfilePageState extends State<EditProfilePage>
       decoration: InputDecoration(
         icon: Icon(MdiIcons.youtube, color: Colors.red),
         fillColor: Colors.white,
+        hintText: 'https://www.youtube.com/channel/UCjcR0stkmPmeYkf9JDEq_ZQ'
       ),
     );
   }
@@ -761,14 +703,8 @@ class EditProfilePageState extends State<EditProfilePage>
           //INSTAGRAM
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Text('Enter your Instagram Name'),
+            child: Text('Enter your Instagram URL'),
           ),
-          Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'https://www.instagram.com/?',
-                style: TextStyle(color: Colors.grey),
-              )),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: instagramFormField(),
@@ -779,14 +715,8 @@ class EditProfilePageState extends State<EditProfilePage>
           //FACEBOOK
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Text('Enter your Facebook Name'),
+            child: Text('Enter your Facebook URL'),
           ),
-          Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'https://www.facebook.com/?',
-                style: TextStyle(color: Colors.grey),
-              )),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: facebookFormField(),
@@ -797,14 +727,8 @@ class EditProfilePageState extends State<EditProfilePage>
           //TWITTER
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Text('Enter your Twitter Name'),
+            child: Text('Enter your Twitter URL'),
           ),
-          Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'https://twitter.com/?',
-                style: TextStyle(color: Colors.grey),
-              )),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: twitterFormField(),
@@ -815,35 +739,20 @@ class EditProfilePageState extends State<EditProfilePage>
           //YOUTUBE
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
-            child: Text('Enter your YouTube Channel ID'),
+            child: Text('Enter your YouTube URL'),
           ),
-          Padding(
-              padding: EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                'https://www.youtube.com/channel/?',
-                style: TextStyle(color: Colors.grey),
-              )),
           Padding(
             padding: EdgeInsets.symmetric(horizontal: 20),
             child: youTubeFormField(),
           ),
           SizedBox(height: 20),
-           _categoryController == 'Music' ? Divider() : Container(),
-           _categoryController == 'Music' ? SizedBox(height: 20) : Container(),
+          _categoryController == 'Music' ? Divider() : Container(),
+          _categoryController == 'Music' ? SizedBox(height: 20) : Container(),
           //SPOTIFY
           _categoryController == 'Music'
               ? Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text('Enter your Spotify Artist ID'),
-                )
-              : Container(),
-          _categoryController == 'Music'
-              ? Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    'https://open.spotify.com/artist/?',
-                    style: TextStyle(color: Colors.grey),
-                  ),
+                  child: Text('Enter your Spotify URL'),
                 )
               : Container(),
           _categoryController == 'Music'
@@ -859,16 +768,7 @@ class EditProfilePageState extends State<EditProfilePage>
           _categoryController == 'Music'
               ? Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text('Enter your iTunes Artist ID'),
-                )
-              : Container(),
-          _categoryController == 'Music'
-              ? Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    'https://music.apple.com/us/artist/?/?',
-                    style: TextStyle(color: Colors.grey),
-                  ),
+                  child: Text('Enter your iTunes URL'),
                 )
               : Container(),
           _categoryController == 'Music'
@@ -884,16 +784,7 @@ class EditProfilePageState extends State<EditProfilePage>
           _categoryController == 'Music'
               ? Padding(
                   padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text('Enter your SoundCloud name'),
-                )
-              : Container(),
-          _categoryController == 'Music'
-              ? Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 20),
-                  child: Text(
-                    'https://soundcloud.com/?',
-                    style: TextStyle(color: Colors.grey),
-                  ),
+                  child: Text('Enter your SoundCloud URL'),
                 )
               : Container(),
           _categoryController == 'Music'

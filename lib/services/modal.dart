@@ -1,75 +1,56 @@
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/services/validater.dart';
 
-class Modal {
-  // static void showInSnackBar(BuildContext context, String text) {
-  //   final snackBar = SnackBar(content: Text(text));
-  //   Scaffold.of(context).showSnackBar(snackBar);
-  // }
+abstract class Modal {
+  void showInSnackBar(
+      {@required GlobalKey<ScaffoldState> scaffoldKey, @required String message});
+  void showAlert(
+      {@required BuildContext context,
+      @required String title,
+      @required String message});
+  Future<String> showChangePassword({@required BuildContext context});
+  Future<String> showChangeEmail({@required BuildContext context});
+  Future<bool> showConfirmation(
+      {@required BuildContext context,
+      @required String title,
+      @required String message});
+}
 
-  static void showInSnackBar(
-      GlobalKey<ScaffoldState> scaffoldKey, String text) {
-    scaffoldKey.currentState.showSnackBar(SnackBar(content: Text(text)));
+class ModalImplementation extends Modal {
+  @override
+  void showInSnackBar(
+      {@required GlobalKey<ScaffoldState> scaffoldKey, @required String message}) {
+    scaffoldKey.currentState.showSnackBar(SnackBar(
+      content: Text(message),
+    ));
   }
 
-  // static void showAlert(BuildContext context, String title, String text) {
-  //   showDialog(
-  //     context: context,
-  //     builder: (context) {
-  //       return AlertDialog(
-  //         title: Text(title),
-  //         content: Text(text),
-  //       );
-  //     },
-  //   );
-  // }
+  @override
+  void showAlert(
+      {@required BuildContext context,
+      @required String title,
+      @required String message}) {
+    showDialog(
+      context: context,
+      builder: (BuildContext buildContext) {
+        return AlertDialog(
+          title: Text(title),
+          content: Text(message),
+          actions: <Widget>[
+            FlatButton(
+              child: const Text('OK'),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
 
-  // static Future<Null> showWaitForOk(
-  //     BuildContext context, String title, String text) {
-  //   return showDialog<Null>(
-  //     barrierDismissible: false,
-  //     context: context,
-  //     child: AlertDialog(
-  //       title: Text(title),
-  //       content: Text(text),
-  //       actions: <Widget>[
-  //         FlatButton(
-  //           child: const Text('OK'),
-  //           onPressed: () {
-  //             Navigator.of(context).pop();
-  //           },
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  // static Future<bool> leaveApp(BuildContext context, String message) {
-  //   return showDialog<bool>(
-  //     barrierDismissible: false,
-  //     context: context,
-  //     child: AlertDialog(
-  //       title: Text('Leave tr3Designs?'),
-  //       content: Text('You will navigate to ${message}'),
-  //       actions: <Widget>[
-  //         FlatButton(
-  //           child: const Text('NO'),
-  //           onPressed: () {
-  //             Navigator.of(context).pop(false);
-  //           },
-  //         ),
-  //         FlatButton(
-  //           child: const Text('YES'),
-  //           onPressed: () {
-  //             Navigator.of(context).pop(true);
-  //           },
-  //         )
-  //       ],
-  //     ),
-  //   );
-  // }
-
-  static Future<String> showPasswordResetEmail(BuildContext context) {
+  @override
+  Future<String> showChangePassword({@required BuildContext context}) {
     final TextEditingController emailController = TextEditingController();
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     bool _autovalidate = false;
@@ -82,19 +63,10 @@ class Modal {
         content: Form(
           key: _formKey,
           autovalidate: _autovalidate,
-          // child: InputField(
-          //     controller: emailController,
-          //     hintText: 'Email',
-          //     obscureText: false,
-          //     textInputType: TextInputType.emailAddress,
-          //     icon: Icons.mail_outline,
-          //     iconColor: Colors.black,
-          //     bottomMargin: 20.0,
-          //     validateFunction: Validater.email),
           child: TextFormField(
             controller: emailController,
             keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.done,
+            textInputAction: TextInputAction.next,
             maxLengthEnforced: true,
             // maxLength: MyFormData.nameCharLimit,
             onFieldSubmitted: (term) {},
@@ -130,7 +102,8 @@ class Modal {
     );
   }
 
-  static Future<String> showChangeEmail(BuildContext context) {
+  @override
+  Future<String> showChangeEmail({@required BuildContext context}) {
     final TextEditingController emailController = TextEditingController();
     final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
     bool _autovalidate = false;
@@ -146,7 +119,7 @@ class Modal {
           child: TextFormField(
             controller: emailController,
             keyboardType: TextInputType.emailAddress,
-            textInputAction: TextInputAction.done,
+            textInputAction: TextInputAction.next,
             maxLengthEnforced: true,
             // maxLength: MyFormData.nameCharLimit,
             onFieldSubmitted: (term) {},
@@ -182,76 +155,26 @@ class Modal {
     );
   }
 
-  static Future<String> showChangePassword(BuildContext context) {
-    final TextEditingController passwordController = TextEditingController();
-    final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-    bool _autovalidate = false;
-
-    return showDialog<String>(
-      barrierDismissible: false,
-      context: context,
-      child: AlertDialog(
-        title: Text('Change Password'),
-        content: Form(
-          key: _formKey,
-          autovalidate: _autovalidate,
-          child: TextFormField(
-            controller: passwordController,
-            keyboardType: TextInputType.text,
-            textInputAction: TextInputAction.done,
-            maxLengthEnforced: true,
-
-            // maxLength: MyFormData.nameCharLimit,
-            onFieldSubmitted: (term) {},
-            validator: Validater.password,
-            onSaved: (value) {},
-            decoration: InputDecoration(
-              hintText: 'New Password',
-              icon: Icon(Icons.email),
-              fillColor: Colors.white,
-            ),
-          ),
-        ),
-        actions: <Widget>[
-          FlatButton(
-            child: const Text('CANCEL'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          FlatButton(
-            child: const Text('SUBMIT'),
-            onPressed: () {
-              final FormState form = _formKey.currentState;
-              if (!form.validate()) {
-                _autovalidate = true;
-              } else {
-                Navigator.of(context).pop(passwordController.text);
-              }
-            },
-          )
-        ],
-      ),
-    );
-  }
-
-  static Future<bool> showConfirmation(
-      BuildContext context, String title, String text) {
+  @override
+  Future<bool> showConfirmation(
+      {@required BuildContext context,
+      @required String title,
+      @required String message}) {
     return showDialog<bool>(
       barrierDismissible: false,
       context: context,
       child: AlertDialog(
         title: Text(title),
-        content: Text(text),
+        content: Text(message),
         actions: <Widget>[
           FlatButton(
-            child: const Text('NO'),
+            child: const Text('NO', style: TextStyle(color: Colors.black)),
             onPressed: () {
               Navigator.of(context).pop(false);
             },
           ),
           FlatButton(
-            child: const Text('YES'),
+            child: const Text('YES', style: TextStyle(color: Colors.black)),
             onPressed: () {
               Navigator.of(context).pop(true);
             },

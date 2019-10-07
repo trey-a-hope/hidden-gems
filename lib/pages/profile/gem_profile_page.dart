@@ -1,16 +1,15 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:hiddengems_flutter/models/gem.dart';
+import 'package:get_it/get_it.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:hiddengems_flutter/models/user.dart';
+import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/services/url_launcher.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:timeago/timeago.dart' as timeago;
-import 'package:url_launcher/url_launcher.dart';
-import 'package:hiddengems_flutter/services/pd_info.dart';
 
 // https://pub.dev/packages/algolia
 
@@ -22,56 +21,29 @@ class GemProfilePage extends StatefulWidget {
   State createState() => GemProfilePageState(id);
 }
 
-class GemProfilePageState extends State<GemProfilePage>
-    with SingleTickerProviderStateMixin {
-
+class GemProfilePageState extends State<GemProfilePage> {
   GemProfilePageState(this._id);
 
-  final PDInfo _pdInfo = PDInfo();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
   final String _id; //Gem ID
-  final Color _iconColor = Colors.grey;
-  final _db = Firestore.instance;
-  String _deviceId; //Viewer ID
-  Gem _gem;
+  final CollectionReference _userDB = Firestore.instance.collection('Users');
+  User _gem;
   bool _isLoading = true;
   // User _currentUser;
-  Gem _currentGem;
+  User _currentUser;
+  final GetIt getIt = GetIt.I;
+  List<String> _gemLikes = List<String>();
 
   @override
   void initState() {
     super.initState();
-    _loadPage();
+    _load();
   }
 
-  // _getCurrentUser() async {
-  //   FirebaseUser firebaseUser = await _auth.currentUser();
-  //   if (firebaseUser != null) {
-  //     QuerySnapshot userColQuery = await _db
-  //         .collection('Users')
-  //         .where('uid', isEqualTo: firebaseUser.uid)
-  //         .getDocuments();
-  //     QuerySnapshot gemColQuery = await _db
-  //         .collection('Gems')
-  //         .where('uid', isEqualTo: firebaseUser.uid)
-  //         .getDocuments();
-
-  //     DocumentSnapshot documentSnapshot;
-  //     if (gemColQuery.documents.isEmpty) {
-  //       documentSnapshot = userColQuery.documents.first;
-  //       _currentUser = User.extractDocument(documentSnapshot);
-  //     } else {
-  //       documentSnapshot = gemColQuery.documents.first;
-  //       _currentGem = User.extractDocument(documentSnapshot);
-  //     }
-  //   }
-  // }
-
-  _loadPage() async {
-    _deviceId = await _pdInfo.getDeviceID();
-    await _fetchGem();
-    // await _getCurrentUser();
+  _load() async {
+    _gem = await getIt<Auth>().getUser(id: _id);
+    _gemLikes = await getIt<Auth>().getGemLikes(id: _gem.id);
+    _currentUser = await getIt<Auth>().getCurrentUser();
 
     setState(
       () {
@@ -80,36 +52,41 @@ class GemProfilePageState extends State<GemProfilePage>
     );
   }
 
-  _fetchGem() async {
-    DocumentSnapshot ds = await _db.collection('Gems').document(_id).get();
-    _gem = Gem.extractDocument(ds);
-  }
-
   _likeGem() async {
-    List<dynamic> likes = List.from(_gem.likes);
+    getIt<Modal>()
+        .showInSnackBar(scaffoldKey: _scaffoldKey, message: 'Like The Gem');
 
-    if (likes.contains(_deviceId)) {
-      likes.remove(_deviceId);
-    } else {
-      likes.add(_deviceId);
-    }
+    _userDB
+        .document(_gem.id)
+        .collection('likes')
+        .add({'userId': _currentUser.id});
+    // List<dynamic> likes = List.from(_gem.likes);
 
-    await _db.collection('Gems').document(_gem.id).updateData({'likes': likes});
+    // if (likes.contains(_deviceId)) {
+    //   likes.remove(_deviceId);
+    // } else {
+    //   likes.add(_deviceId);
+    // }
 
-    setState(() {
-      _gem.likes = likes;
-    });
+    // await _db.collection('Gems').document(_gem.id).updateData({'likes': likes});
+
+    // setState(() {
+    //   _gem.likes = likes;
+    // });
   }
 
   _copyToClipboard(String text) async {
     try {
       if (text.isEmpty) {
-        Modal.showInSnackBar(_scaffoldKey, 'User did not provide this info.');
+        getIt<Modal>().showInSnackBar(
+            scaffoldKey: _scaffoldKey,
+            message: 'User did not provide this info.');
         return;
       }
 
       await Clipboard.setData(ClipboardData(text: text));
-      Modal.showInSnackBar(_scaffoldKey, 'Copied to clipboard.');
+      getIt<Modal>().showInSnackBar(
+          scaffoldKey: _scaffoldKey, message: 'Copied to clipboard.');
       // bool success = await ClipboardManager.copyToClipBoard(text);
       // if (success)
       //   Modal.showInSnackBar(_scaffoldKey, 'Copied to clipboard.');
@@ -117,7 +94,8 @@ class GemProfilePageState extends State<GemProfilePage>
       //   Modal.showInSnackBar(_scaffoldKey, 'Could not copy to clipboard.');
 
     } catch (e) {
-      Modal.showInSnackBar(_scaffoldKey, e.toString());
+      getIt<Modal>()
+          .showInSnackBar(scaffoldKey: _scaffoldKey, message: e.toString());
     }
   }
 
@@ -192,16 +170,12 @@ class GemProfilePageState extends State<GemProfilePage>
               SpeedDialChild(
                 child: Icon(Icons.email, color: Colors.blue),
                 backgroundColor: Colors.white,
-                label: 'Email',
+                label: 'Message',
                 labelStyle: TextStyle(fontSize: 18.0),
-                onTap: () => _copyToClipboard(_gem.email),
-              ),
-              SpeedDialChild(
-                child: Icon(Icons.phone, color: Colors.orange),
-                backgroundColor: Colors.white,
-                label: 'Call',
-                labelStyle: TextStyle(fontSize: 18.0),
-                onTap: () => _copyToClipboard(_gem.phoneNumber),
+                onTap: () {
+                  getIt<Modal>().showAlert(
+                      context: context, title: 'Message', message: _gem.name);
+                },
               )
             ],
           );
@@ -244,10 +218,10 @@ class GemProfilePageState extends State<GemProfilePage>
                     child: Column(
                       children: <Widget>[
                         Text(
-                          '${_gem.likes.length}',
+                          '${_gemLikes.length}',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Text(_gem.likes.length == 1 ? 'Like' : 'Likes')
+                        Text(_gemLikes.length == 1 ? 'Like' : 'Likes')
                       ],
                     ),
                   ),
@@ -294,7 +268,7 @@ class GemProfilePageState extends State<GemProfilePage>
             ),
             actions: <Widget>[
               IconButton(
-                icon: List.from(_gem.likes).contains(_deviceId)
+                icon: List.from(_gemLikes).contains(_currentUser.id)
                     ? Icon(Icons.favorite, color: Colors.red)
                     : Icon(Icons.favorite_border),
                 onPressed: () {
@@ -344,7 +318,7 @@ class GemProfilePageState extends State<GemProfilePage>
             ),
           ),
           Divider(),
-          _gem.instagramName.isEmpty
+          _gem.instagramUrl.isEmpty
               ? Container()
               : InkWell(
                   child: ListTile(
@@ -357,11 +331,10 @@ class GemProfilePageState extends State<GemProfilePage>
                     trailing: Icon(Icons.chevron_right),
                   ),
                   onTap: () {
-                    URLLauncher.launchUrl(
-                        'https://www.instagram.com/${_gem.instagramName}');
+                    URLLauncher.launchUrl(_gem.instagramUrl);
                   },
                 ),
-          _gem.twitterName.isEmpty
+          _gem.twitterUrl.isEmpty
               ? Container()
               : InkWell(
                   child: ListTile(
@@ -374,11 +347,10 @@ class GemProfilePageState extends State<GemProfilePage>
                     trailing: Icon(Icons.chevron_right),
                   ),
                   onTap: () {
-                    URLLauncher.launchUrl(
-                        'https://twitter.com/${_gem.twitterName}');
+                    URLLauncher.launchUrl(_gem.twitterUrl);
                   },
                 ),
-          _gem.facebookName.isEmpty
+          _gem.facebookUrl.isEmpty
               ? Container()
               : InkWell(
                   child: ListTile(
@@ -391,11 +363,10 @@ class GemProfilePageState extends State<GemProfilePage>
                     trailing: Icon(Icons.chevron_right),
                   ),
                   onTap: () {
-                    URLLauncher.launchUrl(
-                        'https://www.facebook.com/${_gem.facebookName}');
+                    URLLauncher.launchUrl(_gem.facebookUrl);
                   },
                 ),
-          _gem.youTubeID.isEmpty
+          _gem.youTubeUrl.isEmpty
               ? Container()
               : InkWell(
                   child: ListTile(
@@ -408,11 +379,10 @@ class GemProfilePageState extends State<GemProfilePage>
                     trailing: Icon(Icons.chevron_right),
                   ),
                   onTap: () {
-                    URLLauncher.launchUrl(
-                        'https://www.youtube.com/channel/${_gem.youTubeID}');
+                    URLLauncher.launchUrl(_gem.youTubeUrl);
                   },
                 ),
-          _gem.spotifyID.isEmpty
+          _gem.spotifyUrl.isEmpty
               ? Container()
               : InkWell(
                   child: ListTile(
@@ -425,11 +395,10 @@ class GemProfilePageState extends State<GemProfilePage>
                     trailing: Icon(Icons.chevron_right),
                   ),
                   onTap: () {
-                    URLLauncher.launchUrl(
-                        'https://open.spotify.com/artist/${_gem.spotifyID}');
+                    URLLauncher.launchUrl(_gem.spotifyUrl);
                   },
                 ),
-          _gem.iTunesID.isEmpty
+          _gem.iTunesUrl.isEmpty
               ? Container()
               : InkWell(
                   child: ListTile(
@@ -442,11 +411,10 @@ class GemProfilePageState extends State<GemProfilePage>
                     trailing: Icon(Icons.chevron_right),
                   ),
                   onTap: () {
-                    URLLauncher.launchUrl(
-                        'https://music.apple.com/us/artist/${_gem.iTunesID}');
+                    URLLauncher.launchUrl(_gem.iTunesUrl);
                   },
                 ),
-          _gem.soundCloudName.isEmpty
+          _gem.soundCloudUrl.isEmpty
               ? Container()
               : InkWell(
                   child: ListTile(
@@ -459,8 +427,7 @@ class GemProfilePageState extends State<GemProfilePage>
                     trailing: Icon(Icons.chevron_right),
                   ),
                   onTap: () {
-                    URLLauncher.launchUrl(
-                        'https://soundcloud.com/${_gem.soundCloudName}');
+                    URLLauncher.launchUrl(_gem.soundCloudUrl);
                   },
                 ),
         ],

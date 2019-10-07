@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:hiddengems_flutter/models/gem.dart';
+import 'package:get_it/get_it.dart';
 import 'package:hiddengems_flutter/common/gem_card.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hiddengems_flutter/models/user.dart';
+import 'package:hiddengems_flutter/services/auth.dart';
+import 'package:hiddengems_flutter/services/modal.dart';
 
 class SubCategoriesPage extends StatefulWidget {
   final String mainCategory;
@@ -21,21 +24,19 @@ class SubCategoriesPage extends StatefulWidget {
       );
 }
 
-class SubCategoriesPageState extends State<SubCategoriesPage>
-    with SingleTickerProviderStateMixin {
+class SubCategoriesPageState extends State<SubCategoriesPage> {
   final String mainCategory;
   final List<String> subCategories;
   final Color titleColor;
   final IconData titleIcon;
-  final _db = Firestore.instance;
-  
-  List<Gem> gems = List<Gem>();
+  final GetIt getIt = GetIt.I;
+  List<User> gems = List<User>();
   bool _isLoading = true;
 
   SubCategoriesPageState(
       this.mainCategory, this.subCategories, this.titleColor, this.titleIcon);
 
-  _buildGemListing(List<Gem> gems) {
+  _buildGemListing(List<User> gems) {
     return ListView.builder(
       padding: EdgeInsets.all(6),
       itemCount: gems.length,
@@ -45,46 +46,38 @@ class SubCategoriesPageState extends State<SubCategoriesPage>
     );
   }
 
-  Future<List<Gem>> _getGems() async {
-    QuerySnapshot qs = await _db
-        .collection('Gems')
-        .where('category', isEqualTo: mainCategory)
-        .getDocuments();
-    List<DocumentSnapshot> docSnapshots = qs.documents;
-    List<Gem> gems = List<Gem>();
-    for (DocumentSnapshot docSnapshot in docSnapshots) {
-      Gem gem = Gem();
-
-      gem.id = docSnapshot['id'];
-      gem.name = docSnapshot['name'];
-      gem.category = docSnapshot['category'];
-      gem.subCategory = docSnapshot['subCategory'];
-      gem.photoUrl = docSnapshot['photoUrl'];
-      gem.likes = docSnapshot['likes'];
-
-      gems.add(gem);
-    }
-    return gems;
-  }
-
   @override
   void initState() {
     super.initState();
 
-    loadPage();
+    _load();
   }
 
-  void loadPage() async {
-    gems = await _getGems();
+  void _load() async {
+    try {
+      gems = await getIt<Auth>().getGems(category: mainCategory, limit: 100);
 
-    setState(
-      () {
-        _isLoading = false;
-      },
-    );
+      setState(
+        () {
+          _isLoading = false;
+        },
+      );
+    } catch (e) {
+      setState(
+        () {
+          _isLoading = false;
+          getIt<Modal>().showAlert(
+            context: context,
+            title: 'Error',
+            message: e.toString(),
+          );
+        },
+      );
+    }
   }
 
   Widget _buildPage() {
+    //Build data for Default Tab Controller.
     List<Tab> tabs = List<Tab>();
     List<ListView> listViewSubCategories = List<ListView>();
 
@@ -95,7 +88,7 @@ class SubCategoriesPageState extends State<SubCategoriesPage>
       tabs.add(tab);
 
       //Split gems into respective listings.
-      List<Gem> subCategoryGems =
+      List<User> subCategoryGems =
           gems.where((i) => i.subCategory == subCategory).toList();
 
       //Create page.
