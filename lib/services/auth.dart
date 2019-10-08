@@ -38,9 +38,7 @@ class AuthImplementation extends Auth {
       DocumentSnapshot documentSnapshot = querySnapshot.documents.first;
       return User.extractDocument(documentSnapshot);
     } catch (e) {
-      throw Exception(
-        e.toString(),
-      );
+      return null;
     }
   }
 

@@ -99,9 +99,9 @@ class User extends ObjectMethods {
     return User(
         backgroundUrl: data['backgroundUrl'],
         bio: data['bio'],
-        category: data['catagory'],
+        category: data['category'],
         email: data['email'],
-        facebookUrl: data['facebookurl'],
+        facebookUrl: data['facebookUrl'],
         fcmToken: data['fcmToken'],
         iTunesUrl: data['iTunesUrl'],
         id: data['id'],

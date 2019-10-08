@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:hiddengems_flutter/common/content_heading_widget.dart';
 import 'package:hiddengems_flutter/common/drawer_widget.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hiddengems_flutter/common/spinner.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/pages/search_page.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
@@ -209,9 +210,7 @@ class HomePageState extends State<HomePage> {
       drawer: DrawerWidget(),
       body: Builder(
         builder: (context) => _isLoading
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
+            ? Spinner()
             : RefreshIndicator(
                 onRefresh: _refresh,
                 key: _refreshIndicatorKey,

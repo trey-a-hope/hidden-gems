@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:hiddengems_flutter/common/gem_card.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:hiddengems_flutter/common/spinner.dart';
+import 'package:hiddengems_flutter/common/user_card.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
@@ -41,7 +41,7 @@ class SubCategoriesPageState extends State<SubCategoriesPage> {
       padding: EdgeInsets.all(6),
       itemCount: gems.length,
       itemBuilder: (BuildContext context, int index) {
-        return GemCard(gem: gems[index]);
+        return UserCard(user: gems[index]);
       },
     );
   }
@@ -130,7 +130,7 @@ class SubCategoriesPageState extends State<SubCategoriesPage> {
             height: double.infinity,
             color: Colors.white,
             child: Center(
-              child: CircularProgressIndicator(),
+              child:Spinner(),
             ),
           )
         : _buildPage();

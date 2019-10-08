@@ -1,4 +1,5 @@
 import 'package:get_it/get_it.dart';
+import 'package:hiddengems_flutter/common/spinner.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
@@ -236,9 +237,7 @@ class EditUserProfilePageState extends State<EditUserProfilePage> {
       appBar: _buildAppBar(),
       body: Builder(
         builder: (context) => _isLoading
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
+            ? Spinner()
             : Form(
                 key: _formKey,
                 autovalidate: _autoValidate,

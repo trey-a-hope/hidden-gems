@@ -158,7 +158,7 @@ class UserProfilePageState extends State<UserProfilePage> {
         : AppBar(
             centerTitle: true,
             title: Text(
-              'GEM DETAILS',
+              'USER DETAILS',
               style: TextStyle(letterSpacing: 2.0),
             ),
           );

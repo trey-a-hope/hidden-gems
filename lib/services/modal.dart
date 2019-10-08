@@ -70,10 +70,10 @@ class ModalImplementation extends Modal {
             maxLengthEnforced: true,
             // maxLength: MyFormData.nameCharLimit,
             onFieldSubmitted: (term) {},
-            validator: Validater.email,
+            validator: Validater.password,
             onSaved: (value) {},
             decoration: InputDecoration(
-              hintText: 'Email',
+              hintText: 'New Password',
               icon: Icon(Icons.email),
               fillColor: Colors.white,
             ),

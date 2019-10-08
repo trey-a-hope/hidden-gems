@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:hiddengems_flutter/common/search_bar_widget.dart';
 import 'package:algolia/algolia.dart';
-import 'package:hiddengems_flutter/common/gem_card.dart';
+import 'package:hiddengems_flutter/common/spinner.dart';
+import 'package:hiddengems_flutter/common/user_card.dart';
+import 'package:hiddengems_flutter/main.dart';
 import 'package:hiddengems_flutter/models/user.dart';
+import 'package:hiddengems_flutter/services/modal.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
 class SearchPage extends StatefulWidget {
   @override
@@ -18,7 +22,7 @@ class _SearchPageState extends State<SearchPage> {
   final String ALGOLIA_APP_ID = 'ZWB00DM8S2';
   final String ALGOLIA_SEARCH_API_KEY = 'c769ba8629b5635bf600cd5fb6dee47c';
 
-  bool _searchGems = true;
+  bool _isSearchingGems = true;
 
   @override
   void initState() {
@@ -26,7 +30,7 @@ class _SearchPageState extends State<SearchPage> {
 
     _searchAppBar = SearchBar(
         inBar: true,
-        hintText: 'Enter name of Gem...',
+        hintText: 'Enter name...',
         buildDefaultAppBar: (context) {
           return AppBar(
             automaticallyImplyLeading: true,
@@ -56,11 +60,8 @@ class _SearchPageState extends State<SearchPage> {
       apiKey: ALGOLIA_SEARCH_API_KEY,
     );
 
-    AlgoliaQuery query = algolia.instance.index('Users');
-    query = _searchGems
-        ? query.setFacetFilter('isGem:true')
-        : query.setFacetFilter('isGem:false');
-    query = query.search(value);
+    AlgoliaQuery query = algolia.instance.index('Users').search(value);
+    query = query.setFacetFilter('isGem:$_isSearchingGems');
 
     _results = (await query.getObjects()).hits;
 
@@ -76,40 +77,42 @@ class _SearchPageState extends State<SearchPage> {
     return Scaffold(
       key: _scaffoldKey,
       appBar: _searchAppBar.build(context),
+      floatingActionButton: _buildFAB(),
       body: _searching == true
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? Spinner()
           : _results.length == 0
               ? Center(
                   child: Text("No results found."),
                 )
               : Column(
                   children: <Widget>[
-                    Switch(
-                      value: _searchGems,
-                      onChanged: (value) {
-                        setState(
-                          () {
-                            _searchGems = value;
-                          },
-                        );
-                      },
-                      activeTrackColor: Colors.lightGreenAccent,
-                      activeColor: Colors.green,
-                    ),
                     ListView.builder(
                       physics: NeverScrollableScrollPhysics(),
                       shrinkWrap: true,
                       itemCount: _results.length,
                       itemBuilder: (BuildContext ctx, int index) {
                         AlgoliaObjectSnapshot snap = _results[index];
-                        User gem = User.extractAlgoliaObjectSnapshot(snap);
-                        return GemCard(gem: gem);
+                        User user = User.extractAlgoliaObjectSnapshot(snap);
+                        return UserCard(user: user);
                       },
                     )
                   ],
                 ),
+    );
+  }
+
+  _buildFAB() {
+    return FloatingActionButton(
+      elevation: Theme.of(context).floatingActionButtonTheme.elevation,
+      backgroundColor: _isSearchingGems ? Colors.green : Colors.white,
+      child: Icon(MdiIcons.diamondStone,
+          color: _isSearchingGems ? Colors.white : Colors.green),
+      onPressed: () {
+        setState(() {
+          _isSearchingGems = !_isSearchingGems;
+          getIt<Modal>().showInSnackBar(scaffoldKey: _scaffoldKey, message: 'Now searching ${_isSearchingGems ? 'Gems' : 'Users'}');
+        });
+      },
     );
   }
 }

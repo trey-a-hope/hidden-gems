@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:hiddengems_flutter/common/spinner.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
@@ -29,7 +30,6 @@ class GemProfilePageState extends State<GemProfilePage> {
   final CollectionReference _userDB = Firestore.instance.collection('Users');
   User _gem;
   bool _isLoading = true;
-  // User _currentUser;
   User _currentUser;
   final GetIt getIt = GetIt.I;
   List<String> _gemLikes = List<String>();
@@ -68,19 +68,12 @@ class GemProfilePageState extends State<GemProfilePage> {
       querySnapshot.documents.first.reference.delete();
       gemLikesCopy.remove(_currentUser.id);
     }
-    // List<dynamic> likes = List.from(_gem.likes);
 
-    // if (likes.contains(_deviceId)) {
-    //   likes.remove(_deviceId);
-    // } else {
-    //   likes.add(_deviceId);
-    // }
-
-    // await _db.collection('Gems').document(_gem.id).updateData({'likes': likes});
-
-    setState(() {
-      _gemLikes = gemLikesCopy;
-    });
+    setState(
+      () {
+        _gemLikes = gemLikesCopy;
+      },
+    );
   }
 
   _copyToClipboard(String text) async {
@@ -115,9 +108,7 @@ class GemProfilePageState extends State<GemProfilePage> {
       backgroundColor: Colors.grey.shade300,
       floatingActionButton: _buildFAB(),
       body: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? Spinner()
           : SingleChildScrollView(
               child: Stack(
                 children: <Widget>[
@@ -181,8 +172,19 @@ class GemProfilePageState extends State<GemProfilePage> {
                 label: 'Message',
                 labelStyle: TextStyle(fontSize: 18.0),
                 onTap: () {
-                  getIt<Modal>().showAlert(
-                      context: context, title: 'Message', message: _gem.name);
+                  if(_currentUser == null){
+                    getIt<Modal>().showAlert(
+                            context: context,
+                            title: 'Sorry',
+                            message:
+                                'You must be logged in to use this feature.');
+                  }else{
+                    getIt<Modal>().showAlert(
+                            context: context,
+                            title: 'TODO',
+                            message:
+                                'Message the gem.');
+                  }
                 },
               )
             ],
@@ -275,14 +277,25 @@ class GemProfilePageState extends State<GemProfilePage> {
               style: TextStyle(letterSpacing: 2.0),
             ),
             actions: <Widget>[
-              IconButton(
-                icon: List.from(_gemLikes).contains(_currentUser.id)
-                    ? Icon(Icons.favorite, color: Colors.red)
-                    : Icon(Icons.favorite_border),
-                onPressed: () {
-                  _likeGem();
-                },
-              )
+              _currentUser == null
+                  ? IconButton(
+                      icon: Icon(Icons.favorite_border),
+                      onPressed: () {
+                        getIt<Modal>().showAlert(
+                            context: context,
+                            title: 'Sorry',
+                            message:
+                                'You must be logged in to use this feature.');
+                      },
+                    )
+                  : IconButton(
+                      icon: List.from(_gemLikes).contains(_currentUser.id)
+                          ? Icon(Icons.favorite, color: Colors.red)
+                          : Icon(Icons.favorite_border),
+                      onPressed: () {
+                        _likeGem();
+                      },
+                    )
             ],
           );
   }

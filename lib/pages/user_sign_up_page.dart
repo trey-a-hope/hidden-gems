@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hiddengems_flutter/common/spinner.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
@@ -93,6 +94,7 @@ class UserSignUpPageState extends State<UserSignUpPage> {
           DocumentReference dr = await _usersDB.add(
             newUser.toMap(),
           );
+
           await _usersDB
               .document(dr.documentID)
               .updateData({'id': dr.documentID});
@@ -124,9 +126,7 @@ class UserSignUpPageState extends State<UserSignUpPage> {
     return Scaffold(
       key: _scaffoldKey,
       body: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(),
-            )
+          ? Spinner()
           : Stack(
               alignment: Alignment.center,
               children: <Widget>[
@@ -165,7 +165,7 @@ class UserSignUpPageState extends State<UserSignUpPage> {
                   child: Column(
                     children: <Widget>[
                       Container(
-                        height: 550,
+                        height: _autoValidate ? 390 : 370,
                         width: screenWidth * 0.9,
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),

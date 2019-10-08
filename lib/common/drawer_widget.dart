@@ -126,7 +126,7 @@ class DrawerWidgetState extends State<DrawerWidget> {
               ? ListTile(
                   leading: Icon(MdiIcons.login, color: _drawerIconColor),
                   title: Text(
-                    'Login/Sign Up',
+                    'Login / Sign Up',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
                   subtitle: Text('Become a member.'),

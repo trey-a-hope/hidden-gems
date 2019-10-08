@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hiddengems_flutter/common/spinner.dart';
 import 'package:hiddengems_flutter/pages/gem_sign_up_page.dart';
 import 'package:hiddengems_flutter/pages/user_sign_up_page.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
@@ -131,9 +132,7 @@ class LoginPageState extends State<LoginPage> {
     return Scaffold(
         key: _scaffoldKey,
         body: _isLoading
-            ? Center(
-                child: CircularProgressIndicator(),
-              )
+            ? Spinner()
             : Stack(
                 alignment: Alignment.center,
                 children: <Widget>[

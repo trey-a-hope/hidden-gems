@@ -12,7 +12,7 @@ const StripeProduct = require('./stripe/product_functions');
 admin.initializeApp(functions.config().firebase);
 
 exports.AlgoliaSyncHiddenGemsGemsIndex = Algolia.syncHiddenGemsGemsIndex;
-// exports.AlgoliaSyncHiddenGemsUsersIndex = Algolia.syncHiddenGemsUsersIndex;
+exports.AlgoliaSyncHiddenGemsUsersIndex = Algolia.syncHiddenGemsUsersIndex;
 
 exports.PayPalCreatePayment = PayPal.createPayment;
 
