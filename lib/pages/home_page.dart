@@ -320,7 +320,9 @@ class HomePageState extends State<HomePage> {
   _buildGemShortcut() {
     return Material(
       elevation: 4,
-      borderRadius: const BorderRadius.all(Radius.circular(12)),
+      borderRadius: const BorderRadius.all(
+        Radius.circular(12),
+      ),
       child: Padding(
         padding: const EdgeInsets.all(16),
         child: Row(
@@ -357,11 +359,12 @@ class HomePageState extends State<HomePage> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => SubCategoriesPage(
-                          _entertainment.title,
-                          _entertainment.subCategories,
-                          _entertainment.accentColor,
-                          _entertainment.icon)),
+                    builder: (context) => SubCategoriesPage(
+                        _entertainment.title,
+                        _entertainment.subCategories,
+                        _entertainment.accentColor,
+                        _entertainment.icon),
+                  ),
                 );
               },
               child: Icon(MdiIcons.diamondStone,

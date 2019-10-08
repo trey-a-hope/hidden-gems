@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:hiddengems_flutter/pages/sign_up_page.dart';
+import 'package:hiddengems_flutter/pages/gem_sign_up_page.dart';
+import 'package:hiddengems_flutter/pages/user_sign_up_page.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hiddengems_flutter/services/validater.dart';
 import 'package:hiddengems_flutter/asset_images.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -33,7 +33,7 @@ class LoginPageState extends State<LoginPage> {
             _isLoading = true;
           },
         );
-        AuthResult authResult = await getIt<Auth>().signInWithEmailAndPassword(
+        await getIt<Auth>().signInWithEmailAndPassword(
             email: _emailController.text, password: _passwordController.text);
         Navigator.pop(context);
       } catch (e) {
@@ -177,7 +177,7 @@ class LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   Container(
-                    height: 350,
+                    height: _autoValidate ? 400 : 370,
                     width: screenWidth * 0.9,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(8),
@@ -249,13 +249,39 @@ class LoginPageState extends State<LoginPage> {
                                 MdiIcons.arrowRight,
                                 size: 18.0,
                               ),
-                              label: Text('Sign Up'),
+                              label: Text('Sign Up as Gem'),
                               onPressed: () {
                                 Navigator.push(
                                   context,
                                   MaterialPageRoute(
                                     builder: (BuildContext context) =>
-                                        SignUpPage(),
+                                        GemSignUpPage(),
+                                  ),
+                                );
+                              },
+                            ),
+                            OutlineButton.icon(
+                              padding: const EdgeInsets.symmetric(
+                                vertical: 8.0,
+                                horizontal: 30.0,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(20.0)),
+                              highlightedBorderColor: Colors.blue,
+                              borderSide: BorderSide(color: Colors.blue),
+                              color: Colors.blue,
+                              textColor: Colors.blue,
+                              icon: Icon(
+                                MdiIcons.arrowRight,
+                                size: 18.0,
+                              ),
+                              label: Text('Sign Up as User'),
+                              onPressed: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (BuildContext context) =>
+                                        UserSignUpPage(),
                                   ),
                                 );
                               },

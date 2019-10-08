@@ -18,6 +18,8 @@ class _SearchPageState extends State<SearchPage> {
   final String ALGOLIA_APP_ID = 'ZWB00DM8S2';
   final String ALGOLIA_SEARCH_API_KEY = 'c769ba8629b5635bf600cd5fb6dee47c';
 
+  bool _searchGems = true;
+
   @override
   void initState() {
     super.initState();
@@ -55,7 +57,9 @@ class _SearchPageState extends State<SearchPage> {
     );
 
     AlgoliaQuery query = algolia.instance.index('Users');
-    query = query.setFacetFilter('isGem:true');
+    query = _searchGems
+        ? query.setFacetFilter('isGem:true')
+        : query.setFacetFilter('isGem:false');
     query = query.search(value);
 
     _results = (await query.getObjects()).hits;
@@ -80,13 +84,31 @@ class _SearchPageState extends State<SearchPage> {
               ? Center(
                   child: Text("No results found."),
                 )
-              : ListView.builder(
-                  itemCount: _results.length,
-                  itemBuilder: (BuildContext ctx, int index) {
-                    AlgoliaObjectSnapshot snap = _results[index];
-                    User gem = User.extractAlgoliaObjectSnapshot(snap);
-                    return GemCard(gem: gem);
-                  },
+              : Column(
+                  children: <Widget>[
+                    Switch(
+                      value: _searchGems,
+                      onChanged: (value) {
+                        setState(
+                          () {
+                            _searchGems = value;
+                          },
+                        );
+                      },
+                      activeTrackColor: Colors.lightGreenAccent,
+                      activeColor: Colors.green,
+                    ),
+                    ListView.builder(
+                      physics: NeverScrollableScrollPhysics(),
+                      shrinkWrap: true,
+                      itemCount: _results.length,
+                      itemBuilder: (BuildContext ctx, int index) {
+                        AlgoliaObjectSnapshot snap = _results[index];
+                        User gem = User.extractAlgoliaObjectSnapshot(snap);
+                        return GemCard(gem: gem);
+                      },
+                    )
+                  ],
                 ),
     );
   }

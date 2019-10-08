@@ -1,27 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_custom_clippers/flutter_custom_clippers.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hiddengems_flutter/constants.dart';
 import 'package:hiddengems_flutter/services/validater.dart';
-import 'package:hiddengems_flutter/services/modal.dart';
-import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:hiddengems_flutter/constants.dart';
-import 'package:hiddengems_flutter/services/validater.dart';
 import 'package:hiddengems_flutter/asset_images.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 
-class SignUpPage extends StatefulWidget {
+class UserSignUpPage extends StatefulWidget {
   @override
-  State createState() => SignUpPageState();
+  State createState() => UserSignUpPageState();
 }
 
-class SignUpPageState extends State<SignUpPage> {
+class UserSignUpPageState extends State<UserSignUpPage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   String dropdownValue;
@@ -30,25 +24,11 @@ class SignUpPageState extends State<SignUpPage> {
   bool _autoValidate = false;
   bool _isLoading = true;
 
-  List<DropdownMenuItem<String>> _musicSubCatDrop,
-      _mediaSubCatDrop,
-      _entertainmentSubCatDrop,
-      _foodSubCatDrop,
-      _technologySubCatDrop,
-      _artSubCatDrop,
-      _tradeSubCatDrop,
-      _beautySubCatDrop;
-
-  TextEditingController _nameController = TextEditingController();
-  TextEditingController _emailController = TextEditingController();
-  TextEditingController _passwordController = TextEditingController();
-
-  String _categoryController;
-  String _subCategoryController;
+  final TextEditingController _nameController = TextEditingController();
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
   final GetIt getIt = GetIt.I;
   final CollectionReference _usersDB = Firestore.instance.collection('Users');
-  final CollectionReference _miscellaneousDB =
-      Firestore.instance.collection('Miscellaneous');
 
   @override
   void initState() {
@@ -58,7 +38,6 @@ class SignUpPageState extends State<SignUpPage> {
   }
 
   _load() async {
-    await _fetchSubCategories();
     setState(
       () {
         _isLoading = false;
@@ -69,13 +48,6 @@ class SignUpPageState extends State<SignUpPage> {
   _signUp() async {
     if (_formKey.currentState.validate()) {
       _formKey.currentState.save();
-
-      if (_categoryController == null) {
-        getIt<Modal>().showInSnackBar(
-            scaffoldKey: _scaffoldKey,
-            message: 'Please select a talent first.');
-        return;
-      }
 
       bool confirm = await getIt<Modal>().showConfirmation(
           context: context, title: 'Submit', message: 'Are you ready?');
@@ -96,28 +68,31 @@ class SignUpPageState extends State<SignUpPage> {
 
           final FirebaseUser user = authResult.user;
 
-          var data = {
-            'backgroundUrl': DUMMY_BACKGROUND_PHOTO_URL,
-            'bio': '',
-            'category': _categoryController,
-            'email': user.email,
-            'facebookName': '',
-            'iTunesID': '',
-            'instagramName': '',
-            'likes': [],
-            'name': _nameController.text,
-            'phoneNumber': '',
-            'photoUrl': DUMMY_PROFILE_PHOTO_URL,
-            'soundCloudName': '',
-            'spotifyID': '',
-            'subCategory': _subCategoryController,
-            'time': DateTime.now(),
-            'twitterName': '',
-            'uid': user.uid,
-            'youTubeID': '',
-          };
+          User newUser = User(
+              id: '',
+              fcmToken: '',
+              backgroundUrl: DUMMY_BACKGROUND_PHOTO_URL,
+              bio: '',
+              category: '',
+              email: user.email,
+              facebookUrl: '',
+              iTunesUrl: '',
+              instagramUrl: '',
+              name: _nameController.text,
+              phoneNumber: '',
+              photoUrl: DUMMY_PROFILE_PHOTO_URL,
+              soundCloudUrl: '',
+              spotifyUrl: '',
+              subCategory: '',
+              time: DateTime.now(),
+              twitterUrl: '',
+              uid: user.uid,
+              youTubeUrl: '',
+              isGem: false);
 
-          DocumentReference dr = await _usersDB.add(data);
+          DocumentReference dr = await _usersDB.add(
+            newUser.toMap(),
+          );
           await _usersDB
               .document(dr.documentID)
               .updateData({'id': dr.documentID});
@@ -209,21 +184,15 @@ class SignUpPageState extends State<SignUpPage> {
                             autovalidate: _autoValidate,
                             child: Column(
                               children: <Widget>[
+                                SizedBox(
+                                  height: 20,
+                                ),
                                 _nameFormField(),
                                 SizedBox(height: 20),
                                 _emailFormField(),
                                 SizedBox(height: 30),
                                 _passwordFormField(),
                                 SizedBox(height: 30),
-                                Text('Talent Category'),
-                                _categoryDropdownField(),
-                                SizedBox(height: 30),
-                                _categoryController == null
-                                    ? Container()
-                                    : Text('Talent Sub Category'),
-                                _categoryController == null
-                                    ? Container()
-                                    : _subCategoryDropdownField(),
                                 Row(
                                   mainAxisAlignment:
                                       MainAxisAlignment.spaceEvenly,
@@ -300,7 +269,7 @@ class SignUpPageState extends State<SignUpPage> {
       validator: Validater.isEmpty,
       onSaved: (value) {},
       decoration: InputDecoration(
-        hintText: 'Stage Name',
+        hintText: 'Name',
         icon: Icon(Icons.person),
         fillColor: Colors.white,
       ),
@@ -342,173 +311,5 @@ class SignUpPageState extends State<SignUpPage> {
         fillColor: Colors.white,
       ),
     );
-  }
-
-  Widget _categoryDropdownField() {
-    return Container(
-      width: 300.0,
-      child: DropdownButtonHideUnderline(
-        child: ButtonTheme(
-          alignedDropdown: true,
-          child: DropdownButton(
-            value: _categoryController,
-            onChanged: (String value) {
-              setState(
-                () {
-                  _categoryController = value;
-                  //Set the sub category to the first option available.
-                  _subCategoryController = _getSubCatOptions()[0].value;
-                },
-              );
-            },
-            items: MyFormData.categories.map<DropdownMenuItem<String>>(
-              (String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              },
-            ).toList(),
-            style: Theme.of(context).textTheme.title,
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _subCategoryDropdownField() {
-    return Container(
-      width: 300.0,
-      child: DropdownButtonHideUnderline(
-        child: ButtonTheme(
-          alignedDropdown: true,
-          child: DropdownButton(
-            value: _subCategoryController,
-            onChanged: (String value) {
-              setState(
-                () {
-                  _subCategoryController = value;
-                },
-              );
-            },
-            items: _getSubCatOptions(),
-            style: Theme.of(context).textTheme.title,
-          ),
-        ),
-      ),
-    );
-  }
-
-  //Convert SubCategories into DropdownMenuItem lists.
-  Future<void> _fetchSubCategories() async {
-    DocumentSnapshot ds = await _miscellaneousDB.document('HomePage').get();
-
-    dynamic data = ds.data;
-
-    List<String> musicSubCatList = List.from(data['music']['subCategories']);
-    _musicSubCatDrop = musicSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-
-    List<String> mediaSubCatList = List.from(data['media']['subCategories']);
-    _mediaSubCatDrop = mediaSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-
-    List<String> entertainmentSubCatList =
-        List.from(data['entertainment']['subCategories']);
-    _entertainmentSubCatDrop =
-        entertainmentSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-
-    List<String> foodSubCatList = List.from(data['food']['subCategories']);
-    _foodSubCatDrop = foodSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-
-    List<String> technologySubCatList =
-        List.from(data['technology']['subCategories']);
-    _technologySubCatDrop = technologySubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-
-    List<String> artSubCatList = List.from(data['art']['subCategories']);
-    _artSubCatDrop = artSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-
-    List<String> tradeSubCatList = List.from(data['trade']['subCategories']);
-    _tradeSubCatDrop = tradeSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-
-    List<String> beautySubCatList = List.from(data['beauty']['subCategories']);
-    _beautySubCatDrop = beautySubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-  }
-
-  List<DropdownMenuItem<String>> _getSubCatOptions() {
-    switch (_categoryController) {
-      case 'Music':
-        return _musicSubCatDrop;
-      case 'Media':
-        return _mediaSubCatDrop;
-      case 'Entertainment':
-        return _entertainmentSubCatDrop;
-      case 'Food':
-        return _foodSubCatDrop;
-      case 'Technology':
-        return _technologySubCatDrop;
-      case 'Art':
-        return _artSubCatDrop;
-      case 'Trade':
-        return _tradeSubCatDrop;
-      case 'Beauty':
-        return _beautySubCatDrop;
-      default:
-        return null;
-    }
   }
 }

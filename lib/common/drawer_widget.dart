@@ -1,7 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
+import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/pages/profile/edit_gem_profile_page.dart';
+import 'package:hiddengems_flutter/pages/profile/edit_user_profile_page.dart';
 import 'package:hiddengems_flutter/pages/settings_page.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -100,24 +102,34 @@ class DrawerWidgetState extends State<DrawerWidget> {
                     'Edit Profile',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => EditGemProfilePage(),
-                      ),
-                    );
+                  onTap: () async {
+                    User currentUser = await getIt<Auth>().getCurrentUser();
+                    if (currentUser.isGem) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditGemProfilePage(),
+                        ),
+                      );
+                    } else {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EditUserProfilePage(),
+                        ),
+                      );
+                    }
                   },
                 )
               : Container(),
           user == null
               ? ListTile(
-                  leading: Icon(MdiIcons.creation, color: _drawerIconColor),
+                  leading: Icon(MdiIcons.login, color: _drawerIconColor),
                   title: Text(
-                    'Are You A Gem?',
+                    'Login/Sign Up',
                     style: TextStyle(fontWeight: FontWeight.bold),
                   ),
-                  subtitle: Text('Login or create a Gem profile.'),
+                  subtitle: Text('Become a member.'),
                   onTap: () {
                     Navigator.push(
                       context,

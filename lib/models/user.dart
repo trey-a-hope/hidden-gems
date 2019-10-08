@@ -14,7 +14,6 @@ class User extends ObjectMethods {
   String id;
   String instagramUrl;
   String name;
-  // List<dynamic> likes = List<dynamic>(); These will be in a sub collection by themselves.
   String phoneNumber;
   String soundCloudUrl;
   String spotifyUrl;
@@ -33,20 +32,20 @@ class User extends ObjectMethods {
       @required String email,
       @required String facebookUrl,
       @required String fcmToken,
-      @required String iTunesUrl,
       @required String id,
       @required String instagramUrl,
+      @required bool isGem,
+      @required String iTunesUrl,
       @required String name,
       @required String phoneNumber,
+      @required String photoUrl,
       @required String soundCloudUrl,
       @required String spotifyUrl,
       @required String subCategory,
+      @required DateTime time,
       @required String twitterUrl,
       @required String youTubeUrl,
-      @required String photoUrl,
-      @required DateTime time,
-      @required String uid,
-      @required bool isGem}) {
+      @required String uid}) {
     this.backgroundUrl = backgroundUrl;
     this.bio = bio;
     this.category = category;

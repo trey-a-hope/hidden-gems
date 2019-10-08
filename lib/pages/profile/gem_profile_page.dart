@@ -53,13 +53,21 @@ class GemProfilePageState extends State<GemProfilePage> {
   }
 
   _likeGem() async {
-    getIt<Modal>()
-        .showInSnackBar(scaffoldKey: _scaffoldKey, message: 'Like The Gem');
+    List<String> gemLikesCopy = _gemLikes;
 
-    _userDB
-        .document(_gem.id)
-        .collection('likes')
-        .add({'userId': _currentUser.id});
+    CollectionReference likesColRef =
+        _userDB.document(_gem.id).collection('likes');
+    QuerySnapshot querySnapshot = await likesColRef
+        .where('userId', isEqualTo: _currentUser.id)
+        .getDocuments();
+
+    if (querySnapshot.documents.length == 0) {
+      likesColRef.add({'userId': _currentUser.id});
+      gemLikesCopy.add(_currentUser.id);
+    } else {
+      querySnapshot.documents.first.reference.delete();
+      gemLikesCopy.remove(_currentUser.id);
+    }
     // List<dynamic> likes = List.from(_gem.likes);
 
     // if (likes.contains(_deviceId)) {
@@ -70,9 +78,9 @@ class GemProfilePageState extends State<GemProfilePage> {
 
     // await _db.collection('Gems').document(_gem.id).updateData({'likes': likes});
 
-    // setState(() {
-    //   _gem.likes = likes;
-    // });
+    setState(() {
+      _gemLikes = gemLikesCopy;
+    });
   }
 
   _copyToClipboard(String text) async {
