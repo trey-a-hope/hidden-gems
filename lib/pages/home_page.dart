@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hiddengems_flutter/common/content_heading_widget.dart';
@@ -26,7 +30,8 @@ class HomePageState extends State<HomePage> {
   final CollectionReference _miscellaneousDB =
       Firestore.instance.collection('Miscellaneous');
   final CollectionReference _usersDB = Firestore.instance.collection('Users');
-  final CollectionReference _gemsDB = Firestore.instance.collection('Gems');
+  // final CollectionReference _gemsDB = Firestore.instance.collection('Gems');
+  final FirebaseMessaging _fcm = FirebaseMessaging();
 
   bool _isLoading = true;
 
@@ -48,42 +53,42 @@ class HomePageState extends State<HomePage> {
     _load();
   }
 
-  void moveGemsToUsersTable() async {
-    QuerySnapshot querySnapshot = await _gemsDB.getDocuments();
-    for (int i = 0; i < querySnapshot.documents.length; i++) {
-      Map<String, dynamic> data = querySnapshot.documents[i].data;
-      User user = User(
-          backgroundUrl: data['backgroundUrl'],
-          instagramUrl: '',
-          category: data['category'],
-          email: data['email'],
-          phoneNumber: data['phoneNumber'],
-          facebookUrl: '',
-          id: '',
-          spotifyUrl: '',
-          uid: data['uid'],
-          isGem: true,
-          iTunesUrl: '',
-          soundCloudUrl: '',
-          time: data['time'].toDate(),
-          name: data['name'],
-          photoUrl: data['photoUrl'],
-          subCategory: data['subCategory'],
-          youTubeUrl: '',
-          twitterUrl: '',
-          fcmToken: '',
-          bio: data['bio']);
-      DocumentReference docRef = await _usersDB.add(
-        user.toMap(),
-      );
+  // void moveGemsToUsersTable() async {
+  //   QuerySnapshot querySnapshot = await _gemsDB.getDocuments();
+  //   for (int i = 0; i < querySnapshot.documents.length; i++) {
+  //     Map<String, dynamic> data = querySnapshot.documents[i].data;
+  //     User user = User(
+  //         backgroundUrl: data['backgroundUrl'],
+  //         instagramUrl: '',
+  //         category: data['category'],
+  //         email: data['email'],
+  //         phoneNumber: data['phoneNumber'],
+  //         facebookUrl: '',
+  //         id: '',
+  //         spotifyUrl: '',
+  //         uid: data['uid'],
+  //         isGem: true,
+  //         iTunesUrl: '',
+  //         soundCloudUrl: '',
+  //         time: data['time'].toDate(),
+  //         name: data['name'],
+  //         photoUrl: data['photoUrl'],
+  //         subCategory: data['subCategory'],
+  //         youTubeUrl: '',
+  //         twitterUrl: '',
+  //         fcmToken: '',
+  //         bio: data['bio']);
+  //     DocumentReference docRef = await _usersDB.add(
+  //       user.toMap(),
+  //     );
 
-      _usersDB.document(docRef.documentID).updateData(
-        {'id': docRef.documentID},
-      );
-    }
-    getIt<Modal>()
-        .showInSnackBar(scaffoldKey: _scaffoldKey, message: 'Users added.');
-  }
+  //     _usersDB.document(docRef.documentID).updateData(
+  //       {'id': docRef.documentID},
+  //     );
+  //   }
+  //   getIt<Modal>()
+  //       .showInSnackBar(scaffoldKey: _scaffoldKey, message: 'Users added.');
+  // }
 
   _getHeaderWidgets() async {
     DocumentSnapshot ds = await _miscellaneousDB.document('HomePage').get();
@@ -186,6 +191,10 @@ class HomePageState extends State<HomePage> {
     await _getGems();
 
     // moveGemsToUsersTable();
+    FirebaseUser firebaseUser = await getIt<Auth>().getFirebaseUser();
+    if (firebaseUser != null) {
+      _setUpFirebaseMessaging(firebaseUser: firebaseUser);
+    }
 
     setState(
       () {
@@ -199,6 +208,51 @@ class HomePageState extends State<HomePage> {
     await _getGems();
     setState(
       () {},
+    );
+  }
+
+  void _setUpFirebaseMessaging({@required FirebaseUser firebaseUser}) async {
+    //Fetch the ID of the user document.
+    QuerySnapshot querySnapshot =
+        await _usersDB.where('uid', isEqualTo: firebaseUser.uid).getDocuments();
+    DocumentSnapshot documentSnapshot = querySnapshot.documents.first;
+    String id = documentSnapshot.data['id'];
+
+    if (Platform.isIOS) {
+      //Request permission on iOS device.
+      _fcm.requestNotificationPermissions(
+        IosNotificationSettings(),
+      );
+    }
+
+    //Update user's fcm token.
+    final String fcmToken = await _fcm.getToken();
+    if (fcmToken != null) {
+      print(fcmToken);
+      _usersDB.document(id).updateData(
+        {'fcmToken': fcmToken},
+      );
+    }
+
+    //Configure notifications for several action types.
+    _fcm.configure(
+      onMessage: (Map<String, dynamic> message) async {
+        print("onMessage: $message");
+        getIt<Modal>().showAlert(
+            context: context,
+            title: message['notification']['title'],
+            message: message['notification']['body']);
+        //  _showItemDialog(message);
+      },
+      //  onBackgroundMessage: myBackgroundMessageHandler,
+      onLaunch: (Map<String, dynamic> message) async {
+        print("onLaunch: $message");
+        //  _navigateToItemDetail(message);
+      },
+      onResume: (Map<String, dynamic> message) async {
+        print("onResume: $message");
+        //  _navigateToItemDetail(message);
+      },
     );
   }
 

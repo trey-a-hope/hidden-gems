@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hiddengems_flutter/models/user.dart';
+import 'package:hiddengems_flutter/pages/messages/messages_page.dart';
 import 'package:hiddengems_flutter/pages/profile/edit_gem_profile_page.dart';
 import 'package:hiddengems_flutter/pages/profile/edit_user_profile_page.dart';
 import 'package:hiddengems_flutter/pages/settings_page.dart';
@@ -95,6 +96,23 @@ class DrawerWidgetState extends State<DrawerWidget> {
           //     );
           //   },
           // ),
+          user == null
+              ? Container()
+              : ListTile(
+                  leading: Icon(MdiIcons.email, color: _drawerIconColor),
+                  title: Text(
+                    'Messages',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => MessagesPage(),
+                      ),
+                    );
+                  },
+                ),
           user != null
               ? ListTile(
                   leading: Icon(MdiIcons.accountEdit, color: _drawerIconColor),
@@ -122,6 +140,24 @@ class DrawerWidgetState extends State<DrawerWidget> {
                   },
                 )
               : Container(),
+
+          user == null
+              ? Container()
+              : ListTile(
+                  leading: Icon(MdiIcons.settings, color: _drawerIconColor),
+                  title: Text(
+                    'Settings',
+                    style: TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => SettingsPage(),
+                      ),
+                    );
+                  },
+                ),
           user == null
               ? ListTile(
                   leading: Icon(MdiIcons.login, color: _drawerIconColor),
@@ -153,23 +189,6 @@ class DrawerWidgetState extends State<DrawerWidget> {
                     if (confirm) {
                       await getIt<Auth>().signOut();
                     }
-                  },
-                ),
-          user == null
-              ? Container()
-              : ListTile(
-                  leading: Icon(MdiIcons.settings, color: _drawerIconColor),
-                  title: Text(
-                    'Settings',
-                    style: TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => SettingsPage(),
-                      ),
-                    );
                   },
                 ),
           Expanded(

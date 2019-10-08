@@ -110,7 +110,7 @@ class _SearchPageState extends State<SearchPage> {
       onPressed: () {
         setState(() {
           _isSearchingGems = !_isSearchingGems;
-          getIt<Modal>().showInSnackBar(scaffoldKey: _scaffoldKey, message: 'Now searching ${_isSearchingGems ? 'Gems' : 'Users'}');
+          getIt<Modal>().showInSnackBar(scaffoldKey: _scaffoldKey, message: 'Now searching ${_isSearchingGems ? 'Gems' : 'General Users'}');
         });
       },
     );

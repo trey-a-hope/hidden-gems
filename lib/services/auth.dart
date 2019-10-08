@@ -159,9 +159,7 @@ class AuthImplementation extends Auth {
     try {
       return await _auth.currentUser();
     } catch (e) {
-      throw Exception(
-        e.toString(),
-      );
+      return null;
     }
   }
 }

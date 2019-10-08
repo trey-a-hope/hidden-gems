@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hiddengems_flutter/common/spinner.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
+import 'package:hiddengems_flutter/services/message.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/services/url_launcher.dart';
@@ -172,18 +173,23 @@ class GemProfilePageState extends State<GemProfilePage> {
                 label: 'Message',
                 labelStyle: TextStyle(fontSize: 18.0),
                 onTap: () {
-                  if(_currentUser == null){
+                  if (_currentUser == null) {
                     getIt<Modal>().showAlert(
-                            context: context,
-                            title: 'Sorry',
-                            message:
-                                'You must be logged in to use this feature.');
-                  }else{
-                    getIt<Modal>().showAlert(
-                            context: context,
-                            title: 'TODO',
-                            message:
-                                'Message the gem.');
+                        context: context,
+                        title: 'Sorry',
+                        message: 'You must be logged in to use this feature.');
+                  } else {
+                    if (_gem.id == _currentUser.id) {
+                      getIt<Modal>().showAlert(
+                          context: context,
+                          title: 'Ummm',
+                          message: 'You can\'t message yourself...');
+                    } else {
+                      getIt<Message>().openMessageThread(
+                          context: context,
+                          senderId: _currentUser.id,
+                          sendeeId: _gem.id);
+                    }
                   }
                 },
               )

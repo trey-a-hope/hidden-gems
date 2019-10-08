@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 
-class Spinner extends StatelessWidget {
+class Spinner extends StatefulWidget {
+  @override
+  State createState() => SpinnerState();
+}
+
+class SpinnerState extends State<Spinner> {
   @override
   Widget build(BuildContext context) {
     return Center(
