@@ -1,5 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/protocols.dart';
 
 class Conversation extends ObjectMethods {
@@ -10,6 +11,7 @@ class Conversation extends ObjectMethods {
   String sendeeId;
   DateTime time;
   bool read;
+  User oppositeUser;
 
   Conversation(
       {@required String title,
@@ -18,7 +20,8 @@ class Conversation extends ObjectMethods {
       @required String senderId,
       @required String sendeeId,
       @required DateTime time,
-      bool read}) {
+      bool read,
+      User oppositeUser}) {
     this.title = title;
     this.lastMessage = lastMessage;
     this.imageUrl = imageUrl;
@@ -26,6 +29,7 @@ class Conversation extends ObjectMethods {
     this.sendeeId = sendeeId;
     this.time = time;
     this.read = read;
+    this.oppositeUser = oppositeUser;
   }
 
   static Conversation extractDocument(DocumentSnapshot ds) {

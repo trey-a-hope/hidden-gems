@@ -24,7 +24,6 @@ class _MessagesPageState extends State<MessagesPage> {
   final CollectionReference _conversationsDB =
       Firestore.instance.collection('Conversations');
   User _currentUser;
-  User _oppositeUser;
   bool _isLoading = true;
 
   @override
@@ -95,6 +94,7 @@ class _MessagesPageState extends State<MessagesPage> {
             },
           );
 
+          User _oppositeUser;
           if (_currentUser.id == userIds[0]) {
             _oppositeUser = await getIt<Auth>().getUser(id: userIds[1]);
           } else {
@@ -103,14 +103,14 @@ class _MessagesPageState extends State<MessagesPage> {
 
           _conversations.add(
             Conversation(
-              title: _oppositeUser.name,
-              lastMessage: convoData['lastMessage'],
-              imageUrl: _oppositeUser.photoUrl,
-              sendeeId: userIds[0],
-              senderId: userIds[1],
-              time: convoData['time'].toDate(),
-              read: convoData['${_currentUser.id}_read'],
-            ),
+                title: _oppositeUser.name,
+                lastMessage: convoData['lastMessage'],
+                imageUrl: _oppositeUser.photoUrl,
+                sendeeId: userIds[0],
+                senderId: userIds[1],
+                time: convoData['time'].toDate(),
+                read: convoData['${_currentUser.id}_read'],
+                oppositeUser: _oppositeUser),
           );
         }
 
@@ -163,7 +163,7 @@ class _MessagesPageState extends State<MessagesPage> {
             getIt<Message>().openMessageThread(
                 context: context,
                 sender: _currentUser,
-                sendee: _oppositeUser,
+                sendee: conversation.oppositeUser,
                 title: conversation.title);
           },
           leading: CircleAvatar(

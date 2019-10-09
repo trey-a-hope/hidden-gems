@@ -6,6 +6,7 @@ import 'package:get_it/get_it.dart';
 import 'package:hiddengems_flutter/models/chat_message.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/notification.dart';
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
 class MessagePage extends StatelessWidget {
   MessagePage(
@@ -18,7 +19,6 @@ class MessagePage extends StatelessWidget {
   final User sendee;
   final String conversationId;
   final String title;
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
@@ -80,59 +80,55 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     _load();
   }
 
-  _load() async {
-    setState(
-      () {
-        if (conversationId != null) {
-          print(conversationId);
+  _load() {
+    if (conversationId != null) {
+      print(conversationId);
 
-          _thisConversationDoc = _conversationsRef.document(conversationId);
-          _messageRef = _thisConversationDoc.collection('messages');
+      _thisConversationDoc = _conversationsRef.document(conversationId);
+      _messageRef = _thisConversationDoc.collection('messages');
 
-          //List for incoming messages.
-          _messageRef.snapshots().listen(
-            (messageSnapshot) {
-              //Sort messages by timestamp.
-              messageSnapshot.documents.sort(
-                (a, b) => a['timestamp'].compareTo(
-                  b['timestamp'],
+      //List for incoming messages.
+      _messageRef.snapshots().listen(
+        (messageSnapshot) {
+          //Sort messages by timestamp.
+          messageSnapshot.documents.sort(
+            (a, b) => a['timestamp'].compareTo(
+              b['timestamp'],
+            ),
+          );
+          //
+          messageSnapshot.documents.forEach(
+            (messageDoc) {
+              //Build chat message.
+              ChatMessage message = ChatMessage(
+                id: messageDoc.documentID,
+                name: messageDoc['name'],
+                imageUrl: messageDoc['imageUrl'],
+                text: messageDoc['text'],
+                time: messageDoc['timestamp'].toDate(),
+                userId: messageDoc['userId'],
+                myUserId: sender.id,
+                animationController: AnimationController(
+                  duration: Duration(milliseconds: 700),
+                  vsync: this,
                 ),
               );
-              //
-              messageSnapshot.documents.forEach(
-                (messageDoc) {
-                  //Build chat message.
-                  ChatMessage message = ChatMessage(
-                    id: messageDoc.documentID,
-                    name: messageDoc['name'],
-                    imageUrl: messageDoc['imageUrl'],
-                    text: messageDoc['text'],
-                    time: messageDoc['timestamp'].toDate(),
-                    userId: messageDoc['userId'],
-                    myUserId: sender.id,
-                    animationController: AnimationController(
-                      duration: Duration(milliseconds: 700),
-                      vsync: this,
-                    ),
-                  );
 
-                  setState(
-                    () {
-                      //Add message if it is new.
-                      if (_isNewMessage(message)) {
-                        _messages.insert(0, message);
-                      }
-                    },
-                  );
-
-                  message.animationController.forward();
+              setState(
+                () {
+                  //Add message if it is new.
+                  if (_isNewMessage(message)) {
+                    _messages.insert(0, message);
+                  }
                 },
               );
+
+              message.animationController.forward();
             },
           );
-        }
-      },
-    );
+        },
+      );
+    }
   }
 
   bool _isNewMessage(ChatMessage cm) {

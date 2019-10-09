@@ -12,10 +12,7 @@ class SpinnerState extends State<Spinner> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          CircularProgressIndicator(
-            backgroundColor: Colors.black,
-            strokeWidth: 3.0,
-          ),
+          CircularProgressIndicator(),
           SizedBox(height: 20),
           Text(
             'Loading',
