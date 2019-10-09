@@ -3,13 +3,12 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hiddengems_flutter/common/spinner.dart';
 import 'dart:collection';
-
 import 'package:hiddengems_flutter/models/conversation.dart';
 import 'package:hiddengems_flutter/models/user.dart';
-import 'package:hiddengems_flutter/pages/messages/message_page.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:hiddengems_flutter/services/message.dart';
-import 'package:hiddengems_flutter/services/modal.dart';
+import 'package:intl/intl.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class MessagesPage extends StatefulWidget {
   @override
@@ -19,12 +18,14 @@ class MessagesPage extends StatefulWidget {
 class _MessagesPageState extends State<MessagesPage> {
   List<Conversation> _conversations = List<Conversation>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final int convoCharLimit = 60;
+  final int convoCharLimit = 25;
   User _currentUser;
   final GetIt getIt = GetIt.I;
   bool _isLoading = true;
   final CollectionReference _conversationsDB =
       Firestore.instance.collection('Conversations');
+
+  final String timeFormat = 'MMM d, yyyy @ h:mm a';
 
   @override
   void initState() {
@@ -62,6 +63,7 @@ class _MessagesPageState extends State<MessagesPage> {
           conversation.lastMessage = convoDocs[i]['lastMessage'];
           conversation.sendeeId = userIds[0];
           conversation.senderId = userIds[1];
+          conversation.time = convoDocs[i]['time'].toDate();
 
           User oppositeUser;
           if (_currentUser.id == conversation.sendeeId) {
@@ -122,9 +124,10 @@ class _MessagesPageState extends State<MessagesPage> {
             backgroundColor: Colors.purple,
             backgroundImage: NetworkImage(conversation.imageUrl),
           ),
-          trailing: Icon(
-            Icons.chevron_right,
-            color: Colors.grey,
+          trailing: Text(
+            timeago.format(
+              conversation.time,
+            ),
           ),
           title: Text(conversation.title),
           subtitle: Text(conversation.lastMessage.length > convoCharLimit

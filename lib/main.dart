@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:hiddengems_flutter/services/message.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
+import 'package:hiddengems_flutter/services/package_device_info.dart';
 import 'package:hiddengems_flutter/services/storage.dart';
 import 'package:hiddengems_flutter/services/notification.dart';
 
@@ -12,11 +13,11 @@ final GetIt getIt = GetIt.instance;
 
 void main() {
   getIt.registerSingleton<Auth>(AuthImplementation(), signalsReady: true);
-  getIt.registerSingleton<Modal>(ModalImplementation(), signalsReady: true);
+  getIt.registerSingleton<FCMNotification>(FCMNotificationImplementation());
   getIt.registerSingleton<Message>(MessageImplementation(), signalsReady: true);
+  getIt.registerSingleton<Modal>(ModalImplementation(), signalsReady: true);
+  getIt.registerSingleton<PackageDeviceInfo>(PackageDeviceInfoImplementation());
   getIt.registerSingleton<Storage>(StorageImplementation(), signalsReady: true);
-  getIt.registerSingleton<FCMNotification>(FCMNotificationImplementation(),
-      signalsReady: true);
 
   runApp(MyApp());
 }

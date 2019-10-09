@@ -2,16 +2,22 @@ import 'package:device_info/device_info.dart';
 import 'package:package_info/package_info.dart';
 import 'dart:io';
 
-class PDInfo {
-  static final PDInfo _singleton = PDInfo._internal();
-  DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
+abstract class PackageDeviceInfo {
+  Future<String> getDeviceID();
+  Future<String> getAppVersionNumber();
+  Future<String> getAppBuildNumber();
+}
 
-  factory PDInfo() {
-    return _singleton;
-  }
+class PackageDeviceInfoImplementation extends PackageDeviceInfo {
+  // static final PDInfo _singleton = PDInfo._internal();
+  final DeviceInfoPlugin deviceInfo = DeviceInfoPlugin();
 
-  PDInfo._internal();
+  // factory PDInfo() {
+  //   return _singleton;
+  // }
 
+  // PDInfo._internal();
+  @override
   Future<String> getDeviceID() async {
     if (Platform.isIOS) {
       IosDeviceInfo iosInfo = await deviceInfo.iosInfo;
@@ -22,11 +28,13 @@ class PDInfo {
     }
   }
 
+  @override
   Future<String> getAppVersionNumber() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     return packageInfo.version;
   }
 
+  @override
   Future<String> getAppBuildNumber() async {
     PackageInfo packageInfo = await PackageInfo.fromPlatform();
     return packageInfo.buildNumber;

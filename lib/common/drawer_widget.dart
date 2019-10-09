@@ -2,14 +2,14 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hiddengems_flutter/models/user.dart';
+import 'package:hiddengems_flutter/pages/authentication/login_page.dart';
 import 'package:hiddengems_flutter/pages/messages/messages_page.dart';
 import 'package:hiddengems_flutter/pages/profile/edit_gem_profile_page.dart';
 import 'package:hiddengems_flutter/pages/profile/edit_user_profile_page.dart';
 import 'package:hiddengems_flutter/pages/settings_page.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
+import 'package:hiddengems_flutter/services/package_device_info.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
-import 'package:hiddengems_flutter/pages/login_page.dart';
-import 'package:hiddengems_flutter/services/pd_info.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:hiddengems_flutter/constants.dart';
@@ -22,9 +22,9 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class DrawerWidgetState extends State<DrawerWidget> {
-  final PDInfo _pdInfo = PDInfo();
   final _drawerIconColor = Colors.blueGrey;
-  String _projectVersion, _projectCode;
+  String _projectVersion;
+  String _projectCode;
   FirebaseUser user;
   final GetIt getIt = GetIt.I;
 
@@ -46,8 +46,8 @@ class DrawerWidgetState extends State<DrawerWidget> {
   }
 
   load() async {
-    _projectCode = await _pdInfo.getAppBuildNumber();
-    _projectVersion = await _pdInfo.getAppVersionNumber();
+    _projectCode = await getIt<PackageDeviceInfo>().getAppBuildNumber();
+    _projectVersion = await getIt<PackageDeviceInfo>().getAppVersionNumber();
 
     setState(
       () => {},

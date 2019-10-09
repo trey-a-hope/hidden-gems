@@ -17,7 +17,10 @@ DocumentReference _thisConversationDoc;
 CollectionReference _messageRef;
 
 class MessagePage extends StatelessWidget {
-  MessagePage({@required this.userAId, @required this.userBId, @required this.conversationId});
+  MessagePage(
+      {@required this.userAId,
+      @required this.userBId,
+      @required this.conversationId});
 
   final String userAId;
   final String userBId;
@@ -26,29 +29,38 @@ class MessagePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text('Message'),
-      ),
-      body: ChatScreen(userAId: userAId, userBId: userBId, conversationId: conversationId)
-    );
+        key: _scaffoldKey,
+        appBar: AppBar(
+          centerTitle: true,
+          title: Text('Message'),
+        ),
+        body: ChatScreen(
+            userAId: userAId,
+            userBId: userBId,
+            conversationId: conversationId));
   }
 }
 
 class ChatScreen extends StatefulWidget {
-  ChatScreen({@required this.userAId, @required this.userBId, @required this.conversationId});
+  ChatScreen(
+      {@required this.userAId,
+      @required this.userBId,
+      @required this.conversationId});
 
   final String userAId; //Myself
   final String userBId; //Person I'm talking to.
   final String conversationId;
 
   @override
-  State createState() => ChatScreenState(userAId: userAId, userBId: userBId, conversationId: conversationId);
+  State createState() => ChatScreenState(
+      userAId: userAId, userBId: userBId, conversationId: conversationId);
 }
 
 class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
-  ChatScreenState({@required this.userAId, @required this.userBId, @required this.conversationId});
+  ChatScreenState(
+      {@required this.userAId,
+      @required this.userBId,
+      @required this.conversationId});
 
   final String userAId;
   User _userA;
@@ -209,6 +221,9 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       //Apply the image url of the last person to message the group.
       convoData['imageUrl'] = _userA.photoUrl;
 
+      //Apply time stamp to convo data.
+      convoData['time'] = DateTime.now();
+
       _thisConversationDoc.setData(convoData);
 
       // _analytics.logEvent(name: 'Message_Sent');
@@ -216,12 +231,17 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
     //Save messagea data.
     String messageId = _messageRef.document().documentID;
-    createChatMessage(_messageRef, messageId, text, _userA.photoUrl,
-        _userA.name, _userA.id);
+    createChatMessage(
+        _messageRef, messageId, text, _userA.photoUrl, _userA.name, _userA.id);
 
     //Update message thread.
     _thisConversationDoc.updateData(
-        {'lastMessage': text, 'imageUrl': _userA.photoUrl});
+      {
+        'lastMessage': text,
+        'imageUrl': _userA.photoUrl,
+        'time': DateTime.now(),
+      },
+    );
 
     //Notifiy user of new message.
     getIt<FCMNotification>().sendNotificationToUser(
@@ -271,9 +291,11 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
               child: TextField(
                 controller: _textController,
                 onChanged: (String text) {
-                  setState(() {
-                    _isComposing = text.length > 0;
-                  });
+                  setState(
+                    () {
+                      _isComposing = text.length > 0;
+                    },
+                  );
                 },
                 onSubmitted: _handleSubmitted,
                 decoration:

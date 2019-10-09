@@ -10,17 +10,21 @@ abstract class Message {
 }
 
 class MessageImplementation extends Message {
+  final CollectionReference _conversationsDB =
+      Firestore.instance.collection('Conversations');
+
   void openMessageThread(
       {@required BuildContext context,
       @required String senderId,
       @required String sendeeId}) async {
     try {
-      final CollectionReference conversationRef =
-          Firestore.instance.collection('Conversations');
-      Query query = conversationRef;
+      //Return conversation documents that have both user ids set to true.
+      Query query = _conversationsDB;
       query = query.where(senderId, isEqualTo: true);
       query = query.where(sendeeId, isEqualTo: true);
+      //Grab first and only document.
       QuerySnapshot result = await query.snapshots().first;
+      //If convo exits, change from null to the id. Otherwise, keep it null.
       String convoId;
       if (result.documents.isNotEmpty) {
         DocumentSnapshot conversationDoc = result.documents.first;
@@ -34,10 +38,7 @@ class MessageImplementation extends Message {
         ),
       );
     } catch (e) {
-      // getIt<Modal>().showInSnackBar(
-      //   scaffoldKey: _scaffoldKey,
-      //   message: e.toString(),
-      // );
+      throw Exception('Could not open thread.');
     }
   }
 }

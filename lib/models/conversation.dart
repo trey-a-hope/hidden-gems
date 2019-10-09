@@ -4,4 +4,5 @@ class Conversation {
   String imageUrl;
   String senderId;
   String sendeeId;
+  DateTime time;
 }
