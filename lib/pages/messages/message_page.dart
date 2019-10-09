@@ -18,7 +18,6 @@ class MessagePage extends StatelessWidget {
   final User sendee;
   final String conversationId;
   final String title;
-
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
@@ -146,10 +145,6 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   void _handleSubmitted(String text) {
-    if (sender == null) {
-      return;
-    }
-
     //If this is a new message...
     if (conversationId == null) {
       //Create thread.
