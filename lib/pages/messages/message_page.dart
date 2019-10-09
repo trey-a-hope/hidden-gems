@@ -5,86 +5,83 @@ import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:hiddengems_flutter/models/chat_message.dart';
 import 'package:hiddengems_flutter/models/user.dart';
-import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:hiddengems_flutter/services/notification.dart';
-import '../../constants.dart';
-
-final CollectionReference _conversationsRef =
-    Firestore.instance.collection('Conversations');
-final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-final String timeFormat = 'h:mm a';
-DocumentReference _thisConversationDoc;
-CollectionReference _messageRef;
 
 class MessagePage extends StatelessWidget {
   MessagePage(
-      {@required this.userAId,
-      @required this.userBId,
-      @required this.conversationId});
+      {@required this.sender,
+      @required this.sendee,
+      @required this.conversationId,
+      @required this.title});
 
-  final String userAId;
-  final String userBId;
+  final User sender;
+  final User sendee;
   final String conversationId;
+  final String title;
+
+  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        key: _scaffoldKey,
-        appBar: AppBar(
-          centerTitle: true,
-          title: Text('Message'),
-        ),
-        body: ChatScreen(
-            userAId: userAId,
-            userBId: userBId,
-            conversationId: conversationId));
+      key: _scaffoldKey,
+      appBar: AppBar(
+        centerTitle: true,
+        title: Text(title),
+      ),
+      body: ChatScreen(
+          sender: sender, sendee: sendee, conversationId: conversationId),
+    );
   }
 }
 
 class ChatScreen extends StatefulWidget {
   ChatScreen(
-      {@required this.userAId,
-      @required this.userBId,
+      {@required this.sender,
+      @required this.sendee,
       @required this.conversationId});
 
-  final String userAId; //Myself
-  final String userBId; //Person I'm talking to.
+  final User sender; //Myself
+  final User sendee; //Person I'm talking to.
   final String conversationId;
 
   @override
   State createState() => ChatScreenState(
-      userAId: userAId, userBId: userBId, conversationId: conversationId);
+      sender: sender, sendee: sendee, conversationId: conversationId);
 }
 
 class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   ChatScreenState(
-      {@required this.userAId,
-      @required this.userBId,
+      {@required this.sender,
+      @required this.sendee,
       @required this.conversationId});
 
-  final String userAId;
-  User _userA;
-  final String userBId;
-  User _userB;
-  String conversationId;
-
+  final User sender;
+  final User sendee;
+  final CollectionReference _conversationsRef =
+      Firestore.instance.collection('Conversations');
   final List<ChatMessage> _messages = List<ChatMessage>();
   final TextEditingController _textController = TextEditingController();
-  bool _isComposing = false;
-  final CollectionReference _usersDB = Firestore.instance.collection('Users');
   final GetIt getIt = GetIt.I;
+  bool _isComposing = false;
+  DocumentReference _thisConversationDoc;
+  CollectionReference _messageRef;
+  String conversationId;
 
   @override
   void initState() {
     super.initState();
 
+    //Mark conversation as read as soon as user opens it.
+    if (conversationId != null) {
+      _conversationsRef.document(conversationId).updateData(
+        {'${sender.id}_read': true},
+      );
+    }
     _load();
   }
 
   _load() async {
-    _userA = await getIt<Auth>().getUser(id: userAId);
-    _userB = await getIt<Auth>().getUser(id: userBId);
-
     setState(
       () {
         if (conversationId != null) {
@@ -113,7 +110,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                     text: messageDoc['text'],
                     time: messageDoc['timestamp'].toDate(),
                     userId: messageDoc['userId'],
-                    myUserId: _userA.id,
+                    myUserId: sender.id,
                     animationController: AnimationController(
                       duration: Duration(milliseconds: 700),
                       vsync: this,
@@ -134,8 +131,6 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
               );
             },
           );
-        } else {
-          print('This is a message.');
         }
       },
     );
@@ -151,7 +146,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   void _handleSubmitted(String text) {
-    if (_userA == null) {
+    if (sender == null) {
       return;
     }
 
@@ -175,7 +170,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 text: messageDoc['text'],
                 time: messageDoc['timestamp'].toDate(),
                 userId: messageDoc['userId'],
-                myUserId: _userA.id,
+                myUserId: sender.id,
                 animationController: AnimationController(
                   duration: Duration(milliseconds: 700),
                   vsync: this,
@@ -201,28 +196,16 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       Map<String, dynamic> convoData = Map<String, dynamic>();
       Map<String, dynamic> usersData = Map<String, dynamic>();
 
-      //For user A...
-      convoData[_userA.id] = true;
-      usersData[_userA.id] = _userA.name;
+      //For sender...
+      convoData[sender.id] = true;
+      usersData[sender.id] = sender.name;
 
-      //For user B...
-      convoData[_userB.id] = true;
-      usersData[_userB.id] = _userB.name;
+      //For sendee...
+      convoData[sendee.id] = true;
+      usersData[sendee.id] = sendee.name;
 
-      //Apply "array" of user emails to the convo data.
+      //Apply "array" of user ids to the convo data.
       convoData['users'] = usersData;
-
-      //Apply the number of users to the convo data.
-      convoData['userCount'] = 2;
-
-      //Apply the last message to the convo data.
-      convoData['lastMessage'] = text;
-
-      //Apply the image url of the last person to message the group.
-      convoData['imageUrl'] = _userA.photoUrl;
-
-      //Apply time stamp to convo data.
-      convoData['time'] = DateTime.now();
 
       _thisConversationDoc.setData(convoData);
 
@@ -232,33 +215,35 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
     //Save messagea data.
     String messageId = _messageRef.document().documentID;
     createChatMessage(
-        _messageRef, messageId, text, _userA.photoUrl, _userA.name, _userA.id);
+        _messageRef, messageId, text, sender.photoUrl, sender.name, sender.id);
 
     //Update message thread.
     _thisConversationDoc.updateData(
       {
         'lastMessage': text,
-        'imageUrl': _userA.photoUrl,
+        'imageUrl': sender.photoUrl,
         'time': DateTime.now(),
+        '${sender.id}_read': true,
+        '${sendee.id}_read': false
       },
     );
 
     //Notifiy user of new message.
     getIt<FCMNotification>().sendNotificationToUser(
-        fcmToken: _userB.fcmToken,
-        title: 'New Message From ${_userA.name}',
+        fcmToken: sendee.fcmToken,
+        title: 'New Message From ${sender.name}',
         body: text.length > 25 ? text.substring(0, 25) + '...' : text);
 
     _textController.clear();
 
     ChatMessage message = ChatMessage(
       id: messageId,
-      name: _userA.name,
-      imageUrl: _userA.photoUrl,
+      name: sender.name,
+      imageUrl: sender.photoUrl,
       text: text,
       time: DateTime.now(),
-      userId: _userB.id,
-      myUserId: _userA.id,
+      userId: sendee.id,
+      myUserId: sender.id,
       animationController: AnimationController(
         duration: Duration(milliseconds: 700),
         vsync: this,
@@ -286,23 +271,24 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       data: IconThemeData(color: Theme.of(context).accentColor),
       child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 8.0),
-          child: Row(children: <Widget>[
-            Flexible(
-              child: TextField(
-                controller: _textController,
-                onChanged: (String text) {
-                  setState(
-                    () {
-                      _isComposing = text.length > 0;
-                    },
-                  );
-                },
-                onSubmitted: _handleSubmitted,
-                decoration:
-                    InputDecoration.collapsed(hintText: "Send a message"),
+          child: Row(
+            children: <Widget>[
+              Flexible(
+                child: TextField(
+                  controller: _textController,
+                  onChanged: (String text) {
+                    setState(
+                      () {
+                        _isComposing = text.length > 0;
+                      },
+                    );
+                  },
+                  onSubmitted: _handleSubmitted,
+                  decoration:
+                      InputDecoration.collapsed(hintText: "Send a message"),
+                ),
               ),
-            ),
-            Container(
+              Container(
                 margin: EdgeInsets.symmetric(horizontal: 4.0),
                 child: Theme.of(context).platform == TargetPlatform.iOS
                     ? CupertinoButton(
@@ -316,11 +302,16 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                         onPressed: _isComposing
                             ? () => _handleSubmitted(_textController.text)
                             : null,
-                      )),
-          ]),
+                      ),
+              ),
+            ],
+          ),
           decoration: Theme.of(context).platform == TargetPlatform.iOS
               ? BoxDecoration(
-                  border: Border(top: BorderSide(color: Colors.grey[200])))
+                  border: Border(
+                    top: BorderSide(color: Colors.grey[200]),
+                  ),
+                )
               : null),
     );
   }

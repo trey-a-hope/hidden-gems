@@ -95,8 +95,9 @@ class UserProfilePageState extends State<UserProfilePage> {
                     } else {
                       getIt<Message>().openMessageThread(
                           context: context,
-                          senderId: _currentUser.id,
-                          sendeeId: _user.id);
+                          sender: _currentUser,
+                          sendee: _user,
+                          title: _user.name);
                     }
                   }
                 },

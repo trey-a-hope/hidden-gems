@@ -8,6 +8,7 @@ import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:hiddengems_flutter/services/message.dart';
 import 'package:intl/intl.dart';
+import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class MessagesPage extends StatefulWidget {
@@ -19,13 +20,12 @@ class _MessagesPageState extends State<MessagesPage> {
   List<Conversation> _conversations = List<Conversation>();
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final int convoCharLimit = 25;
-  User _currentUser;
   final GetIt getIt = GetIt.I;
-  bool _isLoading = true;
   final CollectionReference _conversationsDB =
       Firestore.instance.collection('Conversations');
-
-  final String timeFormat = 'MMM d, yyyy @ h:mm a';
+  User _currentUser;
+  User _oppositeUser;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -37,51 +37,95 @@ class _MessagesPageState extends State<MessagesPage> {
   _load() async {
     _currentUser = await getIt<Auth>().getCurrentUser();
 
+    //Call Once
     //Get conversations this user is apart of.
+    // QuerySnapshot querySnapshot = await _conversationsDB
+    //     .where(_currentUser.id, isEqualTo: true)
+    //     .getDocuments();
+    // List<DocumentSnapshot> documents = querySnapshot.documents;
+    // for (int i = 0; i < documents.length; i++) {
+    //   var convoData = documents[i].data;
+    //   var userData = convoData['users'];
+    //   List<String> userIds = List<String>();
+
+    //   //Build list of users ids and user names.
+    //   userData.forEach(
+    //     (userId, userName) {
+    //       userIds.add(userId);
+    //     },
+    //   );
+
+    //   if (_currentUser.id == userIds[0]) {
+    //     _oppositeUser = await getIt<Auth>().getUser(id: userIds[1]);
+    //   } else {
+    //     _oppositeUser = await getIt<Auth>().getUser(id: userIds[0]);
+    //   }
+
+    //   _conversations.add(
+    //     Conversation(
+    //       title: _oppositeUser.name,
+    //       lastMessage: convoData['lastMessage'],
+    //       imageUrl: _oppositeUser.photoUrl,
+    //       sendeeId: userIds[0],
+    //       senderId: userIds[1],
+    //       time: convoData['time'].toDate(),
+    //       read: convoData['${_currentUser.id}_read'],
+    //     ),
+    //   );
+    // }
+    // setState(() {
+    //   _isLoading = false;
+    // });
+
+    //Listen
     _conversationsDB.where(_currentUser.id, isEqualTo: true).snapshots().listen(
       (convoSnapshot) async {
         _conversations.clear();
 
         List<DocumentSnapshot> convoDocs = convoSnapshot.documents;
         for (int i = 0; i < convoDocs.length; i++) {
-          Conversation conversation = Conversation();
-
-          LinkedHashMap userNamesMap = convoDocs[i].data['users'];
+          var convoData = convoDocs[i].data;
+          var userData = convoData['users'];
           List<String> userIds = List<String>();
-          List<String> userNames = List<String>();
 
           //Build list of users ids and user names.
-          userNamesMap.forEach(
+          userData.forEach(
             (userId, userName) {
               userIds.add(userId);
-              if (userId != _currentUser.id) {
-                userNames.add(userName);
-              }
             },
           );
 
-          conversation.lastMessage = convoDocs[i]['lastMessage'];
-          conversation.sendeeId = userIds[0];
-          conversation.senderId = userIds[1];
-          conversation.time = convoDocs[i]['time'].toDate();
-
-          User oppositeUser;
-          if (_currentUser.id == conversation.sendeeId) {
-            oppositeUser =
-                await getIt<Auth>().getUser(id: conversation.senderId);
+          if (_currentUser.id == userIds[0]) {
+            _oppositeUser = await getIt<Auth>().getUser(id: userIds[1]);
           } else {
-            oppositeUser =
-                await getIt<Auth>().getUser(id: conversation.sendeeId);
+            _oppositeUser = await getIt<Auth>().getUser(id: userIds[0]);
           }
 
-          conversation.imageUrl = oppositeUser.photoUrl;
-          conversation.title = oppositeUser.name;
-
-          _conversations.add(conversation);
+          _conversations.add(
+            Conversation(
+              title: _oppositeUser.name,
+              lastMessage: convoData['lastMessage'],
+              imageUrl: _oppositeUser.photoUrl,
+              sendeeId: userIds[0],
+              senderId: userIds[1],
+              time: convoData['time'].toDate(),
+              read: convoData['${_currentUser.id}_read'],
+            ),
+          );
         }
-        setState(() {
-          _isLoading = false;
-        });
+
+        //Sort conversations by most recent.
+        _conversations.sort(
+          (a, b) => b.time.compareTo(
+            a.time,
+          ),
+        );
+
+        setState(
+          () {
+            _isLoading = false;
+          },
+        );
       },
     );
   }
@@ -92,7 +136,8 @@ class _MessagesPageState extends State<MessagesPage> {
       key: _scaffoldKey,
       appBar: AppBar(
         centerTitle: true,
-        title: Text('Messages'),
+        title: Text(
+            'Messages (${_conversations.where((c) => c.read == false).length})'),
       ),
       body: _isLoading
           ? Spinner()
@@ -117,8 +162,9 @@ class _MessagesPageState extends State<MessagesPage> {
           onTap: () {
             getIt<Message>().openMessageThread(
                 context: context,
-                senderId: conversation.senderId,
-                sendeeId: conversation.sendeeId);
+                sender: _currentUser,
+                sendee: _oppositeUser,
+                title: conversation.title);
           },
           leading: CircleAvatar(
             backgroundColor: Colors.purple,
@@ -129,10 +175,30 @@ class _MessagesPageState extends State<MessagesPage> {
               conversation.time,
             ),
           ),
-          title: Text(conversation.title),
-          subtitle: Text(conversation.lastMessage.length > convoCharLimit
-              ? conversation.lastMessage.substring(0, convoCharLimit) + '...'
-              : conversation.lastMessage),
+          title: Row(
+            children: <Widget>[
+              conversation.read
+                  ? Container()
+                  : Icon(
+                      MdiIcons.circle,
+                      size: 10,
+                      color: Colors.lightBlue,
+                    ),
+              conversation.read
+                  ? Container()
+                  : SizedBox(
+                      width: 10,
+                    ),
+              Text(
+                conversation.title,
+                style: TextStyle(
+                    fontWeight: conversation.read
+                        ? FontWeight.normal
+                        : FontWeight.bold),
+              )
+            ],
+          ),
+          subtitle: Text(conversation.lastMessage, maxLines: 1),
         ),
         Divider()
       ],

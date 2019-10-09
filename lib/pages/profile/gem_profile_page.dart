@@ -187,8 +187,9 @@ class GemProfilePageState extends State<GemProfilePage> {
                     } else {
                       getIt<Message>().openMessageThread(
                           context: context,
-                          senderId: _currentUser.id,
-                          sendeeId: _gem.id);
+                          sender: _currentUser,
+                          sendee: _gem,
+                          title: _gem.name);
                     }
                   }
                 },
