@@ -82,18 +82,17 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
 
   _load() {
     if (conversationId != null) {
-      print(conversationId);
 
       _thisConversationDoc = _conversationsRef.document(conversationId);
       _messageRef = _thisConversationDoc.collection('messages');
 
-      //List for incoming messages.
+      //Listen for incoming messages.
       _messageRef.snapshots().listen(
         (messageSnapshot) {
-          //Sort messages by timestamp.
+          //Sort messages by time.
           messageSnapshot.documents.sort(
-            (a, b) => a['timestamp'].compareTo(
-              b['timestamp'],
+            (a, b) => a['time'].compareTo(
+              b['time'],
             ),
           );
           //
@@ -105,7 +104,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 name: messageDoc['name'],
                 imageUrl: messageDoc['imageUrl'],
                 text: messageDoc['text'],
-                time: messageDoc['timestamp'].toDate(),
+                time: messageDoc['time'].toDate(),
                 userId: messageDoc['userId'],
                 myUserId: sender.id,
                 animationController: AnimationController(
@@ -159,7 +158,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 name: messageDoc['name'],
                 imageUrl: messageDoc['imageUrl'],
                 text: messageDoc['text'],
-                time: messageDoc['timestamp'].toDate(),
+                time: messageDoc['time'].toDate(),
                 userId: messageDoc['userId'],
                 myUserId: sender.id,
                 animationController: AnimationController(
@@ -342,7 +341,7 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       'imageUrl': imageUrl,
       'name': userName,
       'userId': userId,
-      'timestamp': DateTime.now()
+      'time': DateTime.now()
     };
 
     await messageRef.document(messageId).setData(data);
