@@ -8,13 +8,19 @@ const StripeCustomer = require('./stripe/customer_functions');
 const StripeCharge = require('./stripe/charge_functions');
 const StripeSubscription = require('./stripe/subscription_functions');
 const StripeProduct = require('./stripe/product_functions');
+const Email = require('./email/email_functions');
 
 admin.initializeApp(functions.config().firebase);
 
+//Algolia
 exports.AlgoliaSyncHiddenGemsGemsIndex = Algolia.syncHiddenGemsGemsIndex;
 exports.AlgoliaSyncHiddenGemsUsersIndex = Algolia.syncHiddenGemsUsersIndex;
 
+//Paypal
 exports.PayPalCreatePayment = PayPal.createPayment;
+
+//Email
+exports.SendEmail = Email.send;
 
 //Cards
 exports.StripeCreateCard = StripeCard.create;
