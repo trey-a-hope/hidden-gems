@@ -3,6 +3,7 @@ import 'package:get_it/get_it.dart';
 import 'package:hiddengems_flutter/common/spinner.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
+import 'package:hiddengems_flutter/services/db.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -41,7 +42,6 @@ class GemSignUpPageState extends State<GemSignUpPage> {
   String _categoryController;
   String _subCategoryController;
   final GetIt getIt = GetIt.I;
-  final CollectionReference _usersDB = Firestore.instance.collection('Users');
   final CollectionReference _miscellaneousDB =
       Firestore.instance.collection('Miscellaneous');
 
@@ -112,12 +112,9 @@ class GemSignUpPageState extends State<GemSignUpPage> {
               youTubeUrl: '',
               isGem: true);
 
-          DocumentReference dr = await _usersDB.add(
-            newUser.toMap(),
+          getIt<DB>().createUser(
+            data: newUser.toMap(),
           );
-          await _usersDB
-              .document(dr.documentID)
-              .updateData({'id': dr.documentID});
 
           Navigator.popUntil(
               context, ModalRoute.withName(Navigator.defaultRouteName));

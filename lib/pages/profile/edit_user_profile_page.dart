@@ -2,9 +2,9 @@ import 'package:get_it/get_it.dart';
 import 'package:hiddengems_flutter/common/spinner.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
+import 'package:hiddengems_flutter/services/db.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hiddengems_flutter/constants.dart';
 import 'package:hiddengems_flutter/services/storage.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -19,8 +19,6 @@ class EditUserProfilePage extends StatefulWidget {
 }
 
 class EditUserProfilePageState extends State<EditUserProfilePage> {
-  final CollectionReference _usersDB = Firestore.instance.collection('Users');
-
   User _currentUser;
   bool _isLoading = true;
   bool _autoValidate = false;
@@ -126,25 +124,21 @@ class EditUserProfilePageState extends State<EditUserProfilePage> {
     if (_profileImage != null) {
       String newPhotoUrl = await getIt<Storage>().uploadImage(
           file: _profileImage, path: 'Images/Users/${_currentUser.id}/Profile');
-      await _usersDB.document(_currentUser.id).updateData({'photoUrl': newPhotoUrl});
+          await getIt<DB>().updateUser(userId: _currentUser.id, data: {'photoUrl': newPhotoUrl});
     }
 
     if (_backgroundImage != null) {
       String newBackgroundUrl = await getIt<Storage>().uploadImage(
           file: _backgroundImage, path: 'Images/Users/${_currentUser.id}/Background');
-      await _usersDB
-          .document(_currentUser.id)
-          .updateData({'backgroundUrl': newBackgroundUrl});
+                    await getIt<DB>().updateUser(userId: _currentUser.id, data: {'backgroundUrl': newBackgroundUrl});
     }
   }
 
   Future<void> _submitFormData() async {
-    var data = {
+    await getIt<DB>().updateUser(userId: _currentUser.id, data: {
       'name': _nameController.text,
       'phoneNumber': _phoneController.text,
-    };
-
-    await _usersDB.document(_currentUser.id).updateData(data);
+    });
   }
 
   AppBar _buildAppBar() {

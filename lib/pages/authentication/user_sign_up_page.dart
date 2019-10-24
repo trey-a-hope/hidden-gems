@@ -3,9 +3,9 @@ import 'package:get_it/get_it.dart';
 import 'package:hiddengems_flutter/common/spinner.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
+import 'package:hiddengems_flutter/services/db.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hiddengems_flutter/constants.dart';
 import 'package:hiddengems_flutter/services/validater.dart';
 import 'package:hiddengems_flutter/asset_images.dart';
@@ -29,7 +29,6 @@ class UserSignUpPageState extends State<UserSignUpPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final GetIt getIt = GetIt.I;
-  final CollectionReference _usersDB = Firestore.instance.collection('Users');
 
   @override
   void initState() {
@@ -91,23 +90,22 @@ class UserSignUpPageState extends State<UserSignUpPage> {
               youTubeUrl: '',
               isGem: false);
 
-          DocumentReference dr = await _usersDB.add(
-            newUser.toMap(),
-          );
+              var data = newUser.toMap();
 
-          await _usersDB
-              .document(dr.documentID)
-              .updateData({'id': dr.documentID});
+          getIt<DB>().createUser(
+            data: data,
+          );
 
           Navigator.popUntil(
               context, ModalRoute.withName(Navigator.defaultRouteName));
         } catch (e) {
           setState(
             () {
-              getIt<Modal>().showInSnackBar(
-                  scaffoldKey: _scaffoldKey, message: e.message);
+              _isLoading = false;
             },
           );
+          getIt<Modal>()
+              .showInSnackBar(scaffoldKey: _scaffoldKey, message: e.message);
         }
       }
     } else {
