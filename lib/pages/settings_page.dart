@@ -78,29 +78,31 @@ class SettingsPageState extends State<SettingsPage> {
       onTap: () async {
         try {
           String email = await getIt<Modal>().showChangeEmail(context: context);
-          setState(
-            () {
-              _isLoading = true;
-            },
-          );
+          if (email != null) {
+            setState(
+              () {
+                _isLoading = true;
+              },
+            );
 
-          await _firebaseUser.updateEmail(email);
+            await _firebaseUser.updateEmail(email);
 
-          setState(
-            () {
-              _isLoading = false;
-              getIt<Modal>().showInSnackBar(
-                  scaffoldKey: _scaffoldKey, message: 'Email updated.');
-            },
-          );
+            setState(
+              () {
+                _isLoading = false;
+                getIt<Modal>().showInSnackBar(
+                    scaffoldKey: _scaffoldKey, message: 'Email updated.');
+              },
+            );
+          }
         } catch (e) {
           setState(
             () {
               _isLoading = false;
-              getIt<Modal>().showInSnackBar(
-                  scaffoldKey: _scaffoldKey, message: e.toString());
             },
           );
+          getIt<Modal>()
+              .showInSnackBar(scaffoldKey: _scaffoldKey, message: e.toString());
         }
       },
     );
@@ -135,6 +137,11 @@ class SettingsPageState extends State<SettingsPage> {
             );
           }
         } catch (e) {
+          setState(
+            () {
+              _isLoading = false;
+            },
+          );
           getIt<Modal>().showAlert(
               context: context, title: 'Error', message: e.toString());
         }

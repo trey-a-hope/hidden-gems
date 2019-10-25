@@ -44,7 +44,7 @@ class HomePageState extends State<HomePage> {
       primaryColor: Colors.blue,
       quote: 'Technology is creativity.',
       subCategories: TechnologyTypes,
-      subQUote: '-tr3Designs',
+      subQuote: '-tr3Designs',
       title: 'Technology');
 
 //Art
@@ -56,7 +56,7 @@ class HomePageState extends State<HomePage> {
       primaryColor: Colors.brown,
       quote: 'Art is everywhere.',
       subCategories: ArtTypes,
-      subQUote: '-Bruh',
+      subQuote: '-Bruh',
       title: 'Art');
 
 //Food
@@ -68,7 +68,7 @@ class HomePageState extends State<HomePage> {
       primaryColor: Colors.red,
       quote: 'Life is sweet, then sour..',
       subCategories: FoodTypes,
-      subQUote: '-LBooogi_e',
+      subQuote: '-LBooogi_e',
       title: 'Food');
 
 //Entertainment
@@ -80,7 +80,7 @@ class HomePageState extends State<HomePage> {
       primaryColor: Colors.purple,
       quote: 'Lights, camera, action.',
       subCategories: EntertainmentTypes,
-      subQUote: '-Ric Sexton',
+      subQuote: '-Ric Sexton',
       title: 'Entertainment');
 
 //Media
@@ -92,7 +92,7 @@ class HomePageState extends State<HomePage> {
       primaryColor: Colors.orange,
       quote: 'Capture every moment.',
       subCategories: MediaTypes,
-      subQUote: '-ShotBy3',
+      subQuote: '-ShotBy3',
       title: 'Media');
 
 //Music
@@ -104,7 +104,7 @@ class HomePageState extends State<HomePage> {
       primaryColor: Colors.teal,
       quote: 'Music is the key to happiness.',
       subCategories: MusicTypes,
-      subQUote: '-DH The Rula',
+      subQuote: '-DH The Rula',
       title: 'Music');
 
   final GetIt getIt = GetIt.I;
@@ -116,61 +116,37 @@ class HomePageState extends State<HomePage> {
     _load();
   }
 
-  // _getHeaderWidgets() async {
-  //   DocumentSnapshot ds = await _miscellaneousDB.document('HomePage').get();
-
-  //   dynamic data = ds.data;
-
-  //   dynamic mediaData = data['media'];
-  //   _media.quote = mediaData['quote'];
-  //   _media.subQuote = mediaData['subQuote'];
-  //   _media.photoUrl = mediaData['photoUrl'];
-  //   _media.subCategories = List.from(mediaData['subCategories']);
-  //   _media.primaryColor = Colors.orange;
-  //   _media.accentColor = Colors.orange[50];
-  //   _media.icon = MdiIcons.camera;
-
-  // _getGems() async {
-  //   _music.previewGems =
-  //       await getIt<Auth>().getGems(limit: 5, category: 'Music');
-  //   _media.previewGems =
-  //       await getIt<Auth>().getGems(limit: 5, category: 'Media');
-  //   _entertainment.previewGems =
-  //       await getIt<Auth>().getGems(limit: 5, category: 'Entertainment');
-  //   _food.previewGems = await getIt<Auth>().getGems(limit: 5, category: 'Food');
-  //   _technology.previewGems =
-  //       await getIt<Auth>().getGems(limit: 5, category: 'Technology');
-  //   _art.previewGems = await getIt<Auth>().getGems(limit: 5, category: 'Art');
-  //   // _trade.previewGems =
-  //   //     await getIt<Auth>().getGems(limit: 5, category: 'Trade');
-  //   // _beauty.previewGems =
-  //   //     await getIt<Auth>().getGems(limit: 5, category: 'Beauty');
-  // }
-
   void _load() async {
-    // await _getHeaderWidgets();
-    _music.previewGems =
-        await getIt<Auth>().getGems(limit: 5, category: 'Music');
-    _media.previewGems =
-        await getIt<Auth>().getGems(limit: 5, category: 'Media');
-    _entertainment.previewGems =
-        await getIt<Auth>().getGems(limit: 5, category: 'Entertainment');
-    _food.previewGems = await getIt<Auth>().getGems(limit: 5, category: 'Food');
-    _technology.previewGems =
-        await getIt<Auth>().getGems(limit: 5, category: 'Technology');
-    _art.previewGems = await getIt<Auth>().getGems(limit: 5, category: 'Art');
+    try {
+      _music.previewGems =
+          await getIt<Auth>().getGems(limit: 5, category: 'Music');
+      _media.previewGems =
+          await getIt<Auth>().getGems(limit: 5, category: 'Media');
+      _entertainment.previewGems =
+          await getIt<Auth>().getGems(limit: 5, category: 'Entertainment');
+      _food.previewGems =
+          await getIt<Auth>().getGems(limit: 5, category: 'Food');
+      _technology.previewGems =
+          await getIt<Auth>().getGems(limit: 5, category: 'Technology');
+      _art.previewGems = await getIt<Auth>().getGems(limit: 5, category: 'Art');
 
-    // moveGemsToUsersTable();
-    FirebaseUser firebaseUser = await getIt<Auth>().getFirebaseUser();
-    if (firebaseUser != null) {
-      _setUpFirebaseMessaging(firebaseUser: firebaseUser);
+      FirebaseUser firebaseUser = await getIt<Auth>().getFirebaseUser();
+      if (firebaseUser != null) {
+        _setUpFirebaseMessaging(firebaseUser: firebaseUser);
+      }
+
+      setState(
+        () {
+          _isLoading = false;
+        },
+      );
+    } catch (e) {
+      getIt<Modal>().showAlert(
+        context: context,
+        title: 'Error',
+        message: e.toString(),
+      );
     }
-
-    setState(
-      () {
-        _isLoading = false;
-      },
-    );
   }
 
   Future<void> _refresh() async {
@@ -425,34 +401,6 @@ class HomePageState extends State<HomePage> {
               },
               child: Icon(MdiIcons.diamondStone, color: _art.primaryColor),
             ),
-            // InkWell(
-            //   onTap: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //           builder: (context) => SubCategoriesPage(
-            //               _trade.title,
-            //               _trade.subCategories,
-            //               _trade.accentColor,
-            //               _trade.icon)),
-            //     );
-            //   },
-            //   child: Icon(MdiIcons.diamondStone, color: _trade.primaryColor),
-            // ),
-            // InkWell(
-            //   onTap: () {
-            //     Navigator.push(
-            //       context,
-            //       MaterialPageRoute(
-            //           builder: (context) => SubCategoriesPage(
-            //               _beauty.title,
-            //               _beauty.subCategories,
-            //               _beauty.accentColor,
-            //               _beauty.icon)),
-            //     );
-            //   },
-            //   child: Icon(MdiIcons.diamondStone, color: _beauty.primaryColor),
-            // ),
           ],
         ),
       ),

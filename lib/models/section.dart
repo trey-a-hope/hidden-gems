@@ -15,7 +15,7 @@ class Section {
   Section(
       {@required String title,
       @required String quote,
-      @required String subQUote,
+      @required String subQuote,
       @required String photoUrl,
       @required List<String> subCategories,
       @required Color primaryColor,

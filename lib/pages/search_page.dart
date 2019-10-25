@@ -84,10 +84,7 @@ class _SearchPageState extends State<SearchPage> {
               ? Center(
                   child: Text("No results found."),
                 )
-              : Column(
-                  children: <Widget>[
-                    ListView.builder(
-                      physics: NeverScrollableScrollPhysics(),
+              : ListView.builder(
                       shrinkWrap: true,
                       itemCount: _results.length,
                       itemBuilder: (BuildContext ctx, int index) {
@@ -96,8 +93,6 @@ class _SearchPageState extends State<SearchPage> {
                         return UserCard(user: user);
                       },
                     )
-                  ],
-                ),
     );
   }
 

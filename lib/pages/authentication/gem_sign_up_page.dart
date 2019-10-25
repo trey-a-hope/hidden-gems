@@ -32,9 +32,7 @@ class GemSignUpPageState extends State<GemSignUpPage> {
       _entertainmentSubCatDrop,
       _foodSubCatDrop,
       _technologySubCatDrop,
-      _artSubCatDrop,
-      _tradeSubCatDrop,
-      _beautySubCatDrop;
+      _artSubCatDrop;
 
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
@@ -403,97 +401,7 @@ class GemSignUpPageState extends State<GemSignUpPage> {
       ),
     );
   }
-
-  //Convert SubCategories into DropdownMenuItem lists.
-  // Future<void> _fetchSubCategories() async {
-  //   DocumentSnapshot ds = await _miscellaneousDB.document('HomePage').get();
-
-  //   dynamic data = ds.data;
-
-  //   List<String> musicSubCatList = List.from(data['music']['subCategories']);
-  //   _musicSubCatDrop = musicSubCatList.map<DropdownMenuItem<String>>(
-  //     (String value) {
-  //       return DropdownMenuItem<String>(
-  //         value: value,
-  //         child: Text(value),
-  //       );
-  //     },
-  //   ).toList();
-
-  //   List<String> mediaSubCatList = List.from(data['media']['subCategories']);
-  //   _mediaSubCatDrop = mediaSubCatList.map<DropdownMenuItem<String>>(
-  //     (String value) {
-  //       return DropdownMenuItem<String>(
-  //         value: value,
-  //         child: Text(value),
-  //       );
-  //     },
-  //   ).toList();
-
-  //   List<String> entertainmentSubCatList =
-  //       List.from(data['entertainment']['subCategories']);
-  //   _entertainmentSubCatDrop =
-  //       entertainmentSubCatList.map<DropdownMenuItem<String>>(
-  //     (String value) {
-  //       return DropdownMenuItem<String>(
-  //         value: value,
-  //         child: Text(value),
-  //       );
-  //     },
-  //   ).toList();
-
-  //   List<String> foodSubCatList = List.from(data['food']['subCategories']);
-  //   _foodSubCatDrop = foodSubCatList.map<DropdownMenuItem<String>>(
-  //     (String value) {
-  //       return DropdownMenuItem<String>(
-  //         value: value,
-  //         child: Text(value),
-  //       );
-  //     },
-  //   ).toList();
-
-  //   List<String> technologySubCatList =
-  //       List.from(data['technology']['subCategories']);
-  //   _technologySubCatDrop = technologySubCatList.map<DropdownMenuItem<String>>(
-  //     (String value) {
-  //       return DropdownMenuItem<String>(
-  //         value: value,
-  //         child: Text(value),
-  //       );
-  //     },
-  //   ).toList();
-
-  //   List<String> artSubCatList = List.from(data['art']['subCategories']);
-  //   _artSubCatDrop = artSubCatList.map<DropdownMenuItem<String>>(
-  //     (String value) {
-  //       return DropdownMenuItem<String>(
-  //         value: value,
-  //         child: Text(value),
-  //       );
-  //     },
-  //   ).toList();
-
-  //   List<String> tradeSubCatList = List.from(data['trade']['subCategories']);
-  //   _tradeSubCatDrop = tradeSubCatList.map<DropdownMenuItem<String>>(
-  //     (String value) {
-  //       return DropdownMenuItem<String>(
-  //         value: value,
-  //         child: Text(value),
-  //       );
-  //     },
-  //   ).toList();
-
-  //   List<String> beautySubCatList = List.from(data['beauty']['subCategories']);
-  //   _beautySubCatDrop = beautySubCatList.map<DropdownMenuItem<String>>(
-  //     (String value) {
-  //       return DropdownMenuItem<String>(
-  //         value: value,
-  //         child: Text(value),
-  //       );
-  //     },
-  //   ).toList();
-  // }
-
+  
   List<DropdownMenuItem<String>> _getSubCatOptions() {
     switch (_categoryController) {
       case 'Music':
@@ -508,10 +416,6 @@ class GemSignUpPageState extends State<GemSignUpPage> {
         return _technologySubCatDrop;
       case 'Art':
         return _artSubCatDrop;
-      case 'Trade':
-        return _tradeSubCatDrop;
-      case 'Beauty':
-        return _beautySubCatDrop;
       default:
         return null;
     }

@@ -34,9 +34,7 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
       _entertainmentSubCatDrop,
       _foodSubCatDrop,
       _technologySubCatDrop,
-      _artSubCatDrop,
-      _tradeSubCatDrop,
-      _beautySubCatDrop;
+      _artSubCatDrop;
 
   String _categoryController;
   String _subCategoryController;
@@ -105,36 +103,6 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
       );
     }
   }
-
-  //Convert SubCategories into DropdownMenuItem lists.
-  // List<DropdownMenuItem<String>> _fetchSubCategoriesHelper(
-  //     {@required dynamic data}) {
-  //   List<String> list = List.from(data['subCategories']);
-  //   return list.map<DropdownMenuItem<String>>(
-  //     (String value) {
-  //       return DropdownMenuItem<String>(
-  //         value: value,
-  //         child: Text(value),
-  //       );
-  //     },
-  //   ).toList();
-  // }
-
-  // Future<void> _fetchSubCategories() async {
-  //   DocumentSnapshot ds = await _miscellaneousDB.document('HomePage').get();
-
-  //   dynamic data = ds.data;
-
-  //   _musicSubCatDrop = _fetchSubCategoriesHelper(data: data['music']);
-  //   _mediaSubCatDrop = _fetchSubCategoriesHelper(data: data['media']);
-  //   _entertainmentSubCatDrop =
-  //       _fetchSubCategoriesHelper(data: data['entertainment']);
-  //   _foodSubCatDrop = _fetchSubCategoriesHelper(data: data['food']);
-  //   _technologySubCatDrop = _fetchSubCategoriesHelper(data: data['technology']);
-  //   _artSubCatDrop = _fetchSubCategoriesHelper(data: data['art']);
-  //   _tradeSubCatDrop = _fetchSubCategoriesHelper(data: data['trade']);
-  //   _beautySubCatDrop = _fetchSubCategoriesHelper(data: data['beauty']);
-  // }
 
   Future _pickProfileImage() async {
     File image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -272,10 +240,6 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
         return _technologySubCatDrop;
       case 'Art':
         return _artSubCatDrop;
-      case 'Trade':
-        return _tradeSubCatDrop;
-      case 'Beauty':
-        return _beautySubCatDrop;
       default:
         return null;
     }
