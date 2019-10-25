@@ -124,18 +124,18 @@ class EditUserProfilePageState extends State<EditUserProfilePage> {
     if (_profileImage != null) {
       String newPhotoUrl = await getIt<Storage>().uploadImage(
           file: _profileImage, path: 'Images/Users/${_currentUser.id}/Profile');
-          await getIt<DB>().updateUser(userId: _currentUser.id, data: {'photoUrl': newPhotoUrl});
+          await getIt<DB>().updateUser(userID: _currentUser.id, data: {'photoUrl': newPhotoUrl});
     }
 
     if (_backgroundImage != null) {
       String newBackgroundUrl = await getIt<Storage>().uploadImage(
           file: _backgroundImage, path: 'Images/Users/${_currentUser.id}/Background');
-                    await getIt<DB>().updateUser(userId: _currentUser.id, data: {'backgroundUrl': newBackgroundUrl});
+                    await getIt<DB>().updateUser(userID: _currentUser.id, data: {'backgroundUrl': newBackgroundUrl});
     }
   }
 
   Future<void> _submitFormData() async {
-    await getIt<DB>().updateUser(userId: _currentUser.id, data: {
+    await getIt<DB>().updateUser(userID: _currentUser.id, data: {
       'name': _nameController.text,
       'phoneNumber': _phoneController.text,
     });

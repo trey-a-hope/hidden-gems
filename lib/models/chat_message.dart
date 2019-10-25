@@ -8,8 +8,8 @@ class ChatMessage extends StatelessWidget {
       this.imageUrl,
       this.text,
       this.time,
-      this.userId,
-      this.myUserId,
+      this.userID,
+      this.myuserID,
       this.animationController});
 
   final String id;
@@ -17,8 +17,8 @@ class ChatMessage extends StatelessWidget {
   final String imageUrl;
   final String text;
   final DateTime time;
-  final String userId;
-  final String myUserId;
+  final String userID;
+  final String myuserID;
   final AnimationController animationController;
 
   final String timeFormat = 'MMM d, yyyy @ h:mm a';
@@ -41,8 +41,8 @@ class ChatMessage extends StatelessWidget {
                 backgroundImage: NetworkImage(imageUrl),
                 child: GestureDetector(
                   onTap: () {
-                    if (userId != myUserId) {
-                      // Navigator.of(context).push( PageRouteBuilder( pageBuilder: (_, __, ___) => ProfilePage(userId)) );
+                    if (userID != myuserID) {
+                      // Navigator.of(context).push( PageRouteBuilder( pageBuilder: (_, __, ___) => ProfilePage(userID)) );
                     }
                   },
                 ),

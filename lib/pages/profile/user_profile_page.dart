@@ -7,6 +7,7 @@ import 'package:hiddengems_flutter/common/spinner.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/pages/messages/message_page.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
+import 'package:hiddengems_flutter/services/db.dart';
 import 'package:hiddengems_flutter/services/message.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -38,7 +39,7 @@ class UserProfilePageState extends State<UserProfilePage> {
   }
 
   _load() async {
-    _user = await getIt<Auth>().getUser(id: _id);
+    _user = await getIt<DB>().retrieveUser(userID: _id);
     _currentUser = await getIt<Auth>().getCurrentUser();
 
     setState(

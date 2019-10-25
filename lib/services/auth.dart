@@ -5,7 +5,6 @@ import 'package:hiddengems_flutter/models/user.dart';
 
 abstract class Auth {
   Future<User> getCurrentUser();
-  Future<User> getUser({@required String id});
   Future<void> signOut();
   Stream<FirebaseUser> onAuthStateChanged();
   Future<AuthResult> signInWithEmailAndPassword(
@@ -16,37 +15,25 @@ abstract class Auth {
   Future<List<String>> getGemLikes({@required String id});
   Future<List<User>> getGems({@required String category, @required int limit});
   Future<FirebaseUser> getFirebaseUser();
+  Future<void> deleteUser();
 }
 
 class AuthImplementation extends Auth {
-  AuthImplementation();
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
-    final CollectionReference _usersDB = Firestore.instance.collection('Users');
+  final CollectionReference _usersDB = Firestore.instance.collection('Users');
 
   @override
   Future<User> getCurrentUser() async {
     try {
       FirebaseUser firebaseUser = await _auth.currentUser();
-      QuerySnapshot querySnapshot = await _usersDB.where('uid', isEqualTo: firebaseUser.uid)
+      QuerySnapshot querySnapshot = await _usersDB
+          .where('uid', isEqualTo: firebaseUser.uid)
           .getDocuments();
       DocumentSnapshot documentSnapshot = querySnapshot.documents.first;
       return User.extractDocument(documentSnapshot);
     } catch (e) {
       return null;
-    }
-  }
-
-  @override
-  Future<User> getUser({@required String id}) async {
-    try {
-      DocumentSnapshot documentSnapshot =
-          await _usersDB.document(id).get();
-      return User.extractDocument(documentSnapshot);
-    } catch (e) {
-      throw Exception(
-        e.toString(),
-      );
     }
   }
 
@@ -90,7 +77,7 @@ class AuthImplementation extends Auth {
     try {
       AuthResult authResult = await _auth.createUserWithEmailAndPassword(
           email: email, password: password);
-          return authResult;
+      return authResult;
     } catch (e) {
       throw Exception(
         e.toString(),
@@ -98,18 +85,17 @@ class AuthImplementation extends Auth {
     }
   }
 
-  @override
+  @override //move to db
   Future<List<String>> getGemLikes({@required String id}) async {
     try {
-      QuerySnapshot querySnapshot = await _usersDB.document(id)
-          .collection('likes')
-          .getDocuments();
+      QuerySnapshot querySnapshot =
+          await _usersDB.document(id).collection('likes').getDocuments();
       List<DocumentSnapshot> likeDocs = querySnapshot.documents;
 
       List<String> likes = List<String>();
       for (int i = 0; i < likeDocs.length; i++) {
-        String userId = likeDocs[i].data['userId'];
-        likes.add(userId);
+        String userID = likeDocs[i].data['userID'];
+        likes.add(userID);
       }
       return likes;
     } catch (e) {
@@ -117,16 +103,18 @@ class AuthImplementation extends Auth {
     }
   }
 
-  @override
+  @override //move to db
   Future<List<User>> getGems({@required String category, int limit}) async {
     try {
       QuerySnapshot querySnapshot;
       if (limit == null) {
-        querySnapshot = await _usersDB.where('category', isEqualTo: category)
+        querySnapshot = await _usersDB
+            .where('category', isEqualTo: category)
             .orderBy('time', descending: true)
             .getDocuments();
       } else {
-        querySnapshot = await _usersDB.where('category', isEqualTo: category)
+        querySnapshot = await _usersDB
+            .where('category', isEqualTo: category)
             .orderBy('time', descending: true)
             .limit(limit)
             .getDocuments();
@@ -150,6 +138,19 @@ class AuthImplementation extends Auth {
       return await _auth.currentUser();
     } catch (e) {
       return null;
+    }
+  }
+
+  @override
+  Future<void> deleteUser() async {
+    try {
+      FirebaseUser firebaseUser = await getFirebaseUser();
+      await firebaseUser.delete();
+      return;
+    } catch (e) {
+      throw Exception(
+        e.toString(),
+      );
     }
   }
 }

@@ -8,6 +8,7 @@ import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hiddengems_flutter/constants.dart';
+import 'package:hiddengems_flutter/services/simple_widget_builder.dart';
 import 'package:hiddengems_flutter/services/validater.dart';
 import 'package:hiddengems_flutter/asset_images.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -42,8 +43,6 @@ class GemSignUpPageState extends State<GemSignUpPage> {
   String _categoryController;
   String _subCategoryController;
   final GetIt getIt = GetIt.I;
-  final CollectionReference _miscellaneousDB =
-      Firestore.instance.collection('Miscellaneous');
 
   @override
   void initState() {
@@ -53,7 +52,18 @@ class GemSignUpPageState extends State<GemSignUpPage> {
   }
 
   _load() async {
-    await _fetchSubCategories();
+    _musicSubCatDrop =
+        getIt<SimpleWidgetBuilder>().buildDropdown(list: MusicTypes);
+    _mediaSubCatDrop =
+        getIt<SimpleWidgetBuilder>().buildDropdown(list: MediaTypes);
+    _entertainmentSubCatDrop =
+        getIt<SimpleWidgetBuilder>().buildDropdown(list: EntertainmentTypes);
+    _foodSubCatDrop =
+        getIt<SimpleWidgetBuilder>().buildDropdown(list: FoodTypes);
+    _technologySubCatDrop =
+        getIt<SimpleWidgetBuilder>().buildDropdown(list: TechnologyTypes);
+    _artSubCatDrop = getIt<SimpleWidgetBuilder>().buildDropdown(list: ArtTypes);
+    
     setState(
       () {
         _isLoading = false;
@@ -356,7 +366,7 @@ class GemSignUpPageState extends State<GemSignUpPage> {
                 },
               );
             },
-            items: MyFormData.categories.map<DropdownMenuItem<String>>(
+            items: GemTypes.map<DropdownMenuItem<String>>(
               (String value) {
                 return DropdownMenuItem<String>(
                   value: value,
@@ -395,94 +405,94 @@ class GemSignUpPageState extends State<GemSignUpPage> {
   }
 
   //Convert SubCategories into DropdownMenuItem lists.
-  Future<void> _fetchSubCategories() async {
-    DocumentSnapshot ds = await _miscellaneousDB.document('HomePage').get();
+  // Future<void> _fetchSubCategories() async {
+  //   DocumentSnapshot ds = await _miscellaneousDB.document('HomePage').get();
 
-    dynamic data = ds.data;
+  //   dynamic data = ds.data;
 
-    List<String> musicSubCatList = List.from(data['music']['subCategories']);
-    _musicSubCatDrop = musicSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
+  //   List<String> musicSubCatList = List.from(data['music']['subCategories']);
+  //   _musicSubCatDrop = musicSubCatList.map<DropdownMenuItem<String>>(
+  //     (String value) {
+  //       return DropdownMenuItem<String>(
+  //         value: value,
+  //         child: Text(value),
+  //       );
+  //     },
+  //   ).toList();
 
-    List<String> mediaSubCatList = List.from(data['media']['subCategories']);
-    _mediaSubCatDrop = mediaSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
+  //   List<String> mediaSubCatList = List.from(data['media']['subCategories']);
+  //   _mediaSubCatDrop = mediaSubCatList.map<DropdownMenuItem<String>>(
+  //     (String value) {
+  //       return DropdownMenuItem<String>(
+  //         value: value,
+  //         child: Text(value),
+  //       );
+  //     },
+  //   ).toList();
 
-    List<String> entertainmentSubCatList =
-        List.from(data['entertainment']['subCategories']);
-    _entertainmentSubCatDrop =
-        entertainmentSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
+  //   List<String> entertainmentSubCatList =
+  //       List.from(data['entertainment']['subCategories']);
+  //   _entertainmentSubCatDrop =
+  //       entertainmentSubCatList.map<DropdownMenuItem<String>>(
+  //     (String value) {
+  //       return DropdownMenuItem<String>(
+  //         value: value,
+  //         child: Text(value),
+  //       );
+  //     },
+  //   ).toList();
 
-    List<String> foodSubCatList = List.from(data['food']['subCategories']);
-    _foodSubCatDrop = foodSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
+  //   List<String> foodSubCatList = List.from(data['food']['subCategories']);
+  //   _foodSubCatDrop = foodSubCatList.map<DropdownMenuItem<String>>(
+  //     (String value) {
+  //       return DropdownMenuItem<String>(
+  //         value: value,
+  //         child: Text(value),
+  //       );
+  //     },
+  //   ).toList();
 
-    List<String> technologySubCatList =
-        List.from(data['technology']['subCategories']);
-    _technologySubCatDrop = technologySubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
+  //   List<String> technologySubCatList =
+  //       List.from(data['technology']['subCategories']);
+  //   _technologySubCatDrop = technologySubCatList.map<DropdownMenuItem<String>>(
+  //     (String value) {
+  //       return DropdownMenuItem<String>(
+  //         value: value,
+  //         child: Text(value),
+  //       );
+  //     },
+  //   ).toList();
 
-    List<String> artSubCatList = List.from(data['art']['subCategories']);
-    _artSubCatDrop = artSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
+  //   List<String> artSubCatList = List.from(data['art']['subCategories']);
+  //   _artSubCatDrop = artSubCatList.map<DropdownMenuItem<String>>(
+  //     (String value) {
+  //       return DropdownMenuItem<String>(
+  //         value: value,
+  //         child: Text(value),
+  //       );
+  //     },
+  //   ).toList();
 
-    List<String> tradeSubCatList = List.from(data['trade']['subCategories']);
-    _tradeSubCatDrop = tradeSubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
+  //   List<String> tradeSubCatList = List.from(data['trade']['subCategories']);
+  //   _tradeSubCatDrop = tradeSubCatList.map<DropdownMenuItem<String>>(
+  //     (String value) {
+  //       return DropdownMenuItem<String>(
+  //         value: value,
+  //         child: Text(value),
+  //       );
+  //     },
+  //   ).toList();
 
-    List<String> beautySubCatList = List.from(data['beauty']['subCategories']);
-    _beautySubCatDrop = beautySubCatList.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-  }
+  //   List<String> beautySubCatList = List.from(data['beauty']['subCategories']);
+  //   _beautySubCatDrop = beautySubCatList.map<DropdownMenuItem<String>>(
+  //     (String value) {
+  //       return DropdownMenuItem<String>(
+  //         value: value,
+  //         child: Text(value),
+  //       );
+  //     },
+  //   ).toList();
+  // }
 
   List<DropdownMenuItem<String>> _getSubCatOptions() {
     switch (_categoryController) {

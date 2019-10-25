@@ -105,8 +105,8 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 imageUrl: messageDoc['imageUrl'],
                 text: messageDoc['text'],
                 time: messageDoc['time'].toDate(),
-                userId: messageDoc['userId'],
-                myUserId: sender.id,
+                userID: messageDoc['userID'],
+                myuserID: sender.id,
                 animationController: AnimationController(
                   duration: Duration(milliseconds: 700),
                   vsync: this,
@@ -159,8 +159,8 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
                 imageUrl: messageDoc['imageUrl'],
                 text: messageDoc['text'],
                 time: messageDoc['time'].toDate(),
-                userId: messageDoc['userId'],
-                myUserId: sender.id,
+                userID: messageDoc['userID'],
+                myuserID: sender.id,
                 animationController: AnimationController(
                   duration: Duration(milliseconds: 700),
                   vsync: this,
@@ -232,8 +232,8 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
       imageUrl: sender.photoUrl,
       text: text,
       time: DateTime.now(),
-      userId: sendee.id,
-      myUserId: sender.id,
+      userID: sendee.id,
+      myuserID: sender.id,
       animationController: AnimationController(
         duration: Duration(milliseconds: 700),
         vsync: this,
@@ -335,12 +335,12 @@ class ChatScreenState extends State<ChatScreen> with TickerProviderStateMixin {
   }
 
   createChatMessage(CollectionReference messageRef, String messageId,
-      String text, String imageUrl, String userName, String userId) async {
+      String text, String imageUrl, String userName, String userID) async {
     var data = {
       'text': text,
       'imageUrl': imageUrl,
       'name': userName,
-      'userId': userId,
+      'userID': userID,
       'time': DateTime.now()
     };
 

@@ -6,6 +6,7 @@ import 'dart:collection';
 import 'package:hiddengems_flutter/models/conversation.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
+import 'package:hiddengems_flutter/services/db.dart';
 import 'package:hiddengems_flutter/services/message.dart';
 import 'package:intl/intl.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -45,19 +46,19 @@ class _MessagesPageState extends State<MessagesPage> {
     // for (int i = 0; i < documents.length; i++) {
     //   var convoData = documents[i].data;
     //   var userData = convoData['users'];
-    //   List<String> userIds = List<String>();
+    //   List<String> userIDs = List<String>();
 
     //   //Build list of users ids and user names.
     //   userData.forEach(
-    //     (userId, userName) {
-    //       userIds.add(userId);
+    //     (userID, userName) {
+    //       userIDs.add(userID);
     //     },
     //   );
 
-    //   if (_currentUser.id == userIds[0]) {
-    //     _oppositeUser = await getIt<Auth>().getUser(id: userIds[1]);
+    //   if (_currentUser.id == userIDs[0]) {
+    //     _oppositeUser = await getIt<Auth>().getUser(id: userIDs[1]);
     //   } else {
-    //     _oppositeUser = await getIt<Auth>().getUser(id: userIds[0]);
+    //     _oppositeUser = await getIt<Auth>().getUser(id: userIDs[0]);
     //   }
 
     //   _conversations.add(
@@ -65,8 +66,8 @@ class _MessagesPageState extends State<MessagesPage> {
     //       title: _oppositeUser.name,
     //       lastMessage: convoData['lastMessage'],
     //       imageUrl: _oppositeUser.photoUrl,
-    //       sendeeId: userIds[0],
-    //       senderId: userIds[1],
+    //       sendeeId: userIDs[0],
+    //       senderId: userIDs[1],
     //       time: convoData['time'].toDate(),
     //       read: convoData['${_currentUser.id}_read'],
     //     ),
@@ -85,20 +86,20 @@ class _MessagesPageState extends State<MessagesPage> {
         for (int i = 0; i < convoDocs.length; i++) {
           var convoData = convoDocs[i].data;
           var userData = convoData['users'];
-          List<String> userIds = List<String>();
+          List<String> userIDs = List<String>();
 
           //Build list of users ids and user names.
           userData.forEach(
-            (userId, userName) {
-              userIds.add(userId);
+            (userID, userName) {
+              userIDs.add(userID);
             },
           );
 
           User _oppositeUser;
-          if (_currentUser.id == userIds[0]) {
-            _oppositeUser = await getIt<Auth>().getUser(id: userIds[1]);
+          if (_currentUser.id == userIDs[0]) {
+            _oppositeUser = await getIt<DB>().retrieveUser(userID: userIDs[1]);
           } else {
-            _oppositeUser = await getIt<Auth>().getUser(id: userIds[0]);
+            _oppositeUser = await getIt<DB>().retrieveUser(userID: userIDs[0]);
           }
 
           _conversations.add(
@@ -106,8 +107,8 @@ class _MessagesPageState extends State<MessagesPage> {
                 title: _oppositeUser.name,
                 lastMessage: convoData['lastMessage'],
                 imageUrl: _oppositeUser.photoUrl,
-                sendeeId: userIds[0],
-                senderId: userIds[1],
+                sendeeId: userIDs[0],
+                senderId: userIDs[1],
                 time: convoData['time'].toDate(),
                 read: convoData['${_currentUser.id}_read'],
                 oppositeUser: _oppositeUser),

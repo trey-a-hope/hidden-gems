@@ -7,6 +7,7 @@ import 'package:hiddengems_flutter/services/db.dart';
 import 'package:hiddengems_flutter/services/message.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:hiddengems_flutter/services/package_device_info.dart';
+import 'package:hiddengems_flutter/services/simple_widget_builder.dart';
 import 'package:hiddengems_flutter/services/storage.dart';
 import 'package:hiddengems_flutter/services/notification.dart';
 
@@ -20,6 +21,9 @@ void main() {
   getIt.registerSingleton<Modal>(ModalImplementation(), signalsReady: true);
   getIt.registerSingleton<PackageDeviceInfo>(PackageDeviceInfoImplementation());
   getIt.registerSingleton<Storage>(StorageImplementation(), signalsReady: true);
+  getIt.registerSingleton<SimpleWidgetBuilder>(
+      SimpleWidgetBuilderImplementation(),
+      signalsReady: true);
 
   runApp(MyApp());
 }

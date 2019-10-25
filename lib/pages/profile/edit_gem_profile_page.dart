@@ -6,6 +6,7 @@ import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:hiddengems_flutter/constants.dart';
+import 'package:hiddengems_flutter/services/simple_widget_builder.dart';
 import 'package:hiddengems_flutter/services/storage.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/services/validater.dart';
@@ -19,8 +20,6 @@ class EditGemProfilePage extends StatefulWidget {
 }
 
 class EditGemProfilePageState extends State<EditGemProfilePage> {
-  final CollectionReference _miscellaneousDB =
-      Firestore.instance.collection('Miscellaneous');
   final CollectionReference _usersDB = Firestore.instance.collection('Users');
 
   User _gem;
@@ -68,62 +67,74 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
   }
 
   _load() async {
-    await _fetchSubCategories();
+    try {
+      _musicSubCatDrop = getIt<SimpleWidgetBuilder>().buildDropdown(list: MusicTypes);
+      _mediaSubCatDrop = getIt<SimpleWidgetBuilder>().buildDropdown(list: MediaTypes);
+      _entertainmentSubCatDrop = getIt<SimpleWidgetBuilder>().buildDropdown(list: EntertainmentTypes);
+      _foodSubCatDrop = getIt<SimpleWidgetBuilder>().buildDropdown(list: FoodTypes);
+      _technologySubCatDrop = getIt<SimpleWidgetBuilder>().buildDropdown(list: TechnologyTypes);
+      _artSubCatDrop = getIt<SimpleWidgetBuilder>().buildDropdown(list: ArtTypes);
 
-    _gem = await getIt<Auth>().getCurrentUser();
+      _gem = await getIt<Auth>().getCurrentUser();
 
-    _profileImageProvider = NetworkImage(_gem.photoUrl);
-    _backgroundImageProvider = NetworkImage(_gem.backgroundUrl);
+      _profileImageProvider = NetworkImage(_gem.photoUrl);
+      _backgroundImageProvider = NetworkImage(_gem.backgroundUrl);
 
-    _nameController.text = _gem.name;
-    _bioController.text = _gem.bio;
-    _categoryController = _gem.category;
-    _subCategoryController = _gem.subCategory;
-    _phoneController.text = _gem.phoneNumber;
-    _spotifyController.text = _gem.spotifyUrl;
-    _iTunesController.text = _gem.iTunesUrl;
-    _soundCloudController.text = _gem.soundCloudUrl;
-    _instagramController.text = _gem.instagramUrl;
-    _facebookController.text = _gem.facebookUrl;
-    _twitterController.text = _gem.twitterUrl;
-    _youTubeController.text = _gem.youTubeUrl;
+      _nameController.text = _gem.name;
+      _bioController.text = _gem.bio;
+      _categoryController = _gem.category;
+      _subCategoryController = _gem.subCategory;
+      _phoneController.text = _gem.phoneNumber;
+      _spotifyController.text = _gem.spotifyUrl;
+      _iTunesController.text = _gem.iTunesUrl;
+      _soundCloudController.text = _gem.soundCloudUrl;
+      _instagramController.text = _gem.instagramUrl;
+      _facebookController.text = _gem.facebookUrl;
+      _twitterController.text = _gem.twitterUrl;
+      _youTubeController.text = _gem.youTubeUrl;
 
-    setState(
-      () {
-        _isLoading = false;
-      },
-    );
+      setState(
+        () {
+          _isLoading = false;
+        },
+      );
+    } catch (e) {
+      getIt<Modal>().showInSnackBar(
+        scaffoldKey: _scaffoldKey,
+        message: e.toString(),
+      );
+    }
   }
 
   //Convert SubCategories into DropdownMenuItem lists.
-  List<DropdownMenuItem<String>> _fetchSubCategoriesHelper(
-      {@required dynamic data}) {
-    List<String> list = List.from(data['subCategories']);
-    return list.map<DropdownMenuItem<String>>(
-      (String value) {
-        return DropdownMenuItem<String>(
-          value: value,
-          child: Text(value),
-        );
-      },
-    ).toList();
-  }
+  // List<DropdownMenuItem<String>> _fetchSubCategoriesHelper(
+  //     {@required dynamic data}) {
+  //   List<String> list = List.from(data['subCategories']);
+  //   return list.map<DropdownMenuItem<String>>(
+  //     (String value) {
+  //       return DropdownMenuItem<String>(
+  //         value: value,
+  //         child: Text(value),
+  //       );
+  //     },
+  //   ).toList();
+  // }
 
-  Future<void> _fetchSubCategories() async {
-    DocumentSnapshot ds = await _miscellaneousDB.document('HomePage').get();
+  // Future<void> _fetchSubCategories() async {
+  //   DocumentSnapshot ds = await _miscellaneousDB.document('HomePage').get();
 
-    dynamic data = ds.data;
+  //   dynamic data = ds.data;
 
-    _musicSubCatDrop = _fetchSubCategoriesHelper(data: data['music']);
-    _mediaSubCatDrop = _fetchSubCategoriesHelper(data: data['media']);
-    _entertainmentSubCatDrop =
-        _fetchSubCategoriesHelper(data: data['entertainment']);
-    _foodSubCatDrop = _fetchSubCategoriesHelper(data: data['food']);
-    _technologySubCatDrop = _fetchSubCategoriesHelper(data: data['technology']);
-    _artSubCatDrop = _fetchSubCategoriesHelper(data: data['art']);
-    _tradeSubCatDrop = _fetchSubCategoriesHelper(data: data['trade']);
-    _beautySubCatDrop = _fetchSubCategoriesHelper(data: data['beauty']);
-  }
+  //   _musicSubCatDrop = _fetchSubCategoriesHelper(data: data['music']);
+  //   _mediaSubCatDrop = _fetchSubCategoriesHelper(data: data['media']);
+  //   _entertainmentSubCatDrop =
+  //       _fetchSubCategoriesHelper(data: data['entertainment']);
+  //   _foodSubCatDrop = _fetchSubCategoriesHelper(data: data['food']);
+  //   _technologySubCatDrop = _fetchSubCategoriesHelper(data: data['technology']);
+  //   _artSubCatDrop = _fetchSubCategoriesHelper(data: data['art']);
+  //   _tradeSubCatDrop = _fetchSubCategoriesHelper(data: data['trade']);
+  //   _beautySubCatDrop = _fetchSubCategoriesHelper(data: data['beauty']);
+  // }
 
   Future _pickProfileImage() async {
     File image = await ImagePicker.pickImage(source: ImageSource.gallery);
@@ -344,10 +355,10 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
       // validator: Validater.mobile,
       onSaved: (value) {},
       decoration: InputDecoration(
-        icon: Icon(MdiIcons.spotify, color: Colors.green),
-        fillColor: Colors.white,
-        hintText: 'https://open.spotify.com/artist/4AeeMMRvpOKMeWAcgQ8O6p?si=boRhW5JkRW2T9tp3Xob74Q'
-      ),
+          icon: Icon(MdiIcons.spotify, color: Colors.green),
+          fillColor: Colors.white,
+          hintText:
+              'https://open.spotify.com/artist/4AeeMMRvpOKMeWAcgQ8O6p?si=boRhW5JkRW2T9tp3Xob74Q'),
     );
   }
 
@@ -363,10 +374,9 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
       // validator: Validater.mobile,
       onSaved: (value) {},
       decoration: InputDecoration(
-        icon: Icon(MdiIcons.itunes, color: Colors.grey),
-        fillColor: Colors.white,
-        hintText: 'https://music.apple.com/us/artist/travisty/1469723679'
-      ),
+          icon: Icon(MdiIcons.itunes, color: Colors.grey),
+          fillColor: Colors.white,
+          hintText: 'https://music.apple.com/us/artist/travisty/1469723679'),
     );
   }
 
@@ -382,10 +392,9 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
       // validator: Validater.mobile,
       onSaved: (value) {},
       decoration: InputDecoration(
-        icon: Icon(MdiIcons.soundcloud, color: Colors.orange),
-        fillColor: Colors.white,
-        hintText: 'https://soundcloud.com/trey-hope'
-      ),
+          icon: Icon(MdiIcons.soundcloud, color: Colors.orange),
+          fillColor: Colors.white,
+          hintText: 'https://soundcloud.com/trey-hope'),
     );
   }
 
@@ -399,13 +408,12 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
       maxLines: 1,
       onFieldSubmitted: (term) {},
       // validator: Validater.instagram,
-      
+
       onSaved: (value) {},
       decoration: InputDecoration(
-        icon: Icon(MdiIcons.instagram, color: Colors.pink),
-        fillColor: Colors.white,
-        hintText: 'https://www.instagram.com/trey.a.hope'
-      ),
+          icon: Icon(MdiIcons.instagram, color: Colors.pink),
+          fillColor: Colors.white,
+          hintText: 'https://www.instagram.com/trey.a.hope'),
     );
   }
 
@@ -421,10 +429,9 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
       // validator: Validater.mobile,
       onSaved: (value) {},
       decoration: InputDecoration(
-        icon: Icon(MdiIcons.facebook, color: Colors.blue),
-        fillColor: Colors.white,
-        hintText: 'https://www.facebook.com/trey.a.hope'
-      ),
+          icon: Icon(MdiIcons.facebook, color: Colors.blue),
+          fillColor: Colors.white,
+          hintText: 'https://www.facebook.com/trey.a.hope'),
     );
   }
 
@@ -440,10 +447,9 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
       // validator: Validater.twitter,
       onSaved: (value) {},
       decoration: InputDecoration(
-        icon: Icon(MdiIcons.twitter, color: Colors.lightBlue),
-        fillColor: Colors.white,
-        hintText: 'https://twitter.com/travisty92'
-      ),
+          icon: Icon(MdiIcons.twitter, color: Colors.lightBlue),
+          fillColor: Colors.white,
+          hintText: 'https://twitter.com/travisty92'),
     );
   }
 
@@ -459,10 +465,9 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
       // validator: Validater.mobile,
       onSaved: (value) {},
       decoration: InputDecoration(
-        icon: Icon(MdiIcons.youtube, color: Colors.red),
-        fillColor: Colors.white,
-        hintText: 'https://www.youtube.com/channel/UCjcR0stkmPmeYkf9JDEq_ZQ'
-      ),
+          icon: Icon(MdiIcons.youtube, color: Colors.red),
+          fillColor: Colors.white,
+          hintText: 'https://www.youtube.com/channel/UCjcR0stkmPmeYkf9JDEq_ZQ'),
     );
   }
 
@@ -487,7 +492,7 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
                 },
               );
             },
-            items: MyFormData.categories.map<DropdownMenuItem<String>>(
+            items: GemTypes.map<DropdownMenuItem<String>>(
               (String value) {
                 return DropdownMenuItem<String>(
                   value: value,

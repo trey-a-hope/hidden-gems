@@ -5,6 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hiddengems_flutter/common/spinner.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
+import 'package:hiddengems_flutter/services/db.dart';
 import 'package:hiddengems_flutter/services/message.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
@@ -42,7 +43,7 @@ class GemProfilePageState extends State<GemProfilePage> {
   }
 
   _load() async {
-    _gem = await getIt<Auth>().getUser(id: _id);
+    _gem = await getIt<DB>().retrieveUser(userID: _id);
     _gemLikes = await getIt<Auth>().getGemLikes(id: _gem.id);
     _currentUser = await getIt<Auth>().getCurrentUser();
 
@@ -59,11 +60,11 @@ class GemProfilePageState extends State<GemProfilePage> {
     CollectionReference likesColRef =
         _userDB.document(_gem.id).collection('likes');
     QuerySnapshot querySnapshot = await likesColRef
-        .where('userId', isEqualTo: _currentUser.id)
+        .where('userID', isEqualTo: _currentUser.id)
         .getDocuments();
 
     if (querySnapshot.documents.length == 0) {
-      likesColRef.add({'userId': _currentUser.id});
+      likesColRef.add({'userID': _currentUser.id});
       gemLikesCopy.add(_currentUser.id);
     } else {
       querySnapshot.documents.first.reference.delete();
