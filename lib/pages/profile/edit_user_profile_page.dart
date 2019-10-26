@@ -44,20 +44,27 @@ class EditUserProfilePageState extends State<EditUserProfilePage> {
   }
 
   _load() async {
+    try {
+      _currentUser = await getIt<Auth>().getCurrentUser();
 
-    _currentUser = await getIt<Auth>().getCurrentUser();
+      _profileImageProvider = NetworkImage(_currentUser.photoUrl);
+      _backgroundImageProvider = NetworkImage(_currentUser.backgroundUrl);
 
-    _profileImageProvider = NetworkImage(_currentUser.photoUrl);
-    _backgroundImageProvider = NetworkImage(_currentUser.backgroundUrl);
+      _nameController.text = _currentUser.name;
+      _phoneController.text = _currentUser.phoneNumber;
 
-    _nameController.text = _currentUser.name;
-    _phoneController.text = _currentUser.phoneNumber;
-
-    setState(
-      () {
-        _isLoading = false;
-      },
-    );
+      setState(
+        () {
+          _isLoading = false;
+        },
+      );
+    } catch (e) {
+      getIt<Modal>().showAlert(
+        context: context,
+        title: 'Error',
+        message: e.toString(),
+      );
+    }
   }
 
   Future _pickProfileImage() async {
@@ -124,13 +131,16 @@ class EditUserProfilePageState extends State<EditUserProfilePage> {
     if (_profileImage != null) {
       String newPhotoUrl = await getIt<Storage>().uploadImage(
           file: _profileImage, path: 'Images/Users/${_currentUser.id}/Profile');
-          await getIt<DB>().updateUser(userID: _currentUser.id, data: {'photoUrl': newPhotoUrl});
+      await getIt<DB>()
+          .updateUser(userID: _currentUser.id, data: {'photoUrl': newPhotoUrl});
     }
 
     if (_backgroundImage != null) {
       String newBackgroundUrl = await getIt<Storage>().uploadImage(
-          file: _backgroundImage, path: 'Images/Users/${_currentUser.id}/Background');
-                    await getIt<DB>().updateUser(userID: _currentUser.id, data: {'backgroundUrl': newBackgroundUrl});
+          file: _backgroundImage,
+          path: 'Images/Users/${_currentUser.id}/Background');
+      await getIt<DB>().updateUser(
+          userID: _currentUser.id, data: {'backgroundUrl': newBackgroundUrl});
     }
   }
 
@@ -152,7 +162,6 @@ class EditUserProfilePageState extends State<EditUserProfilePage> {
     );
   }
 
-
   Widget nameFormField() {
     return TextFormField(
       controller: _nameController,
@@ -170,8 +179,6 @@ class EditUserProfilePageState extends State<EditUserProfilePage> {
       ),
     );
   }
-
-
 
   Widget phoneFormField() {
     return TextFormField(
@@ -191,8 +198,6 @@ class EditUserProfilePageState extends State<EditUserProfilePage> {
       ),
     );
   }
-
-  
 
   Widget _buildBottomNavigationBar() {
     return Container(
@@ -314,8 +319,6 @@ class EditUserProfilePageState extends State<EditUserProfilePage> {
       ),
     );
   }
-
-  
 
   _buildInfoBox() {
     return Stack(

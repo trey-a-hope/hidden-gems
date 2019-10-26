@@ -50,23 +50,32 @@ class GemSignUpPageState extends State<GemSignUpPage> {
   }
 
   _load() async {
-    _musicSubCatDrop =
-        getIt<SimpleWidgetBuilder>().buildDropdown(list: MusicTypes);
-    _mediaSubCatDrop =
-        getIt<SimpleWidgetBuilder>().buildDropdown(list: MediaTypes);
-    _entertainmentSubCatDrop =
-        getIt<SimpleWidgetBuilder>().buildDropdown(list: EntertainmentTypes);
-    _foodSubCatDrop =
-        getIt<SimpleWidgetBuilder>().buildDropdown(list: FoodTypes);
-    _technologySubCatDrop =
-        getIt<SimpleWidgetBuilder>().buildDropdown(list: TechnologyTypes);
-    _artSubCatDrop = getIt<SimpleWidgetBuilder>().buildDropdown(list: ArtTypes);
-    
-    setState(
-      () {
-        _isLoading = false;
-      },
-    );
+    try {
+      _musicSubCatDrop =
+          getIt<SimpleWidgetBuilder>().buildDropdown(list: MusicTypes);
+      _mediaSubCatDrop =
+          getIt<SimpleWidgetBuilder>().buildDropdown(list: MediaTypes);
+      _entertainmentSubCatDrop =
+          getIt<SimpleWidgetBuilder>().buildDropdown(list: EntertainmentTypes);
+      _foodSubCatDrop =
+          getIt<SimpleWidgetBuilder>().buildDropdown(list: FoodTypes);
+      _technologySubCatDrop =
+          getIt<SimpleWidgetBuilder>().buildDropdown(list: TechnologyTypes);
+      _artSubCatDrop =
+          getIt<SimpleWidgetBuilder>().buildDropdown(list: ArtTypes);
+
+      setState(
+        () {
+          _isLoading = false;
+        },
+      );
+    } catch (e) {
+      getIt<Modal>().showAlert(
+        context: context,
+        title: 'Error',
+        message: e.toString(),
+      );
+    }
   }
 
   _signUp() async {
@@ -121,7 +130,7 @@ class GemSignUpPageState extends State<GemSignUpPage> {
               isGem: true);
 
           getIt<DB>().createUser(
-            data: newUser.toMap(),
+            user: newUser,
           );
 
           Navigator.popUntil(
@@ -401,7 +410,7 @@ class GemSignUpPageState extends State<GemSignUpPage> {
       ),
     );
   }
-  
+
   List<DropdownMenuItem<String>> _getSubCatOptions() {
     switch (_categoryController) {
       case 'Music':

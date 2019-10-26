@@ -12,6 +12,7 @@ import 'package:hiddengems_flutter/constants.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/pages/search_page.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
+import 'package:hiddengems_flutter/services/db.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/common/gem_section_header.dart';
@@ -28,12 +29,9 @@ class HomePageState extends State<HomePage> {
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
   final GlobalKey<RefreshIndicatorState> _refreshIndicatorKey =
       GlobalKey<RefreshIndicatorState>();
-
-  final CollectionReference _usersDB = Firestore.instance.collection('Users');
-  // final CollectionReference _gemsDB = Firestore.instance.collection('Gems');
   final FirebaseMessaging _fcm = FirebaseMessaging();
-
   bool _isLoading = true;
+  User _currentUser;
 
 //Technology
   Section _technology = Section(
@@ -130,9 +128,9 @@ class HomePageState extends State<HomePage> {
           await getIt<Auth>().getGems(limit: 5, category: 'Technology');
       _art.previewGems = await getIt<Auth>().getGems(limit: 5, category: 'Art');
 
-      FirebaseUser firebaseUser = await getIt<Auth>().getFirebaseUser();
-      if (firebaseUser != null) {
-        _setUpFirebaseMessaging(firebaseUser: firebaseUser);
+      _currentUser = await getIt<Auth>().getCurrentUser();
+      if (_currentUser != null) {
+        _setUpFirebaseMessaging();
       }
 
       setState(
@@ -166,13 +164,7 @@ class HomePageState extends State<HomePage> {
     );
   }
 
-  void _setUpFirebaseMessaging({@required FirebaseUser firebaseUser}) async {
-    //Fetch the ID of the user document.
-    QuerySnapshot querySnapshot =
-        await _usersDB.where('uid', isEqualTo: firebaseUser.uid).getDocuments();
-    DocumentSnapshot documentSnapshot = querySnapshot.documents.first;
-    String id = documentSnapshot.data['id'];
-
+  void _setUpFirebaseMessaging() async {
     if (Platform.isIOS) {
       //Request permission on iOS device.
       _fcm.requestNotificationPermissions(
@@ -184,9 +176,7 @@ class HomePageState extends State<HomePage> {
     final String fcmToken = await _fcm.getToken();
     if (fcmToken != null) {
       print(fcmToken);
-      _usersDB.document(id).updateData(
-        {'fcmToken': fcmToken},
-      );
+      getIt<DB>().updateUser(userID: _currentUser.id, data: {'fcmToken': fcmToken});
     }
 
     //Configure notifications for several action types.

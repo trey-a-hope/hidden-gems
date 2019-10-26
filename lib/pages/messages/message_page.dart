@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
-import 'package:hiddengems_flutter/models/chat_message.dart';
+import 'package:hiddengems_flutter/common/chat_message.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/notification.dart';
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();

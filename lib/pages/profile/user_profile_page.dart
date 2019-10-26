@@ -39,14 +39,22 @@ class UserProfilePageState extends State<UserProfilePage> {
   }
 
   _load() async {
-    _user = await getIt<DB>().retrieveUser(userID: _id);
-    _currentUser = await getIt<Auth>().getCurrentUser();
+    try {
+      _user = await getIt<DB>().retrieveUser(userID: _id);
+      _currentUser = await getIt<Auth>().getCurrentUser();
 
-    setState(
-      () {
-        _isLoading = false;
-      },
-    );
+      setState(
+        () {
+          _isLoading = false;
+        },
+      );
+    } catch (e) {
+      getIt<Modal>().showAlert(
+        context: context,
+        title: 'Error',
+        message: e.toString(),
+      );
+    }
   }
 
   _buildFAB() {

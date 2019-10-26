@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get_it/get_it.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:hiddengems_flutter/common/spinner.dart';
+import 'package:hiddengems_flutter/models/like.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
 import 'package:hiddengems_flutter/services/db.dart';
@@ -10,7 +11,6 @@ import 'package:hiddengems_flutter/services/message.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:material_design_icons_flutter/material_design_icons_flutter.dart';
 import 'package:hiddengems_flutter/services/url_launcher.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -28,13 +28,13 @@ class GemProfilePageState extends State<GemProfilePage> {
   GemProfilePageState(this._id);
 
   final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-  final String _id; //Gem ID
-  final CollectionReference _userDB = Firestore.instance.collection('Users');
+  final String _id;
   User _gem;
   bool _isLoading = true;
   User _currentUser;
   final GetIt getIt = GetIt.I;
-  List<String> _gemLikes = List<String>();
+  List<Like> _likes = List<Like>();
+  bool hasLikedGem;
 
   @override
   void initState() {
@@ -43,39 +43,46 @@ class GemProfilePageState extends State<GemProfilePage> {
   }
 
   _load() async {
-    _gem = await getIt<DB>().retrieveUser(userID: _id);
-    _gemLikes = await getIt<Auth>().getGemLikes(id: _gem.id);
-    _currentUser = await getIt<Auth>().getCurrentUser();
+    try {
+      _gem = await getIt<DB>().retrieveUser(userID: _id);
+      _currentUser = await getIt<Auth>().getCurrentUser();
+      _likes = await getIt<DB>().retrieveLikes(gemID: _gem.id);
+      hasLikedGem =
+          _likes.where((like) => like.userID == _currentUser.id).length > 0;
 
-    setState(
-      () {
-        _isLoading = false;
-      },
-    );
+      setState(
+        () {
+          _isLoading = false;
+        },
+      );
+    } catch (e) {
+      getIt<Modal>().showAlert(
+        context: context,
+        title: 'Error',
+        message: e.toString(),
+      );
+    }
   }
 
   _likeGem() async {
-    List<String> gemLikesCopy = _gemLikes;
+    try {
+      if (hasLikedGem) {
+        getIt<DB>().deleteLike(gemID: _gem.id, userID: _currentUser.id);
+        _likes.removeWhere((like) => like.userID == _currentUser.id);
+      } else {
+        Like newLike = Like(id: '', userID: _currentUser.id);
+        getIt<DB>().createLike(like: newLike, gemID: _gem.id);
+        _likes.add(newLike);
+      }
 
-    CollectionReference likesColRef =
-        _userDB.document(_gem.id).collection('likes');
-    QuerySnapshot querySnapshot = await likesColRef
-        .where('userID', isEqualTo: _currentUser.id)
-        .getDocuments();
+      hasLikedGem = !hasLikedGem;
 
-    if (querySnapshot.documents.length == 0) {
-      likesColRef.add({'userID': _currentUser.id});
-      gemLikesCopy.add(_currentUser.id);
-    } else {
-      querySnapshot.documents.first.reference.delete();
-      gemLikesCopy.remove(_currentUser.id);
+      setState(() {});
+    } catch (e) {
+      print(
+        e.toString(),
+      );
     }
-
-    setState(
-      () {
-        _gemLikes = gemLikesCopy;
-      },
-    );
   }
 
   _copyToClipboard(String text) async {
@@ -236,10 +243,10 @@ class GemProfilePageState extends State<GemProfilePage> {
                     child: Column(
                       children: <Widget>[
                         Text(
-                          '${_gemLikes.length}',
+                          '${_likes.length}',
                           style: TextStyle(fontWeight: FontWeight.bold),
                         ),
-                        Text(_gemLikes.length == 1 ? 'Like' : 'Likes')
+                        Text(_likes.length == 1 ? 'Like' : 'Likes')
                       ],
                     ),
                   ),
@@ -297,7 +304,7 @@ class GemProfilePageState extends State<GemProfilePage> {
                       },
                     )
                   : IconButton(
-                      icon: List.from(_gemLikes).contains(_currentUser.id)
+                      icon: hasLikedGem
                           ? Icon(Icons.favorite, color: Colors.red)
                           : Icon(Icons.favorite_border),
                       onPressed: () {

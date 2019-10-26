@@ -38,11 +38,19 @@ class UserSignUpPageState extends State<UserSignUpPage> {
   }
 
   _load() async {
-    setState(
-      () {
-        _isLoading = false;
-      },
-    );
+    try {
+      setState(
+        () {
+          _isLoading = false;
+        },
+      );
+    } catch (e) {
+      getIt<Modal>().showAlert(
+        context: context,
+        title: 'Error',
+        message: e.toString(),
+      );
+    }
   }
 
   _signUp() async {
@@ -90,10 +98,8 @@ class UserSignUpPageState extends State<UserSignUpPage> {
               youTubeUrl: '',
               isGem: false);
 
-              var data = newUser.toMap();
-
           getIt<DB>().createUser(
-            data: data,
+            user: newUser,
           );
 
           Navigator.popUntil(

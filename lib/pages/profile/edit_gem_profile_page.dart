@@ -2,6 +2,7 @@ import 'package:get_it/get_it.dart';
 import 'package:hiddengems_flutter/common/spinner.dart';
 import 'package:hiddengems_flutter/models/user.dart';
 import 'package:hiddengems_flutter/services/auth.dart';
+import 'package:hiddengems_flutter/services/db.dart';
 import 'package:hiddengems_flutter/services/modal.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -20,8 +21,6 @@ class EditGemProfilePage extends StatefulWidget {
 }
 
 class EditGemProfilePageState extends State<EditGemProfilePage> {
-  final CollectionReference _usersDB = Firestore.instance.collection('Users');
-
   User _gem;
   bool _isLoading = true;
   bool _autoValidate = false;
@@ -66,12 +65,18 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
 
   _load() async {
     try {
-      _musicSubCatDrop = getIt<SimpleWidgetBuilder>().buildDropdown(list: MusicTypes);
-      _mediaSubCatDrop = getIt<SimpleWidgetBuilder>().buildDropdown(list: MediaTypes);
-      _entertainmentSubCatDrop = getIt<SimpleWidgetBuilder>().buildDropdown(list: EntertainmentTypes);
-      _foodSubCatDrop = getIt<SimpleWidgetBuilder>().buildDropdown(list: FoodTypes);
-      _technologySubCatDrop = getIt<SimpleWidgetBuilder>().buildDropdown(list: TechnologyTypes);
-      _artSubCatDrop = getIt<SimpleWidgetBuilder>().buildDropdown(list: ArtTypes);
+      _musicSubCatDrop =
+          getIt<SimpleWidgetBuilder>().buildDropdown(list: MusicTypes);
+      _mediaSubCatDrop =
+          getIt<SimpleWidgetBuilder>().buildDropdown(list: MediaTypes);
+      _entertainmentSubCatDrop =
+          getIt<SimpleWidgetBuilder>().buildDropdown(list: EntertainmentTypes);
+      _foodSubCatDrop =
+          getIt<SimpleWidgetBuilder>().buildDropdown(list: FoodTypes);
+      _technologySubCatDrop =
+          getIt<SimpleWidgetBuilder>().buildDropdown(list: TechnologyTypes);
+      _artSubCatDrop =
+          getIt<SimpleWidgetBuilder>().buildDropdown(list: ArtTypes);
 
       _gem = await getIt<Auth>().getCurrentUser();
 
@@ -168,15 +173,15 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
     if (_profileImage != null) {
       String newPhotoUrl = await getIt<Storage>().uploadImage(
           file: _profileImage, path: 'Images/Users/${_gem.id}/Profile');
-      await _usersDB.document(_gem.id).updateData({'photoUrl': newPhotoUrl});
+      await getIt<DB>()
+          .updateUser(userID: _gem.id, data: {'photoUrl': newPhotoUrl});
     }
 
     if (_backgroundImage != null) {
       String newBackgroundUrl = await getIt<Storage>().uploadImage(
           file: _backgroundImage, path: 'Images/Users/${_gem.id}/Background');
-      await _usersDB
-          .document(_gem.id)
-          .updateData({'backgroundUrl': newBackgroundUrl});
+      await getIt<DB>().updateUser(
+          userID: _gem.id, data: {'backgroundUrl': newBackgroundUrl});
     }
   }
 
@@ -197,7 +202,7 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
   // }
 
   Future<void> _submitFormData() async {
-    var data = {
+    await getIt<DB>().updateUser(userID: _gem.id, data: {
       'bio': _bioController.text,
       'category': _categoryController,
       'facebookUrl': _facebookController.text,
@@ -210,9 +215,7 @@ class EditGemProfilePageState extends State<EditGemProfilePage> {
       'subCategory': _subCategoryController,
       'twitterUrl': _twitterController.text,
       'youTubeUrl': _youTubeController.text
-    };
-
-    await _usersDB.document(_gem.id).updateData(data);
+    });
   }
 
   AppBar _buildAppBar() {
