@@ -133,19 +133,4 @@ class DBImplementation extends DB {
       );
     }
   }
-
-  // @override
-  // Future<bool> hasLikedGem({String gemID, String userID}) async {
-  //   try {
-  //     CollectionReference likesColRef =
-  //         _usersDB.document(gemID).collection('Likes');
-  //     QuerySnapshot querySnapshot =
-  //         await likesColRef.where('userID', isEqualTo: userID).getDocuments();
-  //     return querySnapshot.documents.isNotEmpty;
-  //   } catch (e) {
-  //     throw Exception(
-  //       e.toString(),
-  //     );
-  //   }
-  // }
 }
