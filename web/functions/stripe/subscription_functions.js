@@ -8,12 +8,12 @@ const functions = require('firebase-functions');
 
 exports.create = functions.https.onRequest((request, response) => {
     const apiKey = request.body.apiKey;
-    const customerId = request.body.customerId;
+    const customerID = request.body.customerID;
     const plan = request.body.plan;
 
     return stripe(apiKey).subscriptions.create(
         {
-            customer: customerId,
+            customer: customerID,
             items: [
                 {
                     plan: plan,

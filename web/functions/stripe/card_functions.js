@@ -16,12 +16,12 @@ const functions = require('firebase-functions');
 
 exports.create = functions.https.onRequest((request, response) => {
     const apiKey = request.body.apiKey;
-    const customerId = request.body.customerId;
+    const customerID = request.body.customerID;
     const token = request.body.token;
 
 
     return stripe(apiKey).customers.createSource(
-        customerId,
+        customerID,
         {
             source: token,
         }, (err, charge) => {
@@ -52,13 +52,13 @@ exports.create = functions.https.onRequest((request, response) => {
 
 exports.delete = functions.https.onRequest((request, response) => {
     const apiKey = request.body.apiKey;
-    const customerId = request.body.customerId;
-    const cardId = request.body.cardId;
+    const customerID = request.body.customerID;
+    const cardID = request.body.cardID;
 
 
     return stripe(apiKey).customers.deleteSource(
-        customerId,
-        cardId, 
+        customerID,
+        cardID, 
         (err, charge) => {
             if (err) {
                 response.send(err);
