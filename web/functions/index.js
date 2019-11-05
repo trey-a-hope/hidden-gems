@@ -35,6 +35,7 @@ exports.StripeRetrieveCharge = StripeCharge.retrieve;
 exports.StripeCreateCustomer = StripeCustomer.create;
 exports.StripeUpdateCustomer = StripeCustomer.update;
 exports.StripeRetrieveCustomer = StripeCustomer.retrieve;
+exports.StripeDeleteCustomer = StripeCustomer.delete;
 
 //Products
 exports.StripeCreateProduct = StripeProduct.create;

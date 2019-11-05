@@ -65,3 +65,22 @@ exports.update = functions.https.onRequest((request, response) => {
             }
         });
 });
+
+/*
+    DELETE A CUSTOMER
+    Permanently deletes a customer. It cannot be undone. Also immediately cancels any active subscriptions on the customer.
+    PARAMS
+    String customerID;
+*/
+exports.delete = functions.https.onRequest((request, response) => {
+    const apiKey = request.body.apiKey;
+    const customerID = request.body.customerID;
+
+    return stripe(apiKey).customers.delete(customerID, (err, charge) => {
+        if (err) {
+            response.send(err);
+        } else {
+            response.send(charge);
+        }
+    });
+});
