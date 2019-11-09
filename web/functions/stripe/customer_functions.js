@@ -55,9 +55,29 @@ exports.update = functions.https.onRequest((request, response) => {
     const apiKey = request.body.apiKey;
     const customerID = request.body.customerID;
     const token = request.body.token;
+    const line1 = request.body.line1;
+    const city = request.body.city;
+    const country = request.body.country;
+    const postal_code = request.body.postal_code;
+    const state = request.body.state;
+    const name = request.body.name;
+    const email = request.body.email;
+    const default_source = request.body.default_source;
 
     return stripe(apiKey).customers.update(customerID,
-        { source: token }, (err, customer) => {
+        {
+            source: token,
+            email: email,
+            name: name,
+            default_source: default_source,
+            address: {
+                line1: line1,
+                city: city,
+                country: country,
+                postal_code: postal_code,
+                state: state
+            }
+        }, (err, customer) => {
             if (err) {
                 response.send(err);
             } else {
@@ -76,11 +96,11 @@ exports.delete = functions.https.onRequest((request, response) => {
     const apiKey = request.body.apiKey;
     const customerID = request.body.customerID;
 
-    return stripe(apiKey).customers.delete(customerID, (err, charge) => {
+    return stripe(apiKey).customers.del(customerID, (err, confirmation) => {
         if (err) {
             response.send(err);
         } else {
-            response.send(charge);
+            response.send(confirmation);
         }
     });
 });
