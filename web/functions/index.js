@@ -10,6 +10,7 @@ const StripeCharge = require('./stripe/charge_functions');
 const StripeSubscription = require('./stripe/subscription_functions');
 const StripeOrder = require('./stripe/order_functions');
 const StripeProduct = require('./stripe/product_functions');
+const StripeSku = require('./stripe/sku_functions');
 const Email = require('./email/email_functions');
 
 admin.initializeApp(functions.config().firebase);
@@ -47,6 +48,9 @@ exports.StripeCreateOrder = StripeOrder.create;
 
 //Products
 exports.StripeCreateProduct = StripeProduct.create;
+
+//Skus
+exports.StripeRetrieveSku = StripeSku.retrieve;
 
 //Subscriptions
 exports.StripeCreateSubscription = StripeSubscription.create;
