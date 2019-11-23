@@ -45,6 +45,7 @@ exports.StripeRetrieveCoupon = StripeCoupon.retrieve;
 
 //Orders
 exports.StripeCreateOrder = StripeOrder.create;
+exports.StripeListOrders = StripeOrder.list;
 
 //Products
 exports.StripeCreateProduct = StripeProduct.create;
