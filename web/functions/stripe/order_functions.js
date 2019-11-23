@@ -84,13 +84,13 @@ exports.list = functions.https.onRequest((request, response) => {
     https://stripe.com/docs/api/orders/update
 */
 
-exports.list = functions.https.onRequest((request, response) => {
+exports.update = functions.https.onRequest((request, response) => {
     const apiKey = request.body.apiKey;
     const orderID = request.body.orderID;
     const status = request.body.status;
     const carrier = request.body.carrier;
     const tracking_number = request.body.tracking_number;
-    
+
     return stripe(apiKey).orders.update(
         orderID,
         {
@@ -100,20 +100,35 @@ exports.list = functions.https.onRequest((request, response) => {
                 tracking_number: tracking_number,
             }
         },
-        (err, orders) => {
+        (err, order) => {
             if (err) {
                 response.send(err);
             } else {
-                response.send(orders);
+                response.send(order);
             }
         }
     );
 });
 
-stripe.orders.update('or_1FhqOZGQvSy9RLmzc9vK4BuL', {
-    status: 'fulfilled',
-    shipping: {
-        carrier: 'USPS',
-        tracking_number: 'TRACK123',
-    },
+/*
+    PAY AN ORDER
+    https://stripe.com/docs/api/orders/pay
+*/
+
+exports.pay = functions.https.onRequest((request, response) => {
+    const apiKey = request.body.apiKey;
+    const orderID = request.body.orderID;
+    const source = request.body.source;
+
+    return stripe(apiKey).orders.pay(
+        orderID,
+        { source: source },
+        (err, order) => {
+            if (err) {
+                response.send(err);
+            } else {
+                response.send(order);
+            }
+        }
+    );
 });
