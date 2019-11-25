@@ -32,11 +32,21 @@ exports.create = functions.https.onRequest((request, response) => {
     const description = request.body.description;
     const name = request.body.name;
 
-    return stripe(apiKey).customers.create({
-        description: description,
-        email: email,
-        name: name
-    }, (err, customer) => {
+    var data = {};
+
+    if (email !== undefined) {
+        data['email'] = email
+    }
+
+    if (description !== undefined) {
+        data['description'] = description
+    }
+
+    if (name !== undefined) {
+        data['name'] = name
+    }
+
+    return stripe(apiKey).customers.create(data, (err, customer) => {
         if (err) {
             response.send(err);
         } else {
@@ -64,20 +74,43 @@ exports.update = functions.https.onRequest((request, response) => {
     const email = request.body.email;
     const default_source = request.body.default_source;
 
-    return stripe(apiKey).customers.update(customerID,
-        {
-            source: token,
-            email: email,
+    var data = {};
+
+    //Add shipping details only if updating shipping.
+    if (name !== undefined && line1 !== undefined && city !== undefined && country !== undefined && postal_code !== undefined && state !== undefined) {
+
+        var addressData = {
+            line1: line1,
+            city: city,
+            country: country,
+            postal_code: postal_code,
+            state: state
+        }
+
+        data['shipping'] = {
             name: name,
-            default_source: default_source,
-            address: {
-                line1: line1,
-                city: city,
-                country: country,
-                postal_code: postal_code,
-                state: state
-            }
-        }, (err, customer) => {
+            address: addressData
+        }
+    }
+
+    if (token !== undefined) {
+        data['source'] = token
+    }
+
+    if (email !== undefined) {
+        data['email'] = email
+    }
+
+    if (name !== undefined) {
+        data['name'] = name
+    }
+
+    if (default_source !== undefined) {
+        data['default_source'] = default_source
+    }
+
+    return stripe(apiKey).customers.update(customerID,
+        data, (err, customer) => {
             if (err) {
                 response.send(err);
             } else {

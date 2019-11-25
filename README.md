@@ -56,3 +56,5 @@ rm -rf stripe_functions.js
 ## Remove git
 rm -rf .git
 
+## Firebase Functions Deploy Taking Forever?
+firebase login --no-localhost

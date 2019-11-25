@@ -8,13 +8,7 @@ const functions = require('firebase-functions');
 
 exports.create = functions.https.onRequest((request, response) => {
     const apiKey = request.body.apiKey;
-    const email = request.body.email;
-    const name = request.body.name;
-    const line1 = request.body.line1;
-    const city = request.body.city;
-    const state = request.body.state;
-    const country = request.body.country;
-    const postal_code = request.body.postal_code;
+    const customerID = request.body.customerID;
     const itemType = request.body.itemType;
     const itemParent = request.body.itemParent;
     const itemQuantity = request.body.itemQuantity;
@@ -23,7 +17,7 @@ exports.create = functions.https.onRequest((request, response) => {
     return stripe(apiKey).orders.create(
         {
             currency: 'usd',
-            email: email,
+            customer: customerID,
             items: [
                 {
                     type: itemType,
@@ -31,23 +25,13 @@ exports.create = functions.https.onRequest((request, response) => {
                     quantity: itemQuantity
                 }
             ],
-            shipping: {
-                name: name,
-                address: {
-                    line1: line1,
-                    city: city,
-                    state: state,
-                    country: country,
-                    postal_code: postal_code,
-                },
-            },
             metadata: metadata
         },
-        (err, product) => {
+        (err, order) => {
             if (err) {
                 response.send(err);
             } else {
-                response.send(product);
+                response.send(order);
             }
         }
     );
@@ -64,11 +48,10 @@ exports.list = functions.https.onRequest((request, response) => {
     const status = request.body.status;
 
     return stripe(apiKey).orders.list(
-        // {
-        //     customer: customerID,
-        //     status: status,
-        // },
-        { limit: 3 },
+        {
+            customer: customerID,
+            status: status,
+        },
         (err, orders) => {
             if (err) {
                 response.send(err);
@@ -119,10 +102,14 @@ exports.pay = functions.https.onRequest((request, response) => {
     const apiKey = request.body.apiKey;
     const orderID = request.body.orderID;
     const source = request.body.source;
+    const customerID = request.body.customerID;
 
     return stripe(apiKey).orders.pay(
         orderID,
-        { source: source },
+        {
+            source: source,
+            customer: customerID
+        },
         (err, order) => {
             if (err) {
                 response.send(err);
