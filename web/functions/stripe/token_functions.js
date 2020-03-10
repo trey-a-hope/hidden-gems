@@ -22,15 +22,19 @@ exports.create = functions.https.onRequest((request, response) => {
     const exp_year = request.body.exp_year;
     const cvc = request.body.cvc;
 
+    var data = {
+        card: {
+            number: number,
+            exp_month: exp_month,
+            exp_year: exp_year,
+            cvc: cvc
+        }
+    };
+
+    
+
     return stripe(apiKey).tokens.create(
-        {
-            card: {
-                number: number,
-                exp_month: exp_month,
-                exp_year: exp_year,
-                cvc: cvc
-            }
-        }, (err, charge) => {
+        data, (err, charge) => {
             if (err) {
                 response.send(err);
             } else {

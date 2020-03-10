@@ -19,12 +19,13 @@ exports.create = functions.https.onRequest((request, response) => {
     const customerID = request.body.customerID;
     const token = request.body.token;
 
+    var data = {};
+
+    data['source'] = token;
 
     return stripe(apiKey).customers.createSource(
         customerID,
-        {
-            source: token,
-        }, (err, charge) => {
+        data, (err, charge) => {
             if (err) {
                 response.send(err);
             } else {
@@ -55,10 +56,9 @@ exports.delete = functions.https.onRequest((request, response) => {
     const customerID = request.body.customerID;
     const cardID = request.body.cardID;
 
-
     return stripe(apiKey).customers.deleteSource(
         customerID,
-        cardID, 
+        cardID,
         (err, charge) => {
             if (err) {
                 response.send(err);

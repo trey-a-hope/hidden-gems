@@ -87,10 +87,12 @@ exports.update = functions.https.onRequest((request, response) => {
             state: state
         }
 
-        data['shipping'] = {
+        var shippingData = {
             name: name,
             address: addressData
-        }
+        };
+
+        data['shipping'] = shippingData;
     }
 
     if (token !== undefined) {

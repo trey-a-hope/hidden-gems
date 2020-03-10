@@ -11,11 +11,13 @@ exports.create = functions.https.onRequest((request, response) => {
     const name = request.body.name;
     const type = request.body.type;
 
+    var data = {
+        name: name,
+        type: type,
+    };
+
     return stripe(apiKey).products.create(
-        {
-            name: name,
-            type: type,
-        }, (err, product) => {
+        data, (err, product) => {
             if (err) {
                 response.send(err);
             } else {
